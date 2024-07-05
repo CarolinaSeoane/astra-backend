@@ -5,19 +5,28 @@ from flask_pymongo import PyMongo
 
 from app.routes.teams import teams
 from app.routes.index import index
+from app.db_connection import mongo
+
 # TODO create custom logger
 
 def create_app():
     # Loading env vars
+    print(f'Loading environment variables...')
     dotenv_path = os.path.join(os.path.dirname(__file__), "..", "config", 'dev.env') # TODO dev.env shouldnt be hardcoded
     load_dotenv(dotenv_path)
-    print(f"the dotenv path: {dotenv_path}")
-    
-    print("creating app")
+
+
+    # Creating flask app and loading env vars
+    print('Creating app...')
     app = Flask(__name__)
     load_env_vars_onto_app(app, dotenv_path)
-
+    
+  
     # Setup db connection
+    print('Setting up db connection...')
+    app.config['MONGO_URI'] = os.getenv('MONGO_URI')   
+    mongo.init_app(app)  
+
 
     # Register blueprints
     app.register_blueprint(teams, url_prefix='/teams')
