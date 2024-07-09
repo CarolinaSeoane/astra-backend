@@ -9,8 +9,7 @@ class Role(Enum):
 
 class Member:
 
-    def __init__(self, user, team, role, date):
+    def __init__(self, user, role, date):
         self.user = user
-        self.team = team
         self.role = role
         self.date = date
