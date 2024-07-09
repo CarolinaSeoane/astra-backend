@@ -1,6 +1,7 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask
+from flask_cors import CORS
 
 from app.routes.teams import teams
 from app.routes.index import index
@@ -17,9 +18,9 @@ def create_app():
 
     # Creating flask app and loading env vars
     print('Creating app...')
-    app = Flask(__name__)
+    app = Flask(__name__)   
     load_env_vars_onto_app(app, dotenv_path)
-    
+    CORS(app, support_credentials=True)
   
     # Setup db connection
     print('Setting up db connection...')
