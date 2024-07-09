@@ -1,4 +1,3 @@
-import os
 import json
 from flask import Blueprint, jsonify
 from app.db_connection import mongo
@@ -14,4 +13,3 @@ def init_teams():
     response = json.loads(response)
 
     return jsonify(response)
-

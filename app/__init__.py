@@ -1,11 +1,10 @@
 import os
 from dotenv import load_dotenv
-from flask import Flask, Blueprint
-from flask_pymongo import PyMongo
+from flask import Flask
 
 from app.routes.teams import teams
 from app.routes.index import index
-from app.db_connection import mongo
+from app.routes.astra import astra
 
 # TODO create custom logger
 
@@ -24,20 +23,19 @@ def create_app():
   
     # Setup db connection
     print('Setting up db connection...')
-    app.config['MONGO_URI'] = os.getenv('MONGO_URI')   
-    mongo.init_app(app)  
+    app.config['MONGO_URI'] = os.getenv('MONGO_URI')
 
 
     # Register blueprints
     app.register_blueprint(teams, url_prefix='/teams')
     app.register_blueprint(index, url_prefix='/')
+    app.register_blueprint(astra, url_prefix='/astra')
 
     return app
 
 def load_env_vars_onto_app(app, dotenv_path):
     env_vars = dotenv_to_dict(dotenv_path)
     for key, value in env_vars.items():
-        print(f"found key {key} with value {value}")
         app.config[key] = value
 
 def dotenv_to_dict(dotenv_path):
