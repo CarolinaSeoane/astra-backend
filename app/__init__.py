@@ -3,9 +3,11 @@ from dotenv import load_dotenv
 from flask import Flask
 from flask_cors import CORS
 
+from app.db_connection import mongo
 from app.routes.teams import teams
 from app.routes.index import index
 from app.routes.astra import astra
+from app.routes.users import users
 
 # TODO create custom logger
 
@@ -24,13 +26,15 @@ def create_app():
   
     # Setup db connection
     print('Setting up db connection...')
+    print(os.getenv('MONGO_URI'))
     app.config['MONGO_URI'] = os.getenv('MONGO_URI')
-
+    mongo.init_app(app) 
 
     # Register blueprints
     app.register_blueprint(teams, url_prefix='/teams')
     app.register_blueprint(index, url_prefix='/')
     app.register_blueprint(astra, url_prefix='/astra')
+    app.register_blueprint(users, url_prefix='/users')
 
     return app
 
