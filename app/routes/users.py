@@ -60,12 +60,14 @@ def sign_up(args):
         return jsonify({
             "message": f"Conflict. A user with the email {args['email']} already exists."
         }), 409
-
+ 
     # Email doesn't exist. Save user to mongo
-    User(**args).save_user()
+    new_user = User(**args)
+    new_user.save_user()
     session_token = generate_jwt(args['email'])
+    
     return jsonify({
         "message": "User signed up successfully.",
-        "data": "user",
+        "data": new_user.from_obj_to_dict(),
         "token": session_token
     }), 200
