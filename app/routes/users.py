@@ -3,6 +3,7 @@ from webargs import fields
 from webargs.flaskparser import use_args
 
 from app.services.google_auth import validate_credentials
+from app.services.token import generate_jwt
 from app.models.user import User
 
 users = Blueprint('users', __name__)
@@ -10,6 +11,7 @@ users = Blueprint('users', __name__)
 @users.route('/login', methods=['POST'])
 @use_args({'credential': fields.Str(required=True)}, location='json')
 def handle_login(args):
+    # TODO: handle already existing jwt?
     try:
         id_info = validate_credentials(args['credential'])
     except ValueError as err:
@@ -37,16 +39,33 @@ def handle_login(args):
         }), 404
     else:
         # User is signed up and we only need to log them in
-        # TODO: manage sessions
+        session_token = generate_jwt(email)
         return jsonify({
             "message": "User logged in successfully.",
-            "data": user.from_obj_to_dict()
+            "data": user.from_obj_to_dict(),
+            "token": session_token
         }), 200
 
 @users.route('/sign-up', methods=['POST'])
-@use_args({'credential': fields.Str(required=True)}, location='json')
+@use_args({'name': fields.Str(required=True),
+           'surname': fields.Str(required=True),
+           'email': fields.Str(required=True),
+           'username': fields.Str(required=True),
+           'profile_picture': fields.Str(required=True)}, location='json')
 def sign_up(args):
-    # save usr to mongo
+
+    # Verify email doesn't exist
+    user = User.get_user(args['email'])
+    if user is not None:
+        return jsonify({
+            "message": f"Conflict. A user with the email {args['email']} already exists."
+        }), 409
+
+    # Email doesn't exist. Save user to mongo
+    User(**args).save_user()
+    session_token = generate_jwt(args['email'])
     return jsonify({
-            "message": "User signed up."
-        }), 200
+        "message": "User signed up successfully.",
+        "data": "user",
+        "token": session_token
+    }), 200

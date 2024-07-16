@@ -2,10 +2,11 @@ from app.db_connection import mongo
 
 class User:
 
-    def __init__(self, _id, name, surname, email, profile_picture, organizations=set()):
+    def __init__(self, name, surname, username, email, profile_picture, organizations=set(), _id = None):
         self._id = _id
         self.name = name
         self.surname = surname
+        self.username = username
         self.email = email
         self.profile_picture = profile_picture
         self.organizations = organizations
@@ -39,4 +40,10 @@ class User:
             'profile_picture': self.profile_picture,
             'organizations': [str(org_id) for org_id in list(self.organizations)] if remove_object_ids else list(self.organizations)
         }
+    
+    def save_user(self):
+        print('Saving user')
+        usr = self.from_obj_to_dict(False)
+        # en el metodo from_obj_to_dict hay que ver que hacer cuando no tiene id, seria ni pasar este campo y que lo cree mongo
+        mongo.db.users.insert_one(usr)
     
