@@ -26,7 +26,6 @@ def create_app():
   
     # Setup db connection
     print('Setting up db connection...')
-    print(os.getenv('MONGO_URI'))
     app.config['MONGO_URI'] = os.getenv('MONGO_URI')
     mongo.init_app(app) 
 

@@ -70,4 +70,4 @@ def sign_up(args):
         "message": "User signed up successfully.",
         "data": new_user.from_obj_to_dict(),
         "token": session_token
-    }), 200
+    }), 201
