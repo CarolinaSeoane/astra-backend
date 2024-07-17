@@ -5,9 +5,10 @@ import os
 JWT_ALGORITHM = os.getenv('JWT_ALGORITHM')
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-def generate_jwt(user_email):
+def generate_jwt(user_email, _id):
     payload = {
         'email': user_email,
+        "_id": _id,
         'exp': datetime.now(UTC) + timedelta(days=1)  # Expires in 1 day
     }
     token = jwt.encode(payload, SECRET_KEY, JWT_ALGORITHM)

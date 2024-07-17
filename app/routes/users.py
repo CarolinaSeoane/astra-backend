@@ -39,7 +39,7 @@ def handle_login(args):
         }), 404
     else:
         # User is signed up and we only need to log them in
-        session_token = generate_jwt(email)
+        session_token = generate_jwt(email, str(user._id))
         return jsonify({
             "message": "User logged in successfully.",
             "data": user.from_obj_to_dict(),
@@ -64,7 +64,7 @@ def sign_up(args):
     # Email doesn't exist. Save user to mongo
     new_user = User(**args)
     new_user.save_user()
-    session_token = generate_jwt(args['email'])
+    session_token = generate_jwt(args['email'], "str(new_user._id)")
     
     return jsonify({
         "message": "User signed up successfully.",
