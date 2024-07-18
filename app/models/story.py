@@ -44,7 +44,7 @@ class Story:
     @classmethod
     def get_stories_by_team_id(cls, team_id: ObjectId):
         '''
-        returns None if no stories are found for the given team_id
+        returns [] if no stories are found for the given team_id
         '''
         stories_list = list(mongo.db.stories.find({'team': team_id}))
         response = json_util.dumps(stories_list) # mongoDb doc to JSON-encoded string.

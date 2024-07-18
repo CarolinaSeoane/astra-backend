@@ -1,6 +1,8 @@
-from flask import Blueprint, jsonify, request
+from flask import Blueprint, request
 from webargs import fields
 from webargs.flaskparser import use_args
+from bson import json_util
+import json
 
 from app.services.google_auth import validate_credentials
 from app.services.token import generate_jwt
@@ -42,13 +44,13 @@ def handle_login(args):
         return send_response(route, method, data, ["User not found. Please complete the sign-up process."], 404)
     else:
         # User is signed up and we only need to log them in
-        session_token = generate_jwt(email, str(user._id))
+        session_token = generate_jwt(email, user['_id']['$oid'])
         data = {
-            "user": user.from_obj_to_dict(),
+            "user": user,
             "token": session_token
         }
         return send_response(route, method, data, [], 200)
-        
+
 
 @users.route('/sign-up', methods=['POST'])
 @use_args({'name': fields.Str(required=True),
@@ -59,7 +61,7 @@ def handle_login(args):
 def sign_up(args):
     route = request.path
     method = request.method
-    
+
     # Verify email doesn't exist
     user = User.get_user(args['email'])
     if user is not None:
@@ -68,10 +70,13 @@ def sign_up(args):
     # Email doesn't exist. Save user to mongo
     new_user = User(**args)
     new_user.save_user()
-    session_token = generate_jwt(args['email'], "str(new_user._id)")
+    session_token = generate_jwt(args['email'], str(new_user._id))
+
+    new_user_str = json_util.dumps(new_user.__dict__)
+    new_user_dict = json.loads(new_user_str)
     
     data = {
-        "user": new_user.from_obj_to_dict(),
+        "user": new_user_dict,
         "token": session_token
     }
 

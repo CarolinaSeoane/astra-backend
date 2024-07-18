@@ -1,5 +1,5 @@
-from bson import ObjectId
-from app.utils import handle_object_id, handle_object_ids
+from bson import ObjectId, json_util
+import json
 
 from app.db_connection import mongo
 
@@ -18,24 +18,14 @@ class User:
     @classmethod
     def get_user(cls, email):
         '''
-        returns None if user is not found
+        returns None if user is not found and dict if found
         '''
-        user_data = mongo.db.users.find_one({'email': email})    
-        return User(**user_data) if user_data else None
-    
-    def from_obj_to_dict(self, convert_id_to_str=True):
-        # Method used to convert the python object to a dict keeping all objectIds as ObjectId or strings
-        return {
-            '_id': handle_object_id(self._id, convert_id_to_str),
-            'name': self.name,
-            'surname': self.surname,
-            'username': self.username,
-            'email': self.email,
-            'profile_picture': self.profile_picture,
-            'teams': handle_object_ids(self.teams, convert_id_to_str)
-        }
+        user_data = mongo.db.users.find_one({'email': email})
+        user_data = json_util.dumps(user_data)
+        user_data = json.loads(user_data)
+        
+        return user_data
     
     def save_user(self):
-        usr = self.from_obj_to_dict(False)
-        mongo.db.users.insert_one(usr)
+        mongo.db.users.insert_one(self.__dict__)
     
