@@ -184,7 +184,8 @@ class Populate:
                         "app": "GOOGLE-SEARCH",
                         "status": "Doing"
                     }
-                ]
+                ],
+                "team": self.team1_id
             }
         ]
         self.helper.post_to_collection("stories", stories)

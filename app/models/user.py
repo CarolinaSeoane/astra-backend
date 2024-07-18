@@ -1,7 +1,7 @@
-from app.db_connection import mongo
 from bson import ObjectId
-
 from app.utils import handle_object_id, handle_object_ids
+
+from app.db_connection import mongo
 
 
 class User:
