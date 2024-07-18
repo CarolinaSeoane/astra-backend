@@ -14,12 +14,10 @@ def generate_jwt(user_email, _id):
     token = jwt.encode(payload, SECRET_KEY, JWT_ALGORITHM)
     return token
 
-# def validate_jwt(token):
-#     try:
-#         decoded = jwt.decode(token, SECRET_KEY, JWT_ALGORITHM)
-#         return decoded
-#     except jwt.ExpiredSignatureError:
-#         return None  # Token has expired
-#     except jwt.InvalidTokenError:
-#         return None  # Invalid token
+def validate_jwt(token):
+    try:
+        decoded = jwt.decode(token, SECRET_KEY, JWT_ALGORITHM)
+        return decoded
+    except: # Token has expired or is invalid
+        return None
     

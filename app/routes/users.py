@@ -16,15 +16,18 @@ users = Blueprint('users', __name__)
 @use_args({'credential': fields.Str(required=True)}, location='json')
 def handle_login(args):
     # TODO: handle already existing jwt?
-    route = request.path
-    method = request.method
+
+    req_data = {
+        'method': request.method,
+        'endpoint': request.path,
+    }
     
     try:
         id_info = validate_credentials(args['credential'])
     except ValueError as err:
         # Invalid token 
         print(err)
-        return send_response(route, method, [], ["Unauthorized. Access is denied due to invalid credentials."], 401)
+        return send_response([], ["Unauthorized. Access is denied due to invalid credentials."], 401, **req_data)
     
     # ID token is valid
     email = id_info['email']
@@ -41,7 +44,7 @@ def handle_login(args):
                 "name": name,
                 "surname": family_name
             }
-        return send_response(route, method, data, ["User not found. Please complete the sign-up process."], 404)
+        return send_response(data, ["User not found. Please complete the sign-up process."], 404, **req_data)
     else:
         # User is signed up and we only need to log them in
         session_token = generate_jwt(email, user['_id']['$oid'])
@@ -49,7 +52,7 @@ def handle_login(args):
             "user": user,
             "token": session_token
         }
-        return send_response(route, method, data, [], 200)
+        return send_response(data, [], 200, **req_data)
 
 
 @users.route('/sign-up', methods=['POST'])
@@ -59,13 +62,15 @@ def handle_login(args):
            'username': fields.Str(required=True),
            'profile_picture': fields.Str(required=True)}, location='json')
 def sign_up(args):
-    route = request.path
-    method = request.method
+    req_data = {
+        'method': request.method,
+        'endpoint': request.path,
+    }
 
     # Verify email doesn't exist
     user = User.get_user(args['email'])
     if user is not None:
-        return send_response(route, method, [], [f"Conflict. A user with the email {args['email']} already exists."], 409)
+        return send_response([], [f"Conflict. A user with the email {args['email']} already exists."], 409, **req_data)
     
     # Email doesn't exist. Save user to mongo
     new_user = User(**args)
@@ -80,5 +85,5 @@ def sign_up(args):
         "token": session_token
     }
 
-    return send_response(route, method, data, [], 201)
+    return send_response(data, [], 201, **req_data)
 

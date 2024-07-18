@@ -25,6 +25,19 @@ class User:
         user_data = json.loads(user_data)
         
         return user_data
+
+    @classmethod
+    def is_user_in_team(cls, _id, team_id):
+        '''
+        returns False if user is not part of the team
+        '''
+
+        query = {
+            "_id": ObjectId(_id),
+            "teams.team": team_id
+        }
+        
+        return mongo.db.users.count_documents(query) > 0
     
     def save_user(self):
         mongo.db.users.insert_one(self.__dict__)
