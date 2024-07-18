@@ -4,7 +4,6 @@ import json
 
 from app.db_connection import mongo
 
-
 class Type(Enum):
     BUGFIX = "Bugfix"
     FEATURE = "Featue"
@@ -52,4 +51,5 @@ class Story:
         stories = json.loads(response) # JSON-encoded string to Python list of dictionaries.
 
         return stories
+    
     
