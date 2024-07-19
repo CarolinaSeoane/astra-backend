@@ -6,7 +6,7 @@ CLIENT_ID = os.getenv('CLIENT_ID')
 
 def validate_credentials(user_token):
     # Specify the CLIENT_ID of the app that accesses the backend:
-    id_info = id_token.verify_oauth2_token(user_token, requests.Request(), CLIENT_ID)
+    id_info = id_token.verify_oauth2_token(user_token, requests.Request(), CLIENT_ID, clock_skew_in_seconds=10)
     
     # The verify_oauth2_token function verifies the JWT signature,
     # the aud claim, and the exp claim. You must also verify the hd
