@@ -33,7 +33,7 @@ def stories_list(args, team_id):
     
     # Validate if user is part of the team
     if not User.is_user_in_team(decoded['_id'], team_id):
-        return send_response([], [f"Unauthorized. User is not authorized to access this resource"], 401, **req_data)
+        return send_response([], [f"Forbidden. User is not authorized to access this resource"], 403, **req_data)
 
 
     stories = Story.get_stories_by_team_id(team_id)
