@@ -56,7 +56,13 @@ class Populate:
                 "username": self.username1,
                 "email": "carolina.b.seoane@gmail.com",
                 "profile_picture": self.pfp1,
-                "organizations": [self.org1_id, self.org2_id]
+                "teams": [
+                    {
+                        "team": self.team1_id,
+                        "name": "Argo",
+                        "icon": "argo.jpg"
+                    },
+                ]
             },
 
             {
@@ -66,7 +72,13 @@ class Populate:
                 "username": self.username2,
                 "email": "seoane.m.b@gmail.com",
                 "profile_picture": self.pfp2,
-                "organizations": [self.org1_id]
+                "teams": [
+                    {
+                        "team": self.team1_id,
+                        "name": "Argo",
+                        "icon": "argo.jpg"
+                    },
+                ]
             }
         ]
         self.helper.post_to_collection("users", users)
@@ -172,7 +184,8 @@ class Populate:
                         "app": "GOOGLE-SEARCH",
                         "status": "Doing"
                     }
-                ]
+                ],
+                "team": self.team1_id
             }
         ]
         self.helper.post_to_collection("stories", stories)

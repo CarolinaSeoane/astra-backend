@@ -1,6 +1,13 @@
-def handle_object_id(_id, convert_id_to_str):
-    return str(_id) if convert_id_to_str else _id
+from flask import jsonify
 
-def handle_object_ids(ids_list, convert_id_to_str):
-    return [str(_id) for _id in list(ids_list)] if convert_id_to_str else list(ids_list)
-    
+
+def send_response(data, errors, status_code, method, endpoint):  
+    payload = {
+        'meta': {
+            'method': method,
+            'endpoint': endpoint
+        },
+        'data': data,
+        'errors': errors
+    }
+    return jsonify(payload), status_code

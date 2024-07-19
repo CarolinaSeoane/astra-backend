@@ -1,10 +1,14 @@
-from flask import Blueprint, jsonify
+from flask import Blueprint, request
 from webargs import fields
 from webargs.flaskparser import use_args
+from bson import json_util
+import json
 
 from app.services.google_auth import validate_credentials
 from app.services.token import generate_jwt
 from app.models.user import User
+from app.utils import send_response
+
 
 users = Blueprint('users', __name__)
 
@@ -12,12 +16,18 @@ users = Blueprint('users', __name__)
 @use_args({'credential': fields.Str(required=True)}, location='json')
 def handle_login(args):
     # TODO: handle already existing jwt?
+
+    req_data = {
+        'method': request.method,
+        'endpoint': request.path,
+    }
+    
     try:
         id_info = validate_credentials(args['credential'])
     except ValueError as err:
         # Invalid token 
         print(err)
-        return jsonify({"message": "Unauthorized. Access is denied due to invalid credentials."}), 401
+        return send_response([], ["Unauthorized. Access is denied due to invalid credentials."], 401, **req_data)
     
     # ID token is valid
     email = id_info['email']
@@ -29,22 +39,21 @@ def handle_login(args):
 
     if user is None:
         # User is not in our db and we need to redirect them to the sign up screen
-        return jsonify({
-            "message": "User not found. Please complete the sign-up process.",
-            "data": {
+        data = {
                 "email": email,
                 "name": name,
                 "surname": family_name
             }
-        }), 404
+        return send_response(data, ["User not found. Please complete the sign-up process."], 404, **req_data)
     else:
         # User is signed up and we only need to log them in
-        session_token = generate_jwt(email)
-        return jsonify({
-            "message": "User logged in successfully.",
-            "data": user.from_obj_to_dict(),
+        session_token = generate_jwt(email, user['_id']['$oid'])
+        data = {
+            "user": user,
             "token": session_token
-        }), 200
+        }
+        return send_response(data, [], 200, **req_data)
+
 
 @users.route('/sign-up', methods=['POST'])
 @use_args({'name': fields.Str(required=True),
@@ -53,21 +62,28 @@ def handle_login(args):
            'username': fields.Str(required=True),
            'profile_picture': fields.Str(required=True)}, location='json')
 def sign_up(args):
+    req_data = {
+        'method': request.method,
+        'endpoint': request.path,
+    }
 
     # Verify email doesn't exist
     user = User.get_user(args['email'])
     if user is not None:
-        return jsonify({
-            "message": f"Conflict. A user with the email {args['email']} already exists."
-        }), 409
- 
+        return send_response([], [f"Conflict. A user with the email {args['email']} already exists."], 409, **req_data)
+    
     # Email doesn't exist. Save user to mongo
     new_user = User(**args)
     new_user.save_user()
-    session_token = generate_jwt(args['email'])
+    session_token = generate_jwt(args['email'], str(new_user._id))
+
+    new_user_str = json_util.dumps(new_user.__dict__)
+    new_user_dict = json.loads(new_user_str)
     
-    return jsonify({
-        "message": "User signed up successfully.",
-        "data": new_user.from_obj_to_dict(),
+    data = {
+        "user": new_user_dict,
         "token": session_token
-    }), 201
+    }
+
+    return send_response(data, [], 201, **req_data)
+
