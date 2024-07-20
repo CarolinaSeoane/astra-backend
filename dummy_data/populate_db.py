@@ -125,11 +125,17 @@ class Populate:
                 "members": [
                     {
                         "user": self.user1_id,
+                        "username": self.username1,
+                        "email": "carolina.b.seoane@gmail.com",
+                        "profile_picture": self.pfp1,
                         "role": "Developer",
                         "date": self.user1_id.generation_time
                     },
                     {
                         "user": self.user2_id,
+                        "username": self.username2,
+                        "email": "seoane.m.b@gmail.com",
+                        "profile_picture": self.pfp2,
                         "role": "Scrum Master",
                         "date": self.user2_id.generation_time
                     }
@@ -168,6 +174,9 @@ class Populate:
                 "members": [
                     {
                         "user": self.user1_id,
+                        "username": self.username1,
+                        "email": "carolina.b.seoane@gmail.com",
+                        "profile_picture": self.pfp1,
                         "role": "Scrum Master",
                         "date": self.user1_id.generation_time
                     }
