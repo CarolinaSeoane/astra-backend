@@ -14,6 +14,7 @@ class Populate:
     pfp2 = "5"
 
     team1_id = ObjectId()
+    team2_id = ObjectId()
 
     epic1_id = ObjectId()
     epic1_title = "Mejoras del Buscador"
@@ -62,6 +63,11 @@ class Populate:
                         "name": "Argo",
                         "icon": "argo.jpg"
                     },
+                    {
+                        "team": self.team2_id,
+                        "name": "Flyers",
+                        "icon": "flyers.jpg"
+                    }
                 ]
             },
 
@@ -126,6 +132,44 @@ class Populate:
                         "user": self.user2_id,
                         "role": "Scrum Master",
                         "date": self.user2_id.generation_time
+                    }
+                ]
+            },
+            {
+                "_id": self.team2_id,
+                "name": "Flyers",
+                "logo": "flyers.jpg",
+                "organization": self.org1_id,
+                "team_settings": {
+                    "sprint_duration": "3",
+                    "sprint_begins_on": 0,
+                    "estimation_method": ["Fibonacci"],
+                    "mandatory_story_fields": ["title", "description", "story_points", "sprint"],
+                    "permits": [
+                        {
+                            "role": "Product Owner",
+                            "options": {
+                                "edit_story": False,
+                                "delete_story": False,
+                                "add_team_members": False,
+                                "join_standup": True,
+                                "all_time_metrics": True
+                            }
+                        },
+                        {
+                            "role": "Developer",
+                            "options": {
+                                "create_story": False,
+                                "edit_story": False
+                            }
+                        }
+                    ]
+                },
+                "members": [
+                    {
+                        "user": self.user1_id,
+                        "role": "Scrum Master",
+                        "date": self.user1_id.generation_time
                     }
                 ]
             }
