@@ -3,7 +3,7 @@ from enum import Enum
 
 class Status(Enum):
     DOING = "Doing"
-    NOT_STARTED = "Not Started"
+    NOT_STARTED = "Not started"
     BLOCKED = "Blocked"
     DONE = "Done"
 
