@@ -20,9 +20,8 @@ def stories_list(args, team_id):
         'endpoint': request.path,
     }
 
-    # Validate credential
+    # Validate token
     decoded = validate_jwt(args['Authorization'])
-   
     if not decoded:
         return send_response([], [f"Unauthorized. Invalid session token"], 401, **req_data)
 
