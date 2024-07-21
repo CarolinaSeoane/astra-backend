@@ -40,8 +40,8 @@ class Populate:
             },
             {   
                 "_id": self.org2_id,
-                "name": "Astra",
-                "logo": "astra.jpg",
+                "name": "IBM",
+                "logo": "ibm.jpg",
                 "epics": []
             }
         ]
@@ -145,7 +145,7 @@ class Populate:
                 "_id": self.team2_id,
                 "name": "Flyers",
                 "logo": "flyers.jpg",
-                "organization": self.org1_id,
+                "organization": self.org2_id,
                 "team_settings": {
                     "sprint_duration": "3",
                     "sprint_begins_on": 0,
@@ -207,9 +207,9 @@ class Populate:
     def populate_stories(self):
         stories = [
             {
-                "title": "Mejorar la busqueda de acuerdo a busquedas recientes",
-                "description": "Como usuario quiero que el buscador tenga en cuenta mis busquedas recientes para obtener resultados mas precisos",
-                "acceptance_criteria": "La busqueda devuelve resultados mas precisos segun el historial del usuario",
+                "title": "Mejorar el buscador teniendo en cuenta búsquedas recientes",
+                "description": "Como usuario quiero que el buscador tenga en cuenta mis búsquedas recientes para obtener resultados más precisos",
+                "acceptance_criteria": "La búsqueda devuelve resultados más precisos según el historial del usuario",
                 "creator": {
                     "_id": self.user1_id,
                     "username": self.username1,
@@ -236,6 +236,40 @@ class Populate:
                         "description": "Ajustar parametros de la libreria de busqueda",
                         "app": "GOOGLE-SEARCH",
                         "status": "Doing"
+                    }
+                ],
+                "team": self.team1_id
+            },
+            {
+                "title": "Cambiar color del botón de Login",
+                "description": "Como usuario quiero que el color del buscador cambie para que sea accesible",
+                "acceptance_criteria": "El botón de Login se visualiza con el color #1D4ED8",
+                "creator": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2
+                },
+                "assigned_to": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2
+                },
+                "epic": {
+                    "_id": self.epic1_id,
+                    "title": self.epic1_title,
+                },
+                "sprint": "1",
+                "story_points": "1",
+                "tags": ["UX", "Accesibilidad"],
+                "priority": "Medium",
+                "type": "Feature",
+                "estimation_method": "Fibonacci",
+                "tasks": [
+                    {
+                        "title": "Modificar valor de font-color",
+                        "description": "En el archivo de configuración modificar el valor de la propiedad font-color",
+                        "app": "GOOGLE-UI",
+                        "status": "Not started"
                     }
                 ],
                 "team": self.team1_id
