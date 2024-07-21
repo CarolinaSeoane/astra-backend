@@ -2,6 +2,7 @@ from bson import ObjectId, json_util
 import json
 
 from app.db_connection import mongo
+from app.services.mongoHelper import MongoHelper
 
 
 class Team:
@@ -19,10 +20,7 @@ class Team:
         '''
         returns None if team is not found and dict if found
         '''
-        team_data = mongo.db.teams.find_one({'_id': ObjectId(team_id)})
-        team_data = json_util.dumps(team_data)
-        team_data = json.loads(team_data)
-        return team_data
+        return MongoHelper().get_document_by('teams', {'_id': ObjectId(team_id)})
 
     @classmethod
     def get_team_members(cls, team_id):
