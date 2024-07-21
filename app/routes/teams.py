@@ -86,9 +86,10 @@ def add_team_member(headers, args):
         # users in team have: user_id, username, email, profile_picture, role, date
         user_obj = User(**user)
         
-        Team.add_member(args["team_id"], user_obj, args['role'])
-        
-        return send_response([], [], 200, **req_data)
+        success = Team.add_member(args["team_id"], user_obj, args['role'])
+        if success:
+            return send_response([], [], 200, **req_data)
+        return send_response([], [f"Error adding user {new_member_id} to team"], 500, **req_data)
 
 
 @teams.route('/remove_member/<member_id>', methods=['DELETE'])

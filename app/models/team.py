@@ -43,16 +43,25 @@ class Team:
             "date": current_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + '+00:00'
         }
 
-        # add new member to the team
-        # method in user to update teams list of the user
         filter = {'_id': ObjectId(team_id)}
         update = {'$push': {'members': team_member}} # push is used to insert a new value to an existing array
     
-        MongoHelper().update_collection('teams', filter, update)
+        try:
+            MongoHelper().update_collection('teams', filter, update) # check what this returns. maybe i dont have to do a get_teams after
+            added_to_team = True
+            team = cls.get_team(team_id)
+            new_user.add_team(team)
+        except Exception as e:
+            print(f"Error adding new member to team: {e}")
+            if added_to_team:
+                cls.remove_member(team_id, new_user._id)
+            return False
+        return True
 
-        # add team to user's teams list
-        team = cls.get_team(team_id)
-        print(f"the team is {team}")
-        new_user.add_team(team)
-        
-            # if error occurs, remove the member from the team
+    @classmethod
+    def remove_member(cls, team_id, member_id):
+        '''
+        returns True if member is removed and False if member is not found
+        '''
+        filter = {'_id': ObjectId(team_id)}
+        update = {'$pull': {'members': {'user': ObjectId(member_id)}}} # pull is used to remove a value from an existing array
