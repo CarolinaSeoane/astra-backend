@@ -1,7 +1,7 @@
-from bson import ObjectId, json_util
-import json
+from bson import ObjectId
+from datetime import datetime
+import pytz
 
-from app.db_connection import mongo
 from app.services.mongoHelper import MongoHelper
 
 
@@ -31,3 +31,26 @@ class Team:
         if team is None:
             return None
         return team['members']
+    
+    @classmethod
+    def add_member(cls, team_id, new_user, role):
+        current_time = datetime.now(pytz.utc)
+        team_member = {
+            "user": new_user._id,
+            "username": new_user.username,
+            "email": new_user.email,
+            "profile_picture": new_user.profile_picture,
+            "role": role,
+            "date": current_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + '+00:00'
+        }
+
+        # add new member to the team
+        # method in user to update teams list of the user
+        filter = {'_id': ObjectId(team_id)}
+        update = {'$push': {'members': team_member}} # push is used to insert a new value to an existing array
+        
+        MongoHelper().update_collection('teams', filter, update)
+
+        # add team to user's teams list
+        team = cls.get_team(team_id)
+        new_user.add_team(team)

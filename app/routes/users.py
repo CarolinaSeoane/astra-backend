@@ -35,7 +35,7 @@ def handle_login(args):
     name = id_info['name'].replace(family_name, '').strip()
     
     # Get user from db
-    user = User.get_user(email)
+    user = User.get_user_by({'email': email})
 
     if user is None:
         # User is not in our db and we need to redirect them to the sign up screen
@@ -68,7 +68,7 @@ def sign_up(args):
     }
 
     # Verify email doesn't exist
-    user = User.get_user(args['email'])
+    user = User.get_user_by({'email': args['email']})
     if user is not None:
         return send_response([], [f"Conflict. A user with the email {args['email']} already exists."], 409, **req_data)
     

@@ -1,7 +1,7 @@
-from bson import ObjectId, json_util
-import json
+from bson import ObjectId
 
 from app.db_connection import mongo
+from app.services.mongoHelper import MongoHelper
 
 
 class User:
@@ -16,15 +16,11 @@ class User:
         self.teams = teams
 
     @classmethod
-    def get_user(cls, email):
+    def get_user_by(cls, filter):
         '''
         returns None if user is not found and dict if found
         '''
-        user_data = mongo.db.users.find_one({'email': email})
-        user_data = json_util.dumps(user_data)
-        user_data = json.loads(user_data)
-        
-        return user_data
+        return MongoHelper().get_document_by('users', filter)
 
     @classmethod
     def is_user_in_team(cls, _id, team_id):
@@ -41,4 +37,17 @@ class User:
     
     def save_user(self):
         mongo.db.users.insert_one(self.__dict__)
-    
+
+    def add_team(self, team):
+        '''
+        Add team to user's teams list
+        '''
+        new_team = {
+            "team": team['_id'],
+            "name": team['name'],
+            "icon": team['icon']
+        }
+        
+        filter = {'_id': self._id}
+        update = {'$push': {'teams': new_team}}
+        MongoHelper().update_collection('users', filter, update)
