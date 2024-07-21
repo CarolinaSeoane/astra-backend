@@ -35,13 +35,11 @@ class Populate:
             {
                 "_id": self.org1_id, 
                 "name": "Google",
-                "logo": "google.jpg",
                 "epics": [self.epic1_id]
             },
             {   
                 "_id": self.org2_id,
                 "name": "IBM",
-                "logo": "ibm.jpg",
                 "epics": []
             }
         ]
@@ -60,13 +58,11 @@ class Populate:
                 "teams": [
                     {
                         "team": self.team1_id,
-                        "name": "Argo",
-                        "icon": "argo.jpg"
+                        "name": "Argo"
                     },
                     {
                         "team": self.team2_id,
-                        "name": "Flyers",
-                        "icon": "flyers.jpg"
+                        "name": "Flyers"
                     }
                 ]
             },
@@ -81,8 +77,7 @@ class Populate:
                 "teams": [
                     {
                         "team": self.team1_id,
-                        "name": "Argo",
-                        "icon": "argo.jpg"
+                        "name": "Argo"
                     },
                 ]
             }
@@ -95,7 +90,6 @@ class Populate:
             {
                 "_id": self.team1_id,
                 "name": "Argo",
-                "logo": "argo.jpg",
                 "organization": self.org1_id,
                 "team_settings": {
                     "sprint_duration": "2",
@@ -144,7 +138,6 @@ class Populate:
             {
                 "_id": self.team2_id,
                 "name": "Flyers",
-                "logo": "flyers.jpg",
                 "organization": self.org2_id,
                 "team_settings": {
                     "sprint_duration": "3",
