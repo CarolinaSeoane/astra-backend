@@ -1,6 +1,7 @@
 from flask import Blueprint, request
 from webargs import fields
 from webargs.flaskparser import use_args
+from bson import ObjectId
 
 from app.services.token import validate_jwt
 from app.models.team import Team
@@ -76,16 +77,16 @@ def add_team_member(headers, args):
     if user_is_scrum_master_of_team(members, args['user_id']):
         # add new member to team
         new_member_id = args['new_member_id']
-        user = User.get_user_by(new_member_id)
+        user = User.get_user_by({'_id': ObjectId(new_member_id)})
         if user is None:
             return send_response([], [f"No user found with id {new_member_id}"], 404, **req_data)
-        if user['$oid'] in [member['user']['$oid'] for member in members]:
+        if user['_id']['$oid'] in [member['user']['$oid'] for member in members]:
             return send_response([], [f"User {new_member_id} is already a member of the team"], 400, **req_data)
         
         # users in team have: user_id, username, email, profile_picture, role, date
         user_obj = User(**user)
         
-        Team.add_member(args["team_id"], user_obj)
+        Team.add_member(args["team_id"], user_obj, args['role'])
         
         return send_response([], [], 200, **req_data)
 

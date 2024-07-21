@@ -44,10 +44,8 @@ class User:
         '''
         new_team = {
             "team": team['_id'],
-            "name": team['name'],
-            "icon": team['icon']
+            "name": team['name']
         }
-        
-        filter = {'_id': self._id}
+        filter = {'_id': ObjectId(self._id['$oid'])}
         update = {'$push': {'teams': new_team}}
         MongoHelper().update_collection('users', filter, update)
