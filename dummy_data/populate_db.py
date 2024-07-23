@@ -117,14 +117,14 @@ class Populate:
                     ]
                 },
                 "members": [
-                    {
-                        "user": self.user1_id,
-                        "username": self.username1,
-                        "email": "carolina.b.seoane@gmail.com",
-                        "profile_picture": self.pfp1,
-                        "role": "Developer",
-                        "date": self.user1_id.generation_time
-                    },
+                    # {
+                    #     "user": self.user1_id,
+                    #     "username": self.username1,
+                    #     "email": "carolina.b.seoane@gmail.com",
+                    #     "profile_picture": self.pfp1,
+                    #     "role": "Developer",
+                    #     "date": self.user1_id.generation_time
+                    # },
                     {
                         "user": self.user2_id,
                         "username": self.username2,
