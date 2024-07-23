@@ -28,5 +28,12 @@ class MongoHelper:
         update = {'$set': {'name': 'Bagels & Buns'}} 
         this would update the name of the document with name 'Bagels N Buns' to 'Bagels & Buns'
         '''
-        return self.astra.db[collection_name].update_one(filter, update)
+        print(f"updating collection")
+        print(f"Filter: {filter}")
+        print(f"Update: {update}")
+        var = self.astra.db[collection_name].update_one(filter, update)
+        print(f"updated collection {var}")
+        return var
 
+    def delete_element_from_collection(self, collection_name, filter):
+        return self.astra.db[collection_name].delete_one(filter) # doing .deleted_count will return the number of documents deleted

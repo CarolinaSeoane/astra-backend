@@ -87,19 +87,18 @@ def add_team_member(headers, args):
         user_obj = User(**user)
 
         # check if user to be added to team is part of organization
-        user
+        # user
 
-        
         success = Team.add_member(args["team_id"], user_obj, args['role'])
         if success:
             return send_response([], [], 200, **req_data)
         return send_response([], [f"Error adding user {new_member_email} to team"], 500, **req_data)
+    else:
+        return send_response([], ["User not authorized to complete operation"], 400, **req_data)
 
-
-@teams.route('/remove_member/<member_id>', methods=['DELETE'])
+@teams.route('/remove_member/<team_id>/<member_id>', methods=['DELETE'])
 @use_args({'Authorization': fields.Str(required=True)}, location='headers')
-@use_args({'user_id': fields.Str(required=True)}, location='json')
-def remove_team_member(headers, args, team_id):
+def remove_team_member(headers, team_id, member_id):
     req_data = {
         'method': request.method,
         'endpoint': request.path,
@@ -109,4 +108,12 @@ def remove_team_member(headers, args, team_id):
     decoded = validate_jwt(headers['Authorization'])   
     if not decoded:
         return send_response([], [f"Unauthorized. Invalid session token"], 401, **req_data)
+    user_id = decoded['_id']
     
+    team = Team.get_team(team_id)
+    members = team.get('members')
+    if user_is_scrum_master_of_team(members, user_id):
+        Team.remove_member(team_id, member_id) # can a user remove themselves from a team? what happens if the team is empty after deletion?
+        return send_response([], [], 200, **req_data)
+    
+    return send_response([], ["User not authorized to complete operation"], 400, **req_data)

@@ -60,8 +60,22 @@ class Team:
 
     @classmethod
     def remove_member(cls, team_id, member_id):
-        '''
-        returns True if member is removed and False if member is not found
-        '''
-        filter = {'_id': ObjectId(team_id)}
-        update = {'$pull': {'members': {'user': ObjectId(member_id)}}} # pull is used to remove a value from an existing array
+        from app.db_connection import mongo
+        print(f"Removing member {member_id} from team {team_id}")
+        # filter = {'_id': ObjectId(team_id)}
+        # update = {'$pull': {'members': {'user': ObjectId(member_id)}}} # pull is used to remove a value from an existing array
+        
+        objid = ObjectId(member_id)
+        filter = {"_id": ObjectId(team_id)}
+        update = { "$pull": { "members": {"_id": objid}}}
+        # update = { "$pull": { "members": {"email": "carolina.b.seoane@gmail.com"}}}
+
+
+        print(f"ObjectId Team ID: {type(ObjectId(team_id))}")
+        print(f"ObjectId Member ID: {ObjectId(member_id)}") 
+
+        var = mongo.db["teams"].update_one(filter, update)
+        print(f"updated collection {var}")
+
+        # MongoHelper().update_collection('teams', filter, update)
+    
