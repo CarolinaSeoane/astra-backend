@@ -44,7 +44,7 @@ def user_is_scrum_master_of_team(team_members, user_id):
         return False
     
     for member in team_members:
-        if member['role'] == 'Scrum Master' and member['user']['$oid'] == user_id:
+        if member['role'] == 'Scrum Master' and member['id']['$oid'] == user_id:
             return True
     
     return False
@@ -80,7 +80,7 @@ def add_team_member(headers, args):
         user = User.get_user_by({'email': new_member_email})
         if user is None:
             return send_response([], [f"No user found with email {new_member_email}"], 404, **req_data)
-        if user['_id']['$oid'] in [member['user']['$oid'] for member in members]:
+        if user['_id']['$oid'] in [member['id']['$oid'] for member in members]:
             return send_response([], [f"User {new_member_email} is already a member of the team"], 400, **req_data)
         
         # users in team have: user_id, username, email, profile_picture, role, date

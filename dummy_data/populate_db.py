@@ -57,11 +57,11 @@ class Populate:
                 "profile_picture": self.pfp1,
                 "teams": [
                     {
-                        "team": self.team1_id,
+                        "id": self.team1_id,
                         "name": "Argo"
                     },
                     {
-                        "team": self.team2_id,
+                        "id": self.team2_id,
                         "name": "Flyers"
                     }
                 ]
@@ -76,7 +76,7 @@ class Populate:
                 "profile_picture": self.pfp2,
                 "teams": [
                     {
-                        "team": self.team1_id,
+                        "id": self.team1_id,
                         "name": "Argo"
                     },
                 ]
@@ -117,16 +117,16 @@ class Populate:
                     ]
                 },
                 "members": [
-                    # {
-                    #     "user": self.user1_id,
-                    #     "username": self.username1,
-                    #     "email": "carolina.b.seoane@gmail.com",
-                    #     "profile_picture": self.pfp1,
-                    #     "role": "Developer",
-                    #     "date": self.user1_id.generation_time
-                    # },
                     {
-                        "user": self.user2_id,
+                        "id": self.user1_id,
+                        "username": self.username1,
+                        "email": "carolina.b.seoane@gmail.com",
+                        "profile_picture": self.pfp1,
+                        "role": "Developer",
+                        "date": self.user1_id.generation_time
+                    },
+                    {
+                        "id": self.user2_id,
                         "username": self.username2,
                         "email": "seoane.m.b@gmail.com",
                         "profile_picture": self.pfp2,
@@ -166,7 +166,7 @@ class Populate:
                 },
                 "members": [
                     {
-                        "user": self.user1_id,
+                        "id": self.user1_id,
                         "username": self.username1,
                         "email": "carolina.b.seoane@gmail.com",
                         "profile_picture": self.pfp1,

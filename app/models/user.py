@@ -43,9 +43,18 @@ class User:
         Add team to user's teams list
         '''
         new_team = {
-            "team": team['_id'],
+            "id": team['_id'],
             "name": team['name']
         }
         filter = {'_id': ObjectId(self._id['$oid'])}
         update = {'$push': {'teams': new_team}}
+        MongoHelper().update_collection('users', filter, update)
+
+    @classmethod
+    def remove_from_team(cls, user_id, team_id):
+        '''
+        Remove user from team
+        '''
+        filter = {'_id': ObjectId(user_id)}
+        update = {'$pull': {'teams': {'id': ObjectId(team_id)}}}
         MongoHelper().update_collection('users', filter, update)
