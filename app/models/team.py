@@ -36,7 +36,7 @@ class Team:
     def add_member(cls, team_id, new_user, role):
         current_time = datetime.now(pytz.utc)
         team_member = {
-            "user": new_user._id,
+            "id": new_user._id,
             "username": new_user.username,
             "email": new_user.email,
             "profile_picture": new_user.profile_picture,
