@@ -3,6 +3,7 @@ from bson import ObjectId, json_util
 import json
 
 from app.db_connection import mongo
+from app.utils import kanban_format
 
 class Type(Enum):
     BUGFIX = "Bugfix"
@@ -42,14 +43,26 @@ class Story:
         self.team = team
 
     @classmethod
-    def get_stories_by_team_id(cls, team_id: ObjectId):
+    def get_stories_by_team_id(cls, team_id: ObjectId, view_type):
         '''
         returns [] if no stories are found for the given team_id
         '''
-        stories_list = list(mongo.db.stories.find({'team': team_id}))
+        if view_type == 'kanban':
+            projection = {'_id', 'story_id', 'title', 'assigned_to', 'story_points', 'tasks.title', 'tasks.status'}          
+        else:
+            projection = None
+
+        filter = {
+            "team": { "$eq": team_id },
+        }
+
+        stories_list = list(mongo.db.stories.find(filter = filter, projection = projection))
         response = json_util.dumps(stories_list) # mongoDb doc to JSON-encoded string.
         stories = json.loads(response) # JSON-encoded string to Python list of dictionaries.
+        
+        if view_type == 'kanban':
+            return kanban_format(stories)
+        else:
+            return stories
 
-        return stories
-    
     
