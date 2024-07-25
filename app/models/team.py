@@ -29,7 +29,7 @@ class Team:
         '''
         team = cls.get_team(team_id)
         if team is None:
-            return None
+            return []
         return team['members']
     
     @classmethod
@@ -41,7 +41,9 @@ class Team:
             "email": new_user.email,
             "profile_picture": new_user.profile_picture,
             "role": role,
-            "date": current_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + '+00:00'
+            "date": {
+                "$date": current_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + '+00:00'
+            }
         }
 
         filter = {'_id': ObjectId(team_id)}
@@ -65,4 +67,3 @@ class Team:
         update = {'$pull': {'members': {'id': ObjectId(member_id)}}} # pull is used to remove a value from an existing array
         MongoHelper().update_collection('teams', filter, update)
         User.remove_from_team(member_id, team_id)
-    
