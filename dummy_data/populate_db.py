@@ -57,11 +57,11 @@ class Populate:
                 "profile_picture": self.pfp1,
                 "teams": [
                     {
-                        "id": self.team1_id,
+                        "_id": self.team1_id,
                         "name": "Argo"
                     },
                     {
-                        "id": self.team2_id,
+                        "_id": self.team2_id,
                         "name": "Flyers"
                     }
                 ]
@@ -76,7 +76,7 @@ class Populate:
                 "profile_picture": self.pfp2,
                 "teams": [
                     {
-                        "id": self.team1_id,
+                        "_id": self.team1_id,
                         "name": "Argo"
                     },
                 ]
@@ -118,20 +118,20 @@ class Populate:
                 },
                 "members": [
                     {
-                        "id": self.user1_id,
+                        "_id": self.user1_id,
                         "username": self.username1,
                         "email": "carolina.b.seoane@gmail.com",
                         "profile_picture": self.pfp1,
                         "role": "Developer",
-                        "date": self.user1_id.generation_time
+                        # "date": self.user1_id.generation_time
                     },
                     {
-                        "id": self.user2_id,
+                        "_id": self.user2_id,
                         "username": self.username2,
                         "email": "seoane.m.b@gmail.com",
                         "profile_picture": self.pfp2,
                         "role": "Scrum Master",
-                        "date": self.user2_id.generation_time
+                        # "date": self.user2_id.generation_time
                     }
                 ]
             },
@@ -166,7 +166,7 @@ class Populate:
                 },
                 "members": [
                     {
-                        "id": self.user1_id,
+                        "_id": self.user1_id,
                         "username": self.username1,
                         "email": "carolina.b.seoane@gmail.com",
                         "profile_picture": self.pfp1,
@@ -231,7 +231,7 @@ class Populate:
                         "status": "Doing"
                     }
                 ],
-                "team": self.team1_id
+                "team": self.team1_id # change to _id?
             },
             {
                 "title": "Cambiar color del botón de Login",
@@ -265,7 +265,7 @@ class Populate:
                         "status": "Not started"
                     }
                 ],
-                "team": self.team1_id
+                "team": self.team1_id # change to _id?
             }
         ]
         self.helper.post_to_collection("stories", stories)

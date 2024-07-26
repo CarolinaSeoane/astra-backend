@@ -30,7 +30,7 @@ class User:
 
         query = {
             "_id": ObjectId(_id),
-            "teams.team": team_id
+            "teams._id": team_id
         }
         
         return mongo.db.users.count_documents(query) > 0
@@ -56,5 +56,5 @@ class User:
         Remove user from team
         '''
         filter = {'_id': ObjectId(user_id)}
-        update = {'$pull': {'teams': {'id': ObjectId(team_id)}}}
+        update = {'$pull': {'teams': {'_id': ObjectId(team_id)}}}
         MongoHelper().update_collection('users', filter, update)

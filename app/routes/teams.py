@@ -37,7 +37,7 @@ def get_team_members(headers, team_id):
 
 def user_is_scrum_master_of_team(team_members, user_id):
     for member in team_members:
-        if member['role'] == 'Scrum Master' and member['id']['$oid'] == user_id: # TODO cahnge id to _id
+        if member['role'] == 'Scrum Master' and member['_id']['$oid'] == user_id: # TODO cahnge id to _id
             return True
     return False
 
@@ -69,13 +69,15 @@ def add_team_member(headers, args, team_id):
     if user_is_scrum_master_of_team(members, decoded['_id']):
         new_member_email = args['new_member_email']
         user = User.get_user_by({'email': new_member_email})
+        print(f"adding user: {user}")
         if user is None:
             return send_response([], [f"No user found with email {new_member_email}"], 404, **req_data)
-        if user['_id']['$oid'] in [member['id']['$oid'] for member in members]: # TODO change id to _id
+        if user['_id']['$oid'] in [member['_id']['$oid'] for member in members]: # TODO change id to _id
             return send_response([], [f"User {new_member_email} is already a member of the team"], 400, **req_data)
         
         # users in team have: user_id, username, email, profile_picture, role, date
         user_obj = User(**user)
+        print(f"the user object: {user_obj.__dict__}")
         success = Team.add_member(team_id, user_obj, args['role'])
         if success:
             return send_response([], [], 200, **req_data)
@@ -106,11 +108,12 @@ def remove_team_member(headers, team_id, member_id):
     if not decoded:
         return send_response([], [f"Unauthorized. Invalid session token"], 401, **req_data)
     user_id = decoded['_id']
-    
-    team = Team.get_team(team_id)
-    members = team.get('members')
+
+    members = Team.get_team_members(team_id)
     if user_is_scrum_master_of_team(members, user_id):
         Team.remove_member(team_id, member_id) # can a user remove themselves from a team? what happens if the team is empty after deletion?
+        members = Team.get_team_members(team_id)
+        print(f"team members after deletion: {members}")
         return send_response([], [], 200, **req_data)
     
     return send_response([], ["User not authorized to complete operation"], 400, **req_data)

@@ -36,14 +36,14 @@ class Team:
     def add_member(cls, team_id, new_user, role):
         current_time = datetime.now(pytz.utc)
         team_member = {
-            "id": new_user._id,
+            "_id": new_user._id,
             "username": new_user.username,
             "email": new_user.email,
             "profile_picture": new_user.profile_picture,
             "role": role,
-            "date": {
-                "$date": current_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + '+00:00'
-            }
+            # "date": {
+            #     "$date": current_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + '+00:00'
+            # }
         }
 
         filter = {'_id': ObjectId(team_id)}
@@ -63,7 +63,12 @@ class Team:
 
     @classmethod
     def remove_member(cls, team_id, member_id):
+        print(f"type of member id {type(member_id)}")
+        print(f"removing member {member_id} from team {team_id}")
+        user = User.get_user_by({'_id': ObjectId(member_id)})
+        print(f"type of user id {user}")
         filter = {'_id': ObjectId(team_id)}
-        update = {'$pull': {'members': {'id': ObjectId(member_id)}}} # pull is used to remove a value from an existing array
+        # update = {'$pull': {'members': {'_id': ObjectId("66a2e863493fe8221a338f0b")}}} # pull is used to remove a value from an existing array
+        update = {'$pull': {'members': {'email': user["email"]}}}
         MongoHelper().update_collection('teams', filter, update)
-        User.remove_from_team(member_id, team_id)
+        resp = User.remove_from_team(member_id, team_id)
