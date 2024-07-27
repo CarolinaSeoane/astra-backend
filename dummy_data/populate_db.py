@@ -98,7 +98,7 @@ class Populate:
                     "sprint_duration": "2",
                     "sprint_begins_on": 0,
                     "estimation_method": ["Fibonacci"],
-                    "mandatory_story_fields": ["acceptance_criteria", "title", "description", "story_points"],
+                    "mandatory_story_fields": ["acceptance_criteria", "title", "description", "estimation"],
                     "permits": [
                         {
                             "role": "Product Owner",
@@ -146,7 +146,7 @@ class Populate:
                     "sprint_duration": "3",
                     "sprint_begins_on": 0,
                     "estimation_method": ["Fibonacci"],
-                    "mandatory_story_fields": ["title", "description", "story_points", "sprint"],
+                    "mandatory_story_fields": ["title", "description", "estimation", "sprint"],
                     "permits": [
                         {
                             "role": "Product Owner",
@@ -213,16 +213,16 @@ class Populate:
                     "profile_picture": self.pfp1
                 },
                 "assigned_to": {
-                    "_id": self.user2_id,
-                    "username": self.username2,
-                    "profile_picture": self.pfp2
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1
                 },
                 "epic": {
                     "_id": self.epic1_id,
                     "title": self.epic1_title,
                 },
                 "sprint": "1",
-                "story_points": "5",
+                "estimation": "5",
                 "tags": ["Buscador"],
                 "priority": "Medium",
                 "type": "Feature",
@@ -233,6 +233,12 @@ class Populate:
                         "description": "Ajustar parametros de la libreria de busqueda",
                         "app": "GOOGLE-SEARCH",
                         "status": "Doing"
+                    },
+                    {
+                        "title": "Guardar busquedas recientes en cache",
+                        "description": "Guardar las busquedas de las ultimas 24 horas en cache",
+                        "app": "GOOGLE-SEARCH",
+                        "status": "Done"
                     }
                 ],
                 "team": self.team1_id
@@ -257,7 +263,7 @@ class Populate:
                     "title": self.epic1_title,
                 },
                 "sprint": "1",
-                "story_points": "1",
+                "estimation": "1",
                 "tags": ["UX", "Accesibilidad"],
                 "priority": "Medium",
                 "type": "Feature",
@@ -268,6 +274,41 @@ class Populate:
                         "description": "En el archivo de configuración modificar el valor de la propiedad font-color",
                         "app": "GOOGLE-UI",
                         "status": "Not Started"
+                    }
+                ],
+                "team": self.team1_id
+            },
+            {
+                "story_id": "ARGO-3",
+                "title": "Solicitar pruebas de performance del MS user",
+                "description": "Como usuario quiero que el microservicio pase por pruebas de performance para asegurar su buen rendimiento",
+                "acceptance_criteria": "Pruebas de performance pasan con resultado satisfactorio",
+                "creator": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2
+                },
+                "assigned_to": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1
+                },
+                "epic": {
+                    "_id": self.epic1_id,
+                    "title": self.epic1_title,
+                },
+                "sprint": "1",
+                "estimation": "3",
+                "tags": ["QA", "Performance"],
+                "priority": "Medium",
+                "type": "Feature",
+                "estimation_method": "Fibonacci",
+                "tasks": [
+                    {
+                        "title": "Solicitar pruebas de performance para GET /user/id",
+                        "description": "Crear ticket para pedir prueba de performance",
+                        "app": "MS USER",
+                        "status": "Done"
                     }
                 ],
                 "team": self.team1_id

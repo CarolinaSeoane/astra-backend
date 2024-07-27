@@ -1,5 +1,7 @@
 from flask import jsonify
 
+from app.models.task import Status
+
 
 def send_response(data, errors, status_code, method, endpoint):  
     payload = {
@@ -28,7 +30,19 @@ def kanban_format(stories_dict):
     return stories_dict
 
 def list_format(stories_dict):
-    pass
+    for story in stories_dict:
+        total_tasks = 0
+        tasks_completed = 0
+
+        for task in story['tasks']:
+            total_tasks += 1
+            if task['status'] == Status.DONE.value:
+                tasks_completed += 1
+
+        story['completeness'] = round(tasks_completed/total_tasks * 100)
+        story.pop('tasks')
+    return stories_dict
+
 
 def gantt_format(stories_dict):
     pass

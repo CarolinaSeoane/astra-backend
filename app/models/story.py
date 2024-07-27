@@ -3,7 +3,7 @@ from bson import ObjectId, json_util
 import json
 
 from app.db_connection import mongo
-from app.utils import kanban_format
+from app.utils import kanban_format, list_format
 
 class Type(Enum):
     BUGFIX = "Bugfix"
@@ -20,8 +20,8 @@ class Type(Enum):
 class Story:
 
     def __init__(self, title, description, acceptance_criteria, creator, assigned_to,
-                 epic, sprint, story_points, tags, priority, attachments, comments,
-                 type, tasks, related_stories, story_id, estimation, team, _id=ObjectId()):
+                 epic, sprint, estimation, tags, priority, attachments, comments,
+                 type, tasks, related_stories, story_id, team, _id=ObjectId()):
         self.title = title
         self.description = description
         self.acceptance_criteria = acceptance_criteria
@@ -29,7 +29,7 @@ class Story:
         self.assigned_to = assigned_to
         self.epic = epic
         self.sprint = sprint
-        self.story_points = story_points
+        self.estimation = estimation
         self.tags = tags
         self.priority = priority
         self.attachments = attachments
@@ -48,7 +48,9 @@ class Story:
         returns [] if no stories are found for the given team_id
         '''
         if view_type == 'kanban':
-            projection = {'_id', 'story_id', 'title', 'assigned_to', 'story_points', 'tasks.title', 'tasks.status'}          
+            projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.title', 'tasks.status'}          
+        elif view_type == 'list':
+            projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.status', 'type', 'description'}          
         else:
             projection = None
 
@@ -62,6 +64,8 @@ class Story:
         
         if view_type == 'kanban':
             return kanban_format(stories)
+        elif view_type == 'list':
+            return list_format(stories)
         else:
             return stories
 
