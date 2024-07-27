@@ -239,6 +239,12 @@ class Populate:
                         "description": "Guardar las busquedas de las ultimas 24 horas en cache",
                         "app": "GOOGLE-SEARCH",
                         "status": "Done"
+                    },
+                    {
+                        "title": "Agregar parametro de precision al endpoint /search",
+                        "description": "Agregar parametro precision como entrada que tome un int",
+                        "app": "GOOGLE-SEARCH",
+                        "status": "Done"
                     }
                 ],
                 "team": self.team1_id
