@@ -169,7 +169,7 @@ class Populate:
                 },
                 "members": [
                     {
-                        "id": self.user1_id,
+                        "_id": self.user1_id,
                         "username": self.username1,
                         "email": "carolina.b.seoane@gmail.com",
                         "profile_picture": self.pfp1,
