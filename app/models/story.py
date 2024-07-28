@@ -3,6 +3,7 @@ from bson import ObjectId, json_util
 import json
 
 from app.db_connection import mongo
+from app.utils import kanban_format, list_format
 
 class Type(Enum):
     BUGFIX = "Bugfix"
@@ -19,8 +20,8 @@ class Type(Enum):
 class Story:
 
     def __init__(self, title, description, acceptance_criteria, creator, assigned_to,
-                 epic, sprint, story_points, tags, priority, attachments, comments,
-                 type, tasks, related_stories, story_id, estimation, team, _id=ObjectId()):
+                 epic, sprint, estimation, tags, priority, attachments, comments,
+                 type, tasks, related_stories, story_id, team, _id=ObjectId()):
         self.title = title
         self.description = description
         self.acceptance_criteria = acceptance_criteria
@@ -28,7 +29,7 @@ class Story:
         self.assigned_to = assigned_to
         self.epic = epic
         self.sprint = sprint
-        self.story_points = story_points
+        self.estimation = estimation
         self.tags = tags
         self.priority = priority
         self.attachments = attachments
@@ -42,14 +43,30 @@ class Story:
         self.team = team
 
     @classmethod
-    def get_stories_by_team_id(cls, team_id: ObjectId):
+    def get_stories_by_team_id(cls, team_id: ObjectId, view_type):
         '''
         returns [] if no stories are found for the given team_id
         '''
-        stories_list = list(mongo.db.stories.find({'team': team_id}))
+        if view_type == 'kanban':
+            projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.title', 'tasks.status'}          
+        elif view_type == 'list':
+            projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.status', 'type', 'description'}          
+        else:
+            projection = None
+
+        filter = {
+            "team": { "$eq": team_id },
+        }
+
+        stories_list = list(mongo.db.stories.find(filter = filter, projection = projection))
         response = json_util.dumps(stories_list) # mongoDb doc to JSON-encoded string.
         stories = json.loads(response) # JSON-encoded string to Python list of dictionaries.
+        
+        if view_type == 'kanban':
+            return kanban_format(stories)
+        elif view_type == 'list':
+            return list_format(stories)
+        else:
+            return stories
 
-        return stories
-    
     

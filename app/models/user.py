@@ -27,16 +27,20 @@ class User:
         '''
         returns False if user is not part of the team
         '''
+        # query = {
+        #     "_id": ObjectId(_id),
+        #     "teams._id": team_id
+        # }
 
-        query = {
-            "_id": ObjectId(_id),
-            "teams._id": team_id
+        filter = {
+            "_id": { "$eq": ObjectId(_id) },
+            "teams": { "$elemMatch": {"_id": { "$eq": team_id }}} 
         }
         
-        return mongo.db.users.count_documents(query) > 0
+        return mongo.db.users.count_documents(filter) > 0 # TODO use mongoHelper
     
     def save_user(self):
-        mongo.db.users.insert_one(self.__dict__)
+        mongo.db.users.insert_one(self.__dict__) # TODO use mongoHelper
 
     def add_team(self, team):
         '''
