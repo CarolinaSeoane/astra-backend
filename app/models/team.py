@@ -72,3 +72,7 @@ class Team:
         update = {'$pull': {'members': {'email': user["email"]}}}
         MongoHelper().update_collection('teams', filter, update)
         resp = User.remove_from_team(member_id, team_id)
+
+    @classmethod
+    def get_team_settings(cls, team_id):
+        return cls.get_team(team_id)['team_settings']

@@ -117,3 +117,29 @@ def remove_team_member(headers, team_id, member_id):
         return send_response([], [], 200, **req_data)
     
     return send_response([], ["User not authorized to complete operation"], 400, **req_data)
+
+@teams.route('/settings/<team_id>', methods=['GET'])
+@use_args({'Authorization': fields.Str(required=True)}, location='headers')
+def get_team_settings(headers, team_id):
+    req_data = {
+        'method': request.method,
+        'endpoint': request.path,
+    }
+
+    try:
+        team_id = ObjectId(team_id)
+    except:
+        return send_response([], [f"Team id {team_id} is not valid"], 403, **req_data)
+
+    # Validate tokens
+    decoded = validate_jwt(headers['Authorization'])   
+    if not decoded:
+        return send_response([], [f"Unauthorized. Invalid session token"], 401, **req_data)
+    
+    if not User.is_user_in_team(decoded['_id'], team_id):
+        return send_response([], ["Forbidden. User is not authorized to access this resource"], 403, **req_data)
+    
+    team_settings = Team.get_team_settings(team_id)
+    return send_response(team_settings, [], 200, **req_data)
+
+# @teams.route('/update_member_role/<team_id>/<member_id>', methods=['PUT'])
