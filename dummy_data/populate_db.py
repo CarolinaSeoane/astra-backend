@@ -59,12 +59,10 @@ class Populate:
                     {
                         "_id": self.team1_id,
                         "name": "Argo",
-                        "icon": "argo.jpg"
                     },
                     {
                         "_id": self.team2_id,
                         "name": "Flyers",
-                        "icon": "flyers.jpg"
                     }
                 ]
             },
@@ -79,8 +77,7 @@ class Populate:
                 "teams": [
                     {
                         "_id": self.team1_id,
-                        "name": "Argo",
-                        "icon": "argo.jpg"
+                        "name": "Argo"
                     },
                 ]
             }
@@ -126,7 +123,7 @@ class Populate:
                         "email": "carolina.b.seoane@gmail.com",
                         "profile_picture": self.pfp1,
                         "role": "Developer",
-                        "date": self.user1_id.generation_time
+                        # "date": self.user1_id.generation_time
                     },
                     {
                         "_id": self.user2_id,
@@ -134,14 +131,14 @@ class Populate:
                         "email": "seoane.m.b@gmail.com",
                         "profile_picture": self.pfp2,
                         "role": "Scrum Master",
-                        "date": self.user2_id.generation_time
+                        # "date": self.user2_id.generation_time
                     }
                 ]
             },
             {
                 "_id": self.team2_id,
                 "name": "Flyers",
-                "organization": self.org1_id,
+                "organization": self.org1_id, 
                 "team_settings": {
                     "sprint_duration": "3",
                     "sprint_begins_on": 0,
@@ -317,7 +314,7 @@ class Populate:
                         "status": "Done"
                     }
                 ],
-                "team": self.team1_id
+                "team": self.team1_id # change to _id?
             }
         ]
         self.helper.post_to_collection("stories", stories)
