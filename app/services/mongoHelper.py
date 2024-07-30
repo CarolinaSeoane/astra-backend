@@ -8,6 +8,9 @@ class MongoHelper:
 
     def __init__(self):
         self.astra = mongo
+
+    def get_collection(self, collection_name):
+        return self.get_document_by(collection_name, {})
     
     def get_document_by(self, collection_name, filter):
         document = self.astra.db[collection_name].find_one(filter)

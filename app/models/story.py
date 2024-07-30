@@ -4,6 +4,7 @@ import json
 
 from app.db_connection import mongo
 from app.utils import kanban_format, list_format
+from app.services.mongoHelper import MongoHelper
 
 class Type(Enum):
     BUGFIX = "Bugfix"
@@ -69,4 +70,6 @@ class Story:
         else:
             return stories
 
-    
+    @classmethod
+    def get_story_fields(cls):
+        return MongoHelper().get_collection('story_fields')

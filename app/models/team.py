@@ -72,3 +72,13 @@ class Team:
         update = {'$pull': {'members': {'email': user["email"]}}}
         MongoHelper().update_collection('teams', filter, update)
         resp = User.remove_from_team(member_id, team_id)
+
+    @classmethod
+    def get_team_settings(cls, team_id):
+        return cls.get_team(team_id)['team_settings']
+
+    @classmethod
+    def update_mandatory_fields(cls, team_id, settings):
+        filter = {'_id': team_id}
+        update = {'$set': {'team_settings.story_fields': settings}}
+        MongoHelper().update_collection('teams', filter, update)
