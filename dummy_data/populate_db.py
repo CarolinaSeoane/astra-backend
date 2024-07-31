@@ -110,7 +110,7 @@ class Populate:
                             "time": "10:00" # "HH:MM
                         }
                     },
-                    "team": {
+                    "sprint_set_up": {
                         "estimation_method": ["Fibonacci"],
                         "sprint_duration": "2", # weeks
                         "sprint_begins_on": 0, # Monday
@@ -177,7 +177,7 @@ class Populate:
                             "time": "10:00" # "HH:MM
                         }
                     },
-                    "team": {
+                    "sprint_set_up": {
                         "estimation_method": ["Fibonacci"],
                         "sprint_duration": "3", # weeks
                         "sprint_begins_on": 0, # Monday

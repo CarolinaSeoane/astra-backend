@@ -159,12 +159,41 @@ def update_mandatory_fields(headers, args, team_id):
     # Validate tokens
     decoded = validate_jwt(headers['Authorization'])   
     if not decoded:
-        return send_response([], [f"Unauthorized. Invalid session token"], 401, **req_data)
+        return send_response([], ["Unauthorized. Invalid session token"], 401, **req_data)
     
     if not User.is_user_in_team(decoded['_id'], team_id):
         return send_response([], ["Forbidden. User is not authorized to access this resource"], 403, **req_data)
 
     Team.update_mandatory_fields(team_id, args['mandatory_fields'])
+    return send_response([], [], 200, **req_data)
+
+@teams.route('/sprint_set_up/<team_id>', methods=['PUT'])
+@use_args({'Authorization': fields.Str(required=True)}, location='headers')
+@use_args({
+    'estimation_method': fields.List(fields.Str(), required=False),
+    'sprint_duration': fields.Str(required=False),
+    'sprint_begins_on': fields.Integer(required=False)
+    }, location='json')
+def update_sprint_set_up(headers, args, team_id):
+    req_data = {
+        'method': request.method,
+        'endpoint': request.path,
+    }
+
+    try:
+        team_id = ObjectId(team_id)
+    except:
+        return send_response([], [f"Team id {team_id} is not valid"], 403, **req_data)
+
+    # Validate tokens
+    decoded = validate_jwt(headers['Authorization'])   
+    if not decoded:
+        return send_response([], ["Unauthorized. Invalid session token"], 401, **req_data)
+    
+    if not User.is_user_in_team(decoded['_id'], team_id):
+        return send_response([], ["Forbidden. User is not authorized to access this resource"], 403, **req_data)
+
+    Team.update_sprint_set_up(team_id, args)
     return send_response([], [], 200, **req_data)
 
 # @teams.route('/update_member_role/<team_id>/<member_id>', methods=['PUT'])

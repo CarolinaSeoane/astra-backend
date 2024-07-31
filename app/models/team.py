@@ -82,3 +82,9 @@ class Team:
         filter = {'_id': team_id}
         update = {'$set': {'team_settings.story_fields': settings}}
         MongoHelper().update_collection('teams', filter, update)
+
+    @classmethod
+    def update_sprint_set_up(cls, team_id, set_up):
+        filter = {'_id': team_id}
+        update = {'$set': {'team_settings.sprint_set_up': set_up}}
+        MongoHelper().update_collection('teams', filter, update)
