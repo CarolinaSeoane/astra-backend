@@ -170,15 +170,16 @@ def update_mandatory_fields(headers, args, team_id):
 @teams.route('/sprint_set_up/<team_id>', methods=['PUT'])
 @use_args({'Authorization': fields.Str(required=True)}, location='headers')
 @use_args({
-    'estimation_method': fields.List(fields.Str(), required=False),
+    'estimation_method': fields.List(fields.Str(required=False)),
     'sprint_duration': fields.Str(required=False),
-    'sprint_begins_on': fields.Integer(required=False)
+    'sprint_begins_on': fields.Str(required=False)
     }, location='json')
 def update_sprint_set_up(headers, args, team_id):
     req_data = {
         'method': request.method,
         'endpoint': request.path,
     }
+    print(f"incoming args: {args}")
 
     try:
         team_id = ObjectId(team_id)
