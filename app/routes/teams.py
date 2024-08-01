@@ -128,20 +128,25 @@ def team_ceremonies(headers, team_id):
 
     ceremonies = [
         {
+            'name': 'Standup begins',
+            'date': '2024-08-01T20:28:30',
+            'in_progress': False
+        },
+        {
             'name': 'Standup',
-            'start_date': '2024-07-30T12:00:00',
-            'duration': '30'
+            'date': '2024-08-01T20:28:35',
+            'in_progress': True
+        },
+        {
+            'name': 'Retro begins',
+            'date': '2024-08-01T20:28:50',
+            'in_progress': False
         },
         {
             'name': 'Retro',
-            'start_date': '2024-07-30T14:00:00',
-            'duration': '30'
+            'date': '2024-08-01T20:28:55',
+            'in_progress': True
         },
-        {
-            'name': 'Standup',
-            'start_date': '2024-07-31T12:00:00',
-            'duration': '30'
-        }
     ]
     
     return send_response(ceremonies, [], 200, **req_data)
