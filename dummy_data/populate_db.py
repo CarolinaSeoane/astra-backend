@@ -29,6 +29,7 @@ class Populate:
         self.populate_teams()
         self.populate_epics()
         self.populate_stories()
+        self.populate_story_fields()
 
     def populate_organizations(self):
         organizations = [
@@ -92,10 +93,29 @@ class Populate:
                 "name": "Argo",
                 "organization": self.org1_id,
                 "team_settings": {
-                    "sprint_duration": "2",
-                    "sprint_begins_on": 0,
-                    "estimation_method": ["Fibonacci"],
-                    "mandatory_story_fields": ["acceptance_criteria", "title", "description", "estimation"],
+                    "ceremonies": {
+                        "planning": {
+                            "days": [1], # Tuesday
+                            "when": "beginnig", # "beginning" or "end"
+                            "time": "10:00" # "HH:MM
+                        },
+                        "standup": {
+                            "days": [0, 2, 3], # Monday, Wednesday, Thursday
+                            "when": "every_week",
+                            "time": "09:30" # "HH:MM
+                        },
+                        "retrospective": {
+                            "days": [1], # Tuesday
+                            "when": "end", # "beginning" or "end"
+                            "time": "10:00" # "HH:MM
+                        }
+                    },
+                    "team": {
+                        "estimation_method": ["Fibonacci"],
+                        "sprint_duration": "2", # weeks
+                        "sprint_begins_on": 0, # Monday
+                    },
+                    "story_fields": ['title', 'description', 'creator', 'assigned_to', 'epic', 'sprint', 'points', 'type', 'estimation_method', 'tasks'],
                     "permits": [
                         {
                             "role": "Product Owner",
@@ -140,10 +160,29 @@ class Populate:
                 "name": "Flyers",
                 "organization": self.org1_id, 
                 "team_settings": {
-                    "sprint_duration": "3",
-                    "sprint_begins_on": 0,
-                    "estimation_method": ["Fibonacci"],
-                    "mandatory_story_fields": ["title", "description", "estimation", "sprint"],
+                    "ceremonies": {
+                        "planning": {
+                            "days": [1], # Tuesday
+                            "when": "beginnig", # "beginning" or "end"
+                            "time": "10:00" # "HH:MM
+                        },
+                        "standup": {
+                            "days": [0, 2, 3], # Monday, Wednesday, Thursday
+                            "when": "every_week",
+                            "time": "09:30" # "HH:MM
+                        },
+                        "retrospective": {
+                            "days": [1], # Tuesday
+                            "when": "end", # "beginning" or "end"
+                            "time": "10:00" # "HH:MM
+                        }
+                    },
+                    "team": {
+                        "estimation_method": ["Fibonacci"],
+                        "sprint_duration": "3", # weeks
+                        "sprint_begins_on": 0, # Monday
+                    },
+                    "story_fields": ['title', 'description', 'acceptanceCriteria', 'creator', 'assigned_to', 'epic', 'sprint', 'points', 'tags', 'type', 'estimation_method', 'tasks'],
                     "permits": [
                         {
                             "role": "Product Owner",
@@ -319,3 +358,89 @@ class Populate:
         ]
         self.helper.post_to_collection("stories", stories)
         print("populated stories")
+
+    def populate_story_fields(self):
+        story_fields = [{
+            "fields": [
+                {
+                    "value": 'title',
+                    "label": 'Title',
+                    "modifiable": 0,
+                    "description": 'The title of the story or task.'
+                },
+                {
+                    "value": 'description',
+                    "label": 'Description',
+                    "modifiable": 0,
+                    "description": 'A detailed description of the story or task.'
+                },
+                {
+                    "value": 'acceptanceCriteria',
+                    "label": 'Acceptance Criteria',
+                    "modifiable": 1,
+                    "description": 'The conditions that must be met for the story to be accepted.'
+                },
+                {
+                    "value": 'creator',
+                    "label": 'Creator',
+                    "modifiable": 0,
+                    "description": 'The person who created the story or task.'
+                },
+                {
+                    "value": 'assigned_to',
+                    "label": 'Assigned To',
+                    "modifiable": 0,
+                    "description": 'The person responsible for completing the story or task.'
+                },
+                {
+                    "value": 'epic',
+                    "label": 'Epic',
+                    "modifiable": 1,
+                    "description": 'The larger body of work that this story or task belongs to.'
+                },
+                {
+                    "value": 'sprint',
+                    "label": 'Sprint',
+                    "modifiable": 0,
+                    "description": 'The sprint in which the story or task is being worked on.'
+                },
+                {
+                    "value": 'points',
+                    "label": 'Story Points',
+                    "modifiable": 0,
+                    "description": 'The estimated effort required to complete the story or task.'
+                },
+                {
+                    "value": 'tags',
+                    "label": 'Tags',
+                    "modifiable": 1,
+                    "description": 'Keywords associated with the story or task for categorization.'
+                },
+                {
+                    "value": 'priority',
+                    "label": 'Priority',
+                    "modifiable": 1,
+                    "description": 'The importance level of the story or task.'
+                },
+                {
+                    "value": 'type',
+                    "label": 'Type',
+                    "modifiable": 1,
+                    "description": 'The classification of the story or task (e.g., bug, feature, chore).'
+                },
+                {
+                    "value": 'estimation_method',
+                    "label": 'Estimation Method',
+                    "modifiable": 0,
+                    "description": 'The method used to estimate the effort for the story or task.'
+                },
+                {
+                    "value": 'tasks',
+                    "label": 'Tasks',
+                    "modifiable": 0,
+                    "description": 'The sub-tasks that need to be completed to finish the story.'
+                }
+            ]
+        }]
+        self.helper.post_to_collection("story_fields", story_fields)
+        print("populated story_fields")
