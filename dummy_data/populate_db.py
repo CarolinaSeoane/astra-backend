@@ -110,10 +110,10 @@ class Populate:
                             "time": "10:00" # "HH:MM
                         }
                     },
-                    "team": {
-                        "estimation_method": ["Fibonacci"],
+                    "sprint_set_up": {
+                        "estimation_method": ["fibonacci"],
                         "sprint_duration": "2", # weeks
-                        "sprint_begins_on": 0, # Monday
+                        "sprint_begins_on": "mon"
                     },
                     "story_fields": ['title', 'description', 'creator', 'assigned_to', 'epic', 'sprint', 'points', 'type', 'estimation_method', 'tasks'],
                     "permits": [
@@ -177,10 +177,10 @@ class Populate:
                             "time": "10:00" # "HH:MM
                         }
                     },
-                    "team": {
-                        "estimation_method": ["Fibonacci"],
+                    "sprint_set_up": {
+                        "estimation_method": ["fibonacci"],
                         "sprint_duration": "3", # weeks
-                        "sprint_begins_on": 0, # Monday
+                        "sprint_begins_on": "mon",
                     },
                     "story_fields": ['title', 'description', 'acceptanceCriteria', 'creator', 'assigned_to', 'epic', 'sprint', 'points', 'tags', 'type', 'estimation_method', 'tasks'],
                     "permits": [
