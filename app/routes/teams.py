@@ -118,6 +118,39 @@ def remove_team_member(headers, team_id, member_id):
     
     return send_response([], ["User not authorized to complete operation"], 400, **req_data)
 
+@teams.route('/ceremonies/<team_id>', methods=['GET'])
+@use_args({'Authorization': fields.Str(required=True)}, location='headers')
+def team_ceremonies(headers, team_id):
+    req_data = {
+        'method': request.method,
+        'endpoint': request.path,
+    }
+
+    ceremonies = [
+        {
+            'name': 'Standup begins',
+            'date': '2024-08-01T20:28:30',
+            'in_progress': False
+        },
+        {
+            'name': 'Standup',
+            'date': '2024-08-01T20:28:35',
+            'in_progress': True
+        },
+        {
+            'name': 'Retro begins',
+            'date': '2024-08-01T20:28:50',
+            'in_progress': False
+        },
+        {
+            'name': 'Retro',
+            'date': '2024-08-01T20:28:55',
+            'in_progress': True
+        },
+    ]
+    
+    return send_response(ceremonies, [], 200, **req_data)
+
 @teams.route('/settings/<team_id>', methods=['GET'])
 @use_args({'Authorization': fields.Str(required=True)}, location='headers')
 def get_team_settings(headers, team_id):
@@ -125,7 +158,7 @@ def get_team_settings(headers, team_id):
         'method': request.method,
         'endpoint': request.path,
     }
-
+        
     try:
         team_id = ObjectId(team_id)
     except:
