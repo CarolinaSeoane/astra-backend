@@ -95,17 +95,17 @@ class Populate:
                 "team_settings": {
                     "ceremonies": {
                         "planning": {
-                            "days": [1], # Tuesday
-                            "when": "beginnig", # "beginning" or "end"
+                            "days": ["tue"],
+                            "when": "beginning", # "beginning" or "end"
                             "time": "10:00" # "HH:MM
                         },
                         "standup": {
-                            "days": [0, 2, 3], # Monday, Wednesday, Thursday
-                            "when": "every_week",
+                            "days": ["mon", "wed", "thu"],
+                            "when": "every",
                             "time": "09:30" # "HH:MM
                         },
                         "retrospective": {
-                            "days": [1], # Tuesday
+                            "days": ["tue"],
                             "when": "end", # "beginning" or "end"
                             "time": "10:00" # "HH:MM
                         }
@@ -162,17 +162,17 @@ class Populate:
                 "team_settings": {
                     "ceremonies": {
                         "planning": {
-                            "days": [1], # Tuesday
-                            "when": "beginnig", # "beginning" or "end"
+                            "days": ["tu"],
+                            "when": "beginning", # "beginning" or "end"
                             "time": "10:00" # "HH:MM
                         },
                         "standup": {
-                            "days": [0, 2, 3], # Monday, Wednesday, Thursday
-                            "when": "every_week",
+                            "days": ["mon", "wed", "thu"],
+                            "when": "every",
                             "time": "09:30" # "HH:MM
                         },
                         "retrospective": {
-                            "days": [1], # Tuesday
+                            "days": ["tue"],
                             "when": "end", # "beginning" or "end"
                             "time": "10:00" # "HH:MM
                         }
