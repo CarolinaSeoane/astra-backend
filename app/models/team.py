@@ -88,3 +88,9 @@ class Team:
         filter = {'_id': team_id}
         update = {'$set': {'team_settings.sprint_set_up': set_up}}
         MongoHelper().update_collection('teams', filter, update)
+
+    @classmethod
+    def update_ceremonies_settings(cls, team_id, ceremonies_settings):
+        filter = {'_id': team_id}
+        update = {'$set': {'team_settings.ceremonies': ceremonies_settings}}
+        MongoHelper().update_collection('teams', filter, update)
