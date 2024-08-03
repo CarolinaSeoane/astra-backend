@@ -1,7 +1,7 @@
 import os
 from dotenv import load_dotenv
 from flask import Flask
-from flask_cors import CORS, cross_origin
+from flask_cors import CORS
 
 from app.db_connection import mongo
 from app.routes.stories import stories
@@ -24,8 +24,6 @@ def create_app():
     app = Flask(__name__)   
     load_env_vars_onto_app(app, dotenv_path)
     CORS(app, expose_headers='Authorization', support_credentials=True)
-    # CORS(app, expose_headers='Authorization')
-    # CORS(app, support_credentials=True)
   
     # Setup db connection
     print('Setting up db connection...')
