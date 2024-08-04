@@ -43,3 +43,5 @@ def validate_user_token():
         'method': request.method,
         'endpoint': request.path,
     }
+
+    # To-Do Validate team

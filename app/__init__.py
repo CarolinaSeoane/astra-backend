@@ -9,6 +9,7 @@ from app.routes.index import index
 from app.routes.astra import astra
 from app.routes.users import users
 from app.routes.teams import teams
+from app.routes.sprints import sprints
 
 # TODO create custom logger
 
@@ -36,6 +37,7 @@ def create_app():
     app.register_blueprint(astra, url_prefix='/astra')
     app.register_blueprint(users, url_prefix='/users')
     app.register_blueprint(teams, url_prefix='/teams')
+    app.register_blueprint(teams, url_prefix='/sprints')
 
     return app
 

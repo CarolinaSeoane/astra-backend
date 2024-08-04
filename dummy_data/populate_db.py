@@ -19,6 +19,14 @@ class Populate:
     epic1_id = ObjectId()
     epic1_title = "Mejoras del Buscador"
 
+    sprint1_q1_team1 = ObjectId()
+    sprint2_q1_team1 = ObjectId()
+    sprint3_q1_team1 = ObjectId()
+    sprint4_q1_team1 = ObjectId()
+    sprint5_q1_team1 = ObjectId()
+    sprint6_q1_team1 = ObjectId()
+    sprint1_q2_team1 = ObjectId()
+
     def __init__(self):
         self.helper = DBHelper()
 
@@ -27,6 +35,7 @@ class Populate:
         self.populate_organizations()
         self.populate_users()
         self.populate_teams()
+        self.populate_sprints()
         self.populate_epics()
         self.populate_stories()
         self.populate_story_fields()
@@ -257,7 +266,7 @@ class Populate:
                     "_id": self.epic1_id,
                     "title": self.epic1_title,
                 },
-                "sprint": "1",
+                "sprint": self.sprint1_q1_team1,
                 "estimation": "5",
                 "tags": ["Buscador"],
                 "priority": "Medium",
@@ -304,7 +313,7 @@ class Populate:
                     "_id": self.epic1_id,
                     "title": self.epic1_title,
                 },
-                "sprint": "1",
+                "sprint": self.sprint1_q1_team1,
                 "estimation": "1",
                 "tags": ["UX", "Accesibilidad"],
                 "priority": "Medium",
@@ -339,7 +348,7 @@ class Populate:
                     "_id": self.epic1_id,
                     "title": self.epic1_title,
                 },
-                "sprint": "1",
+                "sprint": self.sprint1_q1_team1,
                 "estimation": "3",
                 "tags": ["QA", "Performance"],
                 "priority": "Medium",
@@ -444,3 +453,81 @@ class Populate:
         }]
         self.helper.post_to_collection("story_fields", story_fields)
         print("populated story_fields")
+
+    def populate_sprints(self):
+        sprints = [
+            {
+                "_id": self.sprint1_q1_team1,
+                "sprint_number": '1',
+                "quarter": '1',
+                "year": '2024',
+                "name": "S1-Q1-2024",
+                "start_date": 'COMPLETAR',
+                "end_date": 'COMPLETAR',
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint2_q1_team1,
+                "sprint_number": '2',
+                "quarter": '1',
+                "year": '2024',
+                "start_date": 'COMPLETAR',
+                "end_date": 'COMPLETAR',
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint3_q1_team1,
+                "sprint_number": '3',
+                "quarter": '1',
+                "year": '2024',
+                "start_date": 'COMPLETAR',
+                "end_date": 'COMPLETAR',
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint4_q1_team1,
+                "sprint_number": '4',
+                "quarter": '1',
+                "year": '2024',
+                "start_date": 'COMPLETAR',
+                "end_date": 'COMPLETAR',
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint5_q1_team1,
+                "sprint_number": '5',
+                "quarter": '1',
+                "year": '2024',
+                "start_date": 'COMPLETAR',
+                "end_date": 'COMPLETAR',
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint6_q1_team1,
+                "sprint_number": '6',
+                "quarter": '1',
+                "year": '2024',
+                "start_date": 'COMPLETAR',
+                "end_date": 'COMPLETAR',
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint1_q2_team1,
+                "sprint_number": '1',
+                "quarter": '2',
+                "year": '2024',
+                "start_date": 'COMPLETAR',
+                "end_date": 'COMPLETAR',
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+
+        ]
+        self.helper.post_to_collection("sprints", sprints)
+        print("populated sprints")
