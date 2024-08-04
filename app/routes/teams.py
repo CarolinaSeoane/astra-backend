@@ -10,8 +10,17 @@ from app.utils import send_response
 
 teams = Blueprint('teams', __name__)
 
-@teams.route('/get_members/<team_id>', methods=['GET']) # TODO change to /members/<team_id>
-def get_team_members(team_id):
+
+@teams.before_request
+def validate_user_is_member_of_team():
+    '''
+    This validation runs before any request made to /teams routes and after token validation
+    '''          
+    try:
+        team_id = request.args['team_id']
+    except:
+        return send_response([], [f"Unprocessable Entity. Missing team_id in query parameters"], 422, **g.req_data)
+    
     try:
         team_id = ObjectId(team_id)
     except:
@@ -20,7 +29,11 @@ def get_team_members(team_id):
     if not User.is_user_in_team(g._id, team_id):
         return send_response([], ["Forbidden. User is not authorized to access this resource"], 403, **g.req_data)
 
-    members = Team.get_team_members(team_id)
+    g.team_id = team_id
+
+@teams.route('/members', methods=['GET'])
+def get_team_members():
+    members = Team.get_team_members(g.team_id)
     return send_response(members, [], 200, **g.req_data)
 
 def user_is_scrum_master_of_team(team_members, user_id):
@@ -34,15 +47,10 @@ new_member_schema = {
     'role': fields.Str(required=True)
 }
 
-@teams.route('/add_member/<team_id>', methods=['POST'])
+@teams.route('/add_member', methods=['POST'])
 @use_args(new_member_schema, location='json')
-def add_team_member(args, team_id):
-    try:
-        team_id = ObjectId(team_id)
-    except:
-        return send_response([], [f"Team id {team_id} is not valid"], 403, **g.req_data)
-    
-    members = Team.get_team_members(team_id)
+def add_team_member(args):   
+    members = Team.get_team_members(g.team_id)
     if user_is_scrum_master_of_team(members, g._id):
         new_member_email = args['new_member_email']
         user = User.get_user_by({'email': new_member_email})
@@ -55,36 +63,26 @@ def add_team_member(args, team_id):
         # users in team have: user_id, username, email, profile_picture, role, date
         user_obj = User(**user)
         print(f"the user object: {user_obj.__dict__}")
-        success = Team.add_member(team_id, user_obj, args['role'])
+        success = Team.add_member(g.team_id, user_obj, args['role'])
         if success:
             return send_response([], [], 200, **g.req_data)
         return send_response([], [f"Error adding user {new_member_email} to team"], 500, **g.req_data)
     else:
         return send_response([], ["User not authorized to complete operation"], 400, **g.req_data)
 
-@teams.route('/remove_member/<team_id>/<member_id>', methods=['DELETE'])
-def remove_team_member(team_id, member_id):
-    try:
-        team_id = ObjectId(team_id)
-    except:
-        return send_response([], [f"Team id {team_id} is not valid"], 403, **g.req_data)
-    
-    try:
-        member_id = ObjectId(member_id)
-    except:
-        return send_response([], [f"Member id {member_id} is not valid"], 403, **g.req_data)
-
-    members = Team.get_team_members(team_id)
+@teams.route('/remove_member/<member_id>', methods=['DELETE'])
+def remove_team_member(member_id):
+    members = Team.get_team_members(g.team_id)
     if user_is_scrum_master_of_team(members, g._id):
-        Team.remove_member(team_id, member_id) # can a user remove themselves from a team? what happens if the team is empty after deletion?
-        members = Team.get_team_members(team_id)
+        Team.remove_member(g.team_id, member_id) # can a user remove themselves from a team? what happens if the team is empty after deletion?
+        members = Team.get_team_members(g.team_id)
         print(f"team members after deletion: {members}")
         return send_response([], [], 200, **g.req_data)
     
     return send_response([], ["User not authorized to complete operation"], 400, **g.req_data)
 
-@teams.route('/ceremonies/<team_id>', methods=['GET'])
-def team_ceremonies(team_id):
+@teams.route('/ceremonies', methods=['GET'])
+def team_ceremonies():
     ceremonies = [
         {
             'name': 'Standup begins',
@@ -110,49 +108,25 @@ def team_ceremonies(team_id):
     
     return send_response(ceremonies, [], 200, **g.req_data)
 
-@teams.route('/settings/<team_id>', methods=['GET'])
-def get_team_settings(team_id):    
-    try:
-        team_id = ObjectId(team_id)
-    except:
-        return send_response([], [f"Team id {team_id} is not valid"], 403, **g.req_data)
-    
-    if not User.is_user_in_team(g._id, team_id):
-        return send_response([], ["Forbidden. User is not authorized to access this resource"], 403, **g.req_data)
-    
-    team_settings = Team.get_team_settings(team_id)
+@teams.route('/settings', methods=['GET'])
+def get_team_settings():    
+    team_settings = Team.get_team_settings(g.team_id)
     return send_response(team_settings, [], 200, **g.req_data)
 
-@teams.route('/mandatory_fields/<team_id>', methods=['PUT'])
+@teams.route('/mandatory_fields', methods=['PUT'])
 @use_args({'mandatory_fields': fields.List(fields.Str(), required=True)}, location='json')
-def update_mandatory_fields(args, team_id):
-    try:
-        team_id = ObjectId(team_id)
-    except:
-        return send_response([], [f"Team id {team_id} is not valid"], 403, **g.req_data)
-    
-    if not User.is_user_in_team(g._id, team_id):
-        return send_response([], ["Forbidden. User is not authorized to access this resource"], 403, **g.req_data)
-
-    Team.update_mandatory_fields(team_id, args['mandatory_fields'])
+def update_mandatory_fields(args):
+    Team.update_mandatory_fields(g.team_id, args['mandatory_fields'])
     return send_response([], [], 200, **g.req_data)
 
-@teams.route('/sprint_set_up/<team_id>', methods=['PUT'])
+@teams.route('/sprint_set_up', methods=['PUT'])
 @use_args({
     'estimation_method': fields.List(fields.Str(required=False)),
     'sprint_duration': fields.Str(required=False),
     'sprint_begins_on': fields.Str(required=False)
     }, location='json')
-def update_sprint_set_up(args, team_id):
-    try:
-        team_id = ObjectId(team_id)
-    except:
-        return send_response([], [f"Team id {team_id} is not valid"], 403, **g.req_data)
-    
-    if not User.is_user_in_team(g._id, team_id):
-        return send_response([], ["Forbidden. User is not authorized to access this resource"], 403, **g.req_data)
-
-    Team.update_sprint_set_up(team_id, args)
+def update_sprint_set_up(args):
+    Team.update_sprint_set_up(g.team_id, args)
     return send_response([], [], 200, **g.req_data)
 
 # @teams.route('/update_member_role/<team_id>/<member_id>', methods=['PUT'])

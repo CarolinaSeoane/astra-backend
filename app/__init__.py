@@ -37,7 +37,7 @@ def create_app():
     app.register_blueprint(astra, url_prefix='/astra')
     app.register_blueprint(users, url_prefix='/users')
     app.register_blueprint(teams, url_prefix='/teams')
-    app.register_blueprint(teams, url_prefix='/sprints')
+    app.register_blueprint(sprints, url_prefix='/sprints')
 
     return app
 
