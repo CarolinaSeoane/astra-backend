@@ -230,13 +230,13 @@ def update_sprint_set_up(headers, args, team_id):
     return send_response([], [], 200, **req_data)
 
 ceremony_args = {
-    "days": fields.Nested(fields.Str, required=True),
+    "days": fields.List(fields.Str(), required=True),
     "when": fields.Str(required=True),
     "time": fields.Str(required=True)
 }
 
 ceremonies_settings_args = {
-    "plannig": fields.Nested(ceremony_args, required=True),
+    "planning": fields.Nested(ceremony_args, required=True),
     "standup": fields.Nested(ceremony_args, required=True),
     "retrospective": fields.Nested(ceremony_args, required=True)
 }
