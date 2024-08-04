@@ -16,6 +16,9 @@ def validate_user_is_member_of_team():
     '''
     This validation runs before any request made to /teams routes and after token validation
     '''          
+    if request.method=='OPTIONS':
+        return None
+    
     try:
         team_id = request.args['team_id']
     except:
