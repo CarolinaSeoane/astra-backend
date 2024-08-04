@@ -23,7 +23,7 @@ def create_app():
     print('Creating app...')
     app = Flask(__name__)   
     load_env_vars_onto_app(app, dotenv_path)
-    CORS(app, support_credentials=True)
+    CORS(app, expose_headers='Authorization', support_credentials=True)
   
     # Setup db connection
     print('Setting up db connection...')
