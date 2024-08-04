@@ -167,28 +167,32 @@ ceremonies_settings_args = {
     "retrospective": fields.Nested(ceremony_args, required=True)
 }
 @teams.route('/ceremonies_frequency/<team_id>', methods=['PUT'])
-@use_args({'Authorization': fields.Str(required=True)}, location='headers')
 @use_args(ceremonies_settings_args, location='json')
-def update_ceremonies_frequency(headers, args, team_id):
-    req_data = {
-        'method': request.method,
-        'endpoint': request.path,
-    }
-
+def update_ceremonies_frequency(args, team_id):
     try:
         team_id = ObjectId(team_id)
     except:
-        return send_response([], [f"Team id {team_id} is not valid"], 403, **req_data)
-
-    # Validate tokens
-    decoded = validate_jwt(headers['Authorization'])   
-    if not decoded:
-        return send_response([], ["Unauthorized. Invalid session token"], 401, **req_data)
+        return send_response([], [f"Team id {team_id} is not valid"], 403, **g.req_data)
     
-    if not User.is_user_in_team(decoded['_id'], team_id):
-        return send_response([], ["Forbidden. User is not authorized to access this resource"], 403, **req_data)
+    if not User.is_user_in_team(g._id, team_id):
+        return send_response([], ["Forbidden. User is not authorized to access this resource"], 403, **g.req_data)
 
     Team.update_ceremonies_settings(team_id, args)
-    return send_response([], [], 200, **req_data)
+    return send_response([], [], 200, **g.req_data)
+
+
+@teams.routes('/permissions/<team_id>', methods=['PUT'])
+@use_args({}, location='json')
+def update_permissions(args, team_id):
+    try:
+        team_id = ObjectId(team_id)
+    except:
+        return send_response([], [f"Team id {team_id} is not valid"], 403, **g.req_data)
+    
+    if not User.is_user_in_team(g._id, team_id):
+        return send_response([], ["Forbidden. User is not authorized to access this resource"], 403, **g.req_data)
+
+    Team.update_permissions(team_id, args)
+    return send_response([], [], 200, **g.req_data)
 
 # @teams.route('/update_member_role/<team_id>/<member_id>', methods=['PUT'])

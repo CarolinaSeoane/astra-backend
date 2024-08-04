@@ -94,3 +94,9 @@ class Team:
         filter = {'_id': team_id}
         update = {'$set': {'team_settings.ceremonies': ceremonies_settings}}
         MongoHelper().update_collection('teams', filter, update)
+
+    @classmethod
+    def update_permissions(cls, team_id, permits):
+        filter = {'_id': team_id}
+        update = {'$set': {'team_settings.permits': permits}}
+        MongoHelper().update_collection('teams', filter, update)
