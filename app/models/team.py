@@ -76,6 +76,10 @@ class Team:
     @classmethod
     def get_team_settings(cls, team_id):
         return cls.get_team(team_id)['team_settings']
+    
+    @classmethod
+    def get_base_permissions(cls):
+        return MongoHelper().get_collection('permissions')
 
     @classmethod
     def update_mandatory_fields(cls, team_id, settings):

@@ -180,9 +180,15 @@ def update_ceremonies_frequency(args, team_id):
     Team.update_ceremonies_settings(team_id, args)
     return send_response([], [], 200, **g.req_data)
 
-
-@teams.routes('/permissions/<team_id>', methods=['PUT'])
-@use_args({}, location='json')
+permit_args = {
+    'role': fields.Str(required=True),
+    'options': fields.List(fields.Str(), required=True)
+}
+permissions_args = {
+    'permits': fields.List(fields.Nested(permit_args), required=True)
+}
+@teams.route('/permissions/<team_id>', methods=['PUT'])
+@use_args(permissions_args, location='json')
 def update_permissions(args, team_id):
     try:
         team_id = ObjectId(team_id)
@@ -192,7 +198,12 @@ def update_permissions(args, team_id):
     if not User.is_user_in_team(g._id, team_id):
         return send_response([], ["Forbidden. User is not authorized to access this resource"], 403, **g.req_data)
 
-    Team.update_permissions(team_id, args)
+    Team.update_permissions(team_id, args['permits'])
     return send_response([], [], 200, **g.req_data)
+
+@teams.route('/permissions', methods=['GET'])
+def permissions():
+    permissions = Team.get_base_permissions()
+    return send_response(permissions, [], 200, **g.req_data)
 
 # @teams.route('/update_member_role/<team_id>/<member_id>', methods=['PUT'])

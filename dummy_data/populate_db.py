@@ -30,6 +30,7 @@ class Populate:
         self.populate_epics()
         self.populate_stories()
         self.populate_story_fields()
+        self.populate_permissions()
 
     def populate_organizations(self):
         organizations = [
@@ -119,20 +120,11 @@ class Populate:
                     "permits": [
                         {
                             "role": "Product Owner",
-                            "options": {
-                                "edit_story": True,
-                                "delete_story": False,
-                                "add_team_members": False,
-                                "join_standup": False,
-                                "all_time_metrics": True
-                            }
+                            "options": ["edit_story", "add_team_members", "join_standup", "all_time_metrics"]
                         },
                         {
                             "role": "Developer",
-                            "options": {
-                                "create_story": True,
-                                "edit_story": True
-                            }
+                            "options": ["create_story", "edit_story"]
                         }
                     ]
                 },
@@ -186,20 +178,11 @@ class Populate:
                     "permits": [
                         {
                             "role": "Product Owner",
-                            "options": {
-                                "edit_story": False,
-                                "delete_story": False,
-                                "add_team_members": False,
-                                "join_standup": True,
-                                "all_time_metrics": True
-                            }
+                            "options": ["edit_story", "delete_story", "join_standup", "all_time_metrics"]
                         },
                         {
                             "role": "Developer",
-                            "options": {
-                                "create_story": False,
-                                "edit_story": False
-                            }
+                            "options": ["create_story", "edit_story"]
                         }
                     ]
                 },
@@ -444,3 +427,54 @@ class Populate:
         }]
         self.helper.post_to_collection("story_fields", story_fields)
         print("populated story_fields")
+
+    def populate_permissions(self):
+        permissions = [{
+            'options': [{
+                "role": "Product Owner",
+                "actions": [
+                    {
+                        "value": "edit_story",
+                        "label": "Edit story"
+                    },
+                    {
+                        'value': 'delete_story',
+                        'label': 'Delete story'
+                    },
+                    {
+                        'value': 'add_team_members',
+                        'label': 'Add team members'
+                    },
+                    {
+                        'value': 'join_standup',
+                        'label': 'Join standup'
+                    },
+                    {
+                        'value': 'all_time_metrics',
+                        'label': 'Access to all time metrics'
+                    }
+                ]
+            }, {
+                "role": "Developer",
+                "actions": [
+                    {
+                        "value": "create_story",
+                        'label': 'Create story'
+                    },
+                    {
+                        "value": "edit_story",
+                        'label': 'Edit story'
+                    },
+                    {
+                        "value": "delete_story",
+                        'label': 'Delete story'
+                    },
+                    {
+                        'value': 'modify_sprint_schedule',
+                        'label': 'Modify sprint schedule'
+                    }
+                ]}
+            ] 
+        }]
+        self.helper.post_to_collection("permissions", permissions)
+        print("populated permissions")
