@@ -1,38 +1,19 @@
-from flask import Blueprint, request, g
+from flask import Blueprint, g
 from webargs import fields
 from webargs.flaskparser import use_args
-from bson import ObjectId
 
 from app.models.team import Team
 from app.models.user import User
 from app.utils import send_response
+from app.routes.utils import validate_user_is_member_of_team
 
 
 teams = Blueprint('teams', __name__)
 
 
 @teams.before_request
-def validate_user_is_member_of_team():
-    '''
-    This validation runs before any request made to /teams routes and after token validation
-    '''          
-    if request.method=='OPTIONS':
-        return None
-    
-    try:
-        team_id = request.args['team_id']
-    except:
-        return send_response([], [f"Unprocessable Entity. Missing team_id in query parameters"], 422, **g.req_data)
-    
-    try:
-        team_id = ObjectId(team_id)
-    except:
-        return send_response([], [f"Team id {team_id} is not valid"], 403, **g.req_data)
-    
-    if not User.is_user_in_team(g._id, team_id):
-        return send_response([], ["Forbidden. User is not authorized to access this resource"], 403, **g.req_data)
-
-    g.team_id = team_id
+def apply_validate_user_is_member_of_team():
+    return validate_user_is_member_of_team()
 
 @teams.route('/members', methods=['GET'])
 def get_team_members():
