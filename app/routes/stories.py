@@ -24,9 +24,13 @@ def apply_validate_user_is_member_of_team():
     return validate_user_is_member_of_team()
 
 @stories.route("/<view_type>", methods=['GET'])
-def stories_list(view_type): 
-    stories = Story.get_stories_by_team_id(g.team_id, view_type)
-
+@use_args({
+    'sprint': fields.Str(required=False),
+    'assigned_to': fields.Str(required=False),
+    }, location='query')
+def stories_list(args, view_type):
+    stories = Story.get_stories_by_team_id(g.team_id, view_type, **args)
+    
     return send_response(stories, [], 200, **g.req_data)
 
 @stories.route("/fields", methods=['GET'])

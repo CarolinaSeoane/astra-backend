@@ -266,7 +266,10 @@ class Populate:
                     "_id": self.epic1_id,
                     "title": self.epic1_title,
                 },
-                "sprint": self.sprint1_q1_team1,
+                "sprint": {
+                    "_id": self.sprint1_q1_team1,
+                    "name": "S1-Q1-2024"
+                },
                 "estimation": "5",
                 "tags": ["Buscador"],
                 "priority": "Medium",
@@ -313,7 +316,10 @@ class Populate:
                     "_id": self.epic1_id,
                     "title": self.epic1_title,
                 },
-                "sprint": self.sprint1_q1_team1,
+                "sprint": {
+                    "_id": self.sprint1_q1_team1,
+                    "name": "S1-Q1-2024"
+                },
                 "estimation": "1",
                 "tags": ["UX", "Accesibilidad"],
                 "priority": "Medium",
@@ -348,7 +354,10 @@ class Populate:
                     "_id": self.epic1_id,
                     "title": self.epic1_title,
                 },
-                "sprint": self.sprint1_q1_team1,
+                "sprint": {
+                    "_id": self.sprint1_q1_team1,
+                    "name": "S1-Q1-2024"
+                },
                 "estimation": "3",
                 "tags": ["QA", "Performance"],
                 "priority": "Medium",
