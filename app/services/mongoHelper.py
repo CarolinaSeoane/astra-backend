@@ -18,6 +18,12 @@ class MongoHelper:
         document = json.loads(document)
         return document
     
+    def get_documents_by(self, collection_name, filter):
+        documents = self.astra.db[collection_name].find(filter)
+        documents = json_util.dumps(documents)
+        documents = json.loads(documents)
+        return documents
+    
     def add_new_element_to_collection(self, collection_name, element):
         return self.astra.db[collection_name].insert_one(element)
     

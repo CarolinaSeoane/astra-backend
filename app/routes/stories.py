@@ -6,6 +6,7 @@ from app.models.story import Story
 from app.utils import send_response
 from app.routes.utils import validate_user_is_member_of_team
 from app.models.team import Team
+from app.models.sprint import Sprint
 
 
 stories = Blueprint("stories", __name__)
@@ -43,29 +44,34 @@ def filters(args):
     print(f"The sprints before value is: {args['sprints_before']}")
     print(f"The sprints after value is: {args['sprints_after']}")
     
-    # sprints = Sprint.getSprintsByTeam() ?
-    members = Team.get_team_members(g.team_id) # Format data to at least include label
+    sprints = Sprint.get_sprints(g.team_id)
+    members = Team.get_team_members(g.team_id)
 
-    print(members)
+    sprints_filter = []
+    for sprint in sprints:
+        sprint_option = {
+            'key': sprint['_id']['$oid'],
+            'label': sprint['name']
+        }
+        sprints_filter.append(sprint_option)
+    
+    members_filter = []
+    for member in members:
+        member_option = {
+            'key': member['_id']['$oid'],
+            'label': member['username'] + (' (You)' if member['_id']['$oid'] == g._id else '')
+        }
+        members_filter.append(member_option)
+
 
     filters = {
         'sprints': {
             'label': 'Sprint',
-            'options': [
-                {
-                    'key': 'S1Q1',
-                    'label': 'Sprint 1'
-                }
-            ]
+            'options': sprints_filter
         },
         'assigned_to': {
             'label': 'Assigned to',
-            'options': [
-                {
-                    'key': 'user1',
-                    'label': 'Carolina Seoane'
-                }
-            ]
+            'options': members_filter
         }
     }
     return send_response(filters, [], 200, **g.req_data)

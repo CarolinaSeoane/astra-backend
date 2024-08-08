@@ -458,6 +458,7 @@ class Populate:
         sprints = [
             {
                 "_id": self.sprint1_q1_team1,
+                "name": 'S1-Q1-2024',
                 "sprint_number": '1',
                 "quarter": '1',
                 "year": '2024',
@@ -469,6 +470,7 @@ class Populate:
             },
             {
                 "_id": self.sprint2_q1_team1,
+                "name": 'S2-Q1-2024',
                 "sprint_number": '2',
                 "quarter": '1',
                 "year": '2024',
@@ -479,6 +481,7 @@ class Populate:
             },
             {
                 "_id": self.sprint3_q1_team1,
+                "name": 'S3-Q1-2024',
                 "sprint_number": '3',
                 "quarter": '1',
                 "year": '2024',
@@ -489,6 +492,7 @@ class Populate:
             },
             {
                 "_id": self.sprint4_q1_team1,
+                "name": 'S4-Q1-2024',
                 "sprint_number": '4',
                 "quarter": '1',
                 "year": '2024',
@@ -499,6 +503,7 @@ class Populate:
             },
             {
                 "_id": self.sprint5_q1_team1,
+                "name": 'S5-Q1-2024',
                 "sprint_number": '5',
                 "quarter": '1',
                 "year": '2024',
@@ -509,6 +514,7 @@ class Populate:
             },
             {
                 "_id": self.sprint6_q1_team1,
+                "name": 'S6-Q1-2024',
                 "sprint_number": '6',
                 "quarter": '1',
                 "year": '2024',
@@ -519,6 +525,7 @@ class Populate:
             },
             {
                 "_id": self.sprint1_q2_team1,
+                "name": 'S1-Q2-2024',
                 "sprint_number": '1',
                 "quarter": '2',
                 "year": '2024',
