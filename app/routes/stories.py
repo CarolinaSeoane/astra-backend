@@ -49,13 +49,15 @@ def filters(args):
     print(f"The sprints after value is: {args['sprints_after']}")
     
     sprints = Sprint.get_sprints(g.team_id)
+    print(sprints)
     members = Team.get_team_members(g.team_id)
 
     sprints_filter = []
     for sprint in sprints:
         sprint_option = {
             'key': sprint['_id']['$oid'],
-            'label': sprint['name']
+            'label': sprint['name'],
+            'status': sprint['status']
         }
         sprints_filter.append(sprint_option)
     
@@ -69,7 +71,7 @@ def filters(args):
 
 
     filters = {
-        'sprints': {
+        'sprint': {
             'label': 'Sprint',
             'options': sprints_filter
         },

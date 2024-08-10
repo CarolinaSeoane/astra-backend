@@ -1,6 +1,8 @@
 from bson import ObjectId
+import datetime
 
 from dummy_data.db_helper import DBHelper
+from app.models.sprint import SprintStatus
 
 class Populate:
     org1_id = ObjectId()
@@ -472,8 +474,9 @@ class Populate:
                 "quarter": '1',
                 "year": '2024',
                 "name": "S1-Q1-2024",
-                "start_date": 'COMPLETAR',
-                "end_date": 'COMPLETAR',
+                "start_date": datetime.datetime(2024, 1, 1),
+                "end_date": datetime.datetime(2024, 1, 14),
+                "status": SprintStatus.FINISHED.value,
                 "target": 'COMPLETAR',
                 "team": self.team1_id
             },
@@ -483,8 +486,9 @@ class Populate:
                 "sprint_number": '2',
                 "quarter": '1',
                 "year": '2024',
-                "start_date": 'COMPLETAR',
-                "end_date": 'COMPLETAR',
+                "start_date": datetime.datetime(2024, 1, 15),
+                "end_date": datetime.datetime(2024, 1, 28),
+                "status": SprintStatus.CURRENT.value,
                 "target": 'COMPLETAR',
                 "team": self.team1_id
             },
@@ -494,8 +498,9 @@ class Populate:
                 "sprint_number": '3',
                 "quarter": '1',
                 "year": '2024',
-                "start_date": 'COMPLETAR',
-                "end_date": 'COMPLETAR',
+                "start_date": datetime.datetime(2024, 1, 29),
+                "end_date": datetime.datetime(2024, 2, 11),
+                "status": SprintStatus.FUTURE.value,
                 "target": 'COMPLETAR',
                 "team": self.team1_id
             },
@@ -505,8 +510,9 @@ class Populate:
                 "sprint_number": '4',
                 "quarter": '1',
                 "year": '2024',
-                "start_date": 'COMPLETAR',
-                "end_date": 'COMPLETAR',
+                "start_date": datetime.datetime(2024, 2, 12),
+                "end_date": datetime.datetime(2024, 2, 25),
+                "status": SprintStatus.FUTURE.value,
                 "target": 'COMPLETAR',
                 "team": self.team1_id
             },
@@ -516,8 +522,9 @@ class Populate:
                 "sprint_number": '5',
                 "quarter": '1',
                 "year": '2024',
-                "start_date": 'COMPLETAR',
-                "end_date": 'COMPLETAR',
+                "start_date": datetime.datetime(2024, 2, 26),
+                "end_date": datetime.datetime(2024, 3, 10),
+                "status": SprintStatus.FUTURE.value,
                 "target": 'COMPLETAR',
                 "team": self.team1_id
             },
@@ -527,8 +534,9 @@ class Populate:
                 "sprint_number": '6',
                 "quarter": '1',
                 "year": '2024',
-                "start_date": 'COMPLETAR',
-                "end_date": 'COMPLETAR',
+                "start_date": datetime.datetime(2024, 3, 11),
+                "end_date": datetime.datetime(2024, 3, 24),
+                "status": SprintStatus.FUTURE.value,
                 "target": 'COMPLETAR',
                 "team": self.team1_id
             },
@@ -538,8 +546,9 @@ class Populate:
                 "sprint_number": '1',
                 "quarter": '2',
                 "year": '2024',
-                "start_date": 'COMPLETAR',
-                "end_date": 'COMPLETAR',
+                "start_date": datetime.datetime(2024, 3, 25),
+                "end_date": datetime.datetime(2024, 4, 7),
+                "status": SprintStatus.FUTURE.value,
                 "target": 'COMPLETAR',
                 "team": self.team1_id
             },
