@@ -1,9 +1,10 @@
 from flask import Blueprint, g, request
 from webargs.flaskparser import use_args
 from webargs import fields
+import datetime
 
 from app.models.story import Story
-from app.utils import send_response
+from app.utils import send_response, get_current_quarter
 from app.routes.utils import validate_user_is_member_of_team
 from app.models.team import Team
 from app.models.sprint import Sprint
@@ -40,16 +41,13 @@ def story_fields():
 
 @stories.route("/filters", methods=['GET'])
 @use_args({
-    'sprints_before': fields.Str(required=False, missing='2'),
-    'sprints_after': fields.Str(required=False, missing='4'),
+    'quarter': fields.Str(required=False, missing=str(get_current_quarter(datetime.datetime.today()))),
+    'year': fields.Str(required=False, missing=str(datetime.datetime.today().year)),
     }, location='query')
 def filters(args):
-
-    print(f"The sprints before value is: {args['sprints_before']}")
-    print(f"The sprints after value is: {args['sprints_after']}")
-    
-    sprints = Sprint.get_sprints(g.team_id)
-    print(sprints)
+    print(args['quarter'])    
+    print(args['year'])    
+    sprints = Sprint.get_sprints(g.team_id, args['quarter'], args['year'])
     members = Team.get_team_members(g.team_id)
 
     sprints_filter = []
@@ -69,7 +67,6 @@ def filters(args):
         }
         members_filter.append(member_option)
 
-
     filters = {
         'sprint': {
             'label': 'Sprint',
@@ -81,3 +78,4 @@ def filters(args):
         }
     }
     return send_response(filters, [], 200, **g.req_data)
+

@@ -22,9 +22,14 @@ class Sprint:
         self.team: team
     
     @classmethod
-    def get_sprints(cls, team_id):
+    def get_sprints(cls, team_id, quarter, year):
         '''
         returns None if the team has no sprints
         '''
+        filter = {
+            'team': ObjectId(team_id),
+            'quarter': quarter, 
+            'year': year
+        }
         sort = {'start_date': 1}
-        return MongoHelper().get_documents_by('sprints', {'team': ObjectId(team_id)}, sort)
+        return MongoHelper().get_documents_by('sprints', filter, sort)
