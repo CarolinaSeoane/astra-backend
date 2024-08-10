@@ -7,6 +7,7 @@ class SprintStatus(Enum):
     CURRENT = "Current"
     FINISHED = "Finished"
     FUTURE = "Future"
+    ACTIVE = "Active" # Used for backlog
 class Sprint:
 
     def __init__(self, name, sprint_number, quarter, year, start_date, end_date, status, target, team, _id=ObjectId()):
@@ -27,9 +28,19 @@ class Sprint:
         returns None if the team has no sprints
         '''
         filter = {
-            'team': ObjectId(team_id),
-            'quarter': quarter, 
-            'year': year
+            '$or': [
+                {
+                    'team': ObjectId(team_id),
+                    'quarter': quarter, 
+                    'year': year
+                },
+                {
+                    'team': ObjectId(team_id),
+                    'name': 'Backlog'
+                },
+            ]
         }
         sort = {'start_date': 1}
-        return MongoHelper().get_documents_by('sprints', filter, sort)
+        documents = MongoHelper().get_documents_by('sprints', filter, sort)
+
+        return documents[1:] + [documents[0]] # Send first element (backlog) to the back

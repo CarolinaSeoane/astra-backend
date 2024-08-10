@@ -44,9 +44,7 @@ def story_fields():
     'quarter': fields.Str(required=False, missing=str(get_current_quarter(datetime.datetime.today()))),
     'year': fields.Str(required=False, missing=str(datetime.datetime.today().year)),
     }, location='query')
-def filters(args):
-    print(args['quarter'])    
-    print(args['year'])    
+def filters(args):  
     sprints = Sprint.get_sprints(g.team_id, args['quarter'], args['year'])
     members = Team.get_team_members(g.team_id)
 

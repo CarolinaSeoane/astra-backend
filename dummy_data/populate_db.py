@@ -36,8 +36,9 @@ class Populate:
     team2_id = ObjectId()
 
     epic1_id = ObjectId()
-    epic1_title = "Mejoras del Buscador"
+    epic1_title = "Mejoras del buscador"
 
+    backlog_team1 = ObjectId() # Backlog is handled as a sprint
     sprint1_q1_team1 = ObjectId()
     sprint2_q1_team1 = ObjectId()
     sprint3_q1_team1 = ObjectId()
@@ -58,6 +59,8 @@ class Populate:
     sprint4_q3_team1 = ObjectId()
     sprint5_q3_team1 = ObjectId()
     sprint6_q3_team1 = ObjectId()
+
+    backlog_team2 = ObjectId()
 
     def __init__(self):
         self.helper = DBHelper()
@@ -607,6 +610,13 @@ class Populate:
     def populate_sprints(self):
         sprints = [
             {
+                "_id": self.backlog_team1,
+                "name": 'Backlog',
+                "target": 'COMPLETAR',
+                "status": SprintStatus.ACTIVE.value,
+                "team": self.team1_id
+            },
+            {
                 "_id": self.sprint1_q1_team1,
                 "name": 'S1-Q1-2024',
                 "sprint_number": '1',
@@ -679,9 +689,6 @@ class Populate:
                 "target": 'COMPLETAR',
                 "team": self.team1_id
             },
-
-
-
             {
                 "_id": self.sprint1_q2_team1,
                 "name": 'S1-Q2-2024',
@@ -754,9 +761,6 @@ class Populate:
                 "target": 'COMPLETAR',
                 "team": self.team1_id
             },
-
-
-            
             {
                 "_id": self.sprint1_q3_team1,
                 "name": 'S1-Q3-2024',
@@ -828,6 +832,13 @@ class Populate:
                 "status": SprintStatus.FUTURE.value,
                 "target": 'COMPLETAR',
                 "team": self.team1_id
+            },
+            {
+                "_id": self.backlog_team2,
+                "name": 'Backlog',
+                "target": 'COMPLETAR',
+                "status": SprintStatus.ACTIVE.value,
+                "team": self.team2_id
             },
         ]
         self.helper.post_to_collection("sprints", sprints)
