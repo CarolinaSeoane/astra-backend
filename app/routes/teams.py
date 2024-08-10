@@ -1,14 +1,23 @@
-from flask import Blueprint, request, g
+from flask import Blueprint, request, g, Flask, jsonify
 from webargs import fields
 from webargs.flaskparser import use_args
 from bson import ObjectId
-
+from app.services.mongoHelper import MongoHelper
+from app.services.token import validate_jwt
 from app.models.team import Team
 from app.models.user import User
 from app.utils import send_response
 
 
 teams = Blueprint('teams', __name__)
+
+def convert_objectid_to_str(document):
+    """Convierte todos los ObjectId en un documento a strings."""
+    if isinstance(document, dict):
+        return {i: (str(j) if isinstance(j, ObjectId) else convert_objectid_to_str(j)) for i, j in document.items()}
+    elif isinstance(document, list):
+        return [convert_objectid_to_str(item) for item in document]
+    return document
 
 @teams.route('/get_members/<team_id>', methods=['GET']) # TODO change to /members/<team_id>
 def get_team_members(team_id):
@@ -156,3 +165,13 @@ def update_sprint_set_up(args, team_id):
     return send_response([], [], 200, **g.req_data)
 
 # @teams.route('/update_member_role/<team_id>/<member_id>', methods=['PUT'])
+@teams.route('/', methods=['GET'])
+def get_all_teams():
+    try:
+        mongo_helper = MongoHelper() 
+        teams_list = mongo_helper.astra.db.teams.find()  
+        teams_data = [convert_objectid_to_str(team) for team in teams_list]
+        return jsonify(teams_data), 200
+    except Exception as e:
+        print(f"Exception: {e}")  
+        return jsonify({"error": str(e)}), 500

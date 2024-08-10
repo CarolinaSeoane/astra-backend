@@ -20,4 +20,3 @@ def validate_jwt(token):
         return decoded
     except: # Token has expired or is invalid
         return None
-    
