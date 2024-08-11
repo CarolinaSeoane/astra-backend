@@ -18,6 +18,9 @@ excluded_routes = [
 
 @app.before_request
 def validate_user_token():
+    '''
+    This validation runs before any request made to any route except the excluded_routes or OPTIONS requests
+    '''
     for route in excluded_routes:
         if request.path.startswith(route) or request.method=='OPTIONS':
             return None

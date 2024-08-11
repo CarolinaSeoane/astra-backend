@@ -44,7 +44,7 @@ class Story:
         self.team = team
 
     @classmethod
-    def get_stories_by_team_id(cls, team_id: ObjectId, view_type):
+    def get_stories_by_team_id(cls, team_id: ObjectId, view_type, **kwargs):
         '''
         returns [] if no stories are found for the given team_id
         '''
@@ -58,6 +58,15 @@ class Story:
         filter = {
             "team": { "$eq": team_id },
         }
+
+        # Add optional filters if provided in kwargs
+        # for key, value in kwargs.items():
+        #     print("%s == %s" % (key, value))
+
+        if 'assigned_to' in kwargs and kwargs['assigned_to']:
+            filter["assigned_to.username"] = kwargs['assigned_to']
+        if 'sprint' in kwargs and kwargs['sprint']:
+            filter["sprint.name"] = kwargs['sprint']
 
         stories_list = list(mongo.db.stories.find(filter = filter, projection = projection))
         response = json_util.dumps(stories_list) # mongoDb doc to JSON-encoded string.
