@@ -1,4 +1,4 @@
-from flask import Blueprint, g
+from flask import Blueprint, g, request
 from webargs import fields
 from webargs.flaskparser import use_args
 
@@ -10,9 +10,19 @@ from app.routes.utils import validate_user_is_member_of_team
 
 teams = Blueprint('teams', __name__)
 
+excluded_routes = [
+    {
+        'route': '/teams/permissions',
+        'methods': ['GET']
+    }
+]
 
 @teams.before_request
 def apply_validate_user_is_member_of_team():
+    for excluded_route in excluded_routes:
+        if request.path.startswith(excluded_route['route']) and (request.method in excluded_route['methods']):
+            return None
+
     return validate_user_is_member_of_team()
 
 @teams.route('/members', methods=['GET'])
