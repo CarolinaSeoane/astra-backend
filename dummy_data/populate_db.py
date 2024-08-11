@@ -1,23 +1,66 @@
 from bson import ObjectId
+import datetime
 
 from dummy_data.db_helper import DBHelper
+from app.models.sprint import SprintStatus
 
 class Populate:
     org1_id = ObjectId()
     org2_id = ObjectId()
 
     user1_id = ObjectId()
-    username1 = "CarolinaSeoane"
-    pfp1 = "2"
     user2_id = ObjectId()
+    user3_id = ObjectId()
+    user4_id = ObjectId()
+    user5_id = ObjectId()
+    user6_id = ObjectId()
+    user7_id = ObjectId()
+    
+    username1 = "CarolinaSeoane"
     username2 = "BelenSeoane"
-    pfp2 = "5"
+    username3 = "MariaJose"
+    username4 = "JuanP"
+    username5 = "Melisa"
+    username6 = "Pedro07"
+    username7 = "Nicolas"
+    
+    pfp1 = "6"
+    pfp2 = "4"
+    pfp3 = "3"
+    pfp4 = "5"
+    pfp5 = "10"
+    pfp6 = "8"
+    pfp7 = "9"
 
     team1_id = ObjectId()
     team2_id = ObjectId()
 
     epic1_id = ObjectId()
-    epic1_title = "Mejoras del Buscador"
+    epic1_title = "Mejoras del buscador"
+
+    backlog_team1 = ObjectId() # Backlog is handled as a sprint
+    sprint1_q1_team1 = ObjectId()
+    sprint2_q1_team1 = ObjectId()
+    sprint3_q1_team1 = ObjectId()
+    sprint4_q1_team1 = ObjectId()
+    sprint5_q1_team1 = ObjectId()
+    sprint6_q1_team1 = ObjectId()
+
+    sprint1_q2_team1 = ObjectId()
+    sprint2_q2_team1 = ObjectId()
+    sprint3_q2_team1 = ObjectId()
+    sprint4_q2_team1 = ObjectId()
+    sprint5_q2_team1 = ObjectId()
+    sprint6_q2_team1 = ObjectId()
+
+    sprint1_q3_team1 = ObjectId()
+    sprint2_q3_team1 = ObjectId()
+    sprint3_q3_team1 = ObjectId()
+    sprint4_q3_team1 = ObjectId()
+    sprint5_q3_team1 = ObjectId()
+    sprint6_q3_team1 = ObjectId()
+
+    backlog_team2 = ObjectId()
 
     def __init__(self):
         self.helper = DBHelper()
@@ -27,6 +70,7 @@ class Populate:
         self.populate_organizations()
         self.populate_users()
         self.populate_teams()
+        self.populate_sprints()
         self.populate_epics()
         self.populate_stories()
         self.populate_story_fields()
@@ -68,7 +112,6 @@ class Populate:
                     }
                 ]
             },
-
             {
                 "_id": self.user2_id,
                 "name": "Belen",
@@ -82,7 +125,77 @@ class Populate:
                         "name": "Argo"
                     },
                 ]
-            }
+            },
+            {
+                "_id": self.user3_id,
+                "name": "Maria José",
+                "surname": "Saenz",
+                "username": self.username3,
+                "email": "msaenz@gmail.com",
+                "profile_picture": self.pfp3,
+                "teams": [
+                    {
+                        "_id": self.team1_id,
+                        "name": "Argo",
+                    }
+                ]
+            },
+            {
+                "_id": self.user4_id,
+                "name": "Juan",
+                "surname": "Politi",
+                "username": self.username4,
+                "email": "juan.pol@gmail.com",
+                "profile_picture": self.pfp4,
+                "teams": [
+                    {
+                        "_id": self.team1_id,
+                        "name": "Argo",
+                    }
+                ]
+            },
+            {
+                "_id": self.user5_id,
+                "name": "Melisa Camila",
+                "surname": "León",
+                "username": self.username5,
+                "email": "melisa_leon@gmail.com",
+                "profile_picture": self.pfp5,
+                "teams": [
+                    {
+                        "_id": self.team1_id,
+                        "name": "Argo",
+                    }
+                ]
+            },
+            {
+                "_id": self.user6_id,
+                "name": "Pedro",
+                "surname": "Lombardo",
+                "username": self.username6,
+                "email": "pepilombardo@gmail.com",
+                "profile_picture": self.pfp6,
+                "teams": [
+                    {
+                        "_id": self.team1_id,
+                        "name": "Argo",
+                    }
+                ]
+            },
+            {
+                "_id": self.user7_id,
+                "name": "Nicolás",
+                "surname": "Justo",
+                "username": self.username7,
+                "email": "nic.justo@gmail.com",
+                "profile_picture": self.pfp7,
+                "teams": [
+                    {
+                        "_id": self.team1_id,
+                        "name": "Argo",
+                    }
+                ]
+            },
         ]
         self.helper.post_to_collection("users", users)
         print("populated users")
@@ -144,7 +257,47 @@ class Populate:
                         "profile_picture": self.pfp2,
                         "role": "Scrum Master",
                         # "date": self.user2_id.generation_time
-                    }
+                    },
+                    {
+                        "_id": self.user3_id,
+                        "username": self.username3,
+                        "email": "msaenz@gmail.com",
+                        "profile_picture": self.pfp3,
+                        "role": "Developer",
+                        # "date": self.user2_id.generation_time
+                    },
+                    {
+                        "_id": self.user4_id,
+                        "username": self.username4,
+                        "email": "juan.pol@gmail.com",
+                        "profile_picture": self.pfp4,
+                        "role": "Developer",
+                        # "date": self.user2_id.generation_time
+                    },
+                    {
+                        "_id": self.user5_id,
+                        "username": self.username5,
+                        "email": "melisa_leon@gmail.com",
+                        "profile_picture": self.pfp5,
+                        "role": "Developer",
+                        # "date": self.user2_id.generation_time
+                    },
+                    {
+                        "_id": self.user6_id,
+                        "username": self.username6,
+                        "email": "pepilombardo@gmail.com",
+                        "profile_picture": self.pfp6,
+                        "role": "Developer",
+                        # "date": self.user2_id.generation_time
+                    },
+                    {
+                        "_id": self.user7_id,
+                        "username": self.username7,
+                        "email": "nic.justo@gmail.com",
+                        "profile_picture": self.pfp7,
+                        "role": "Developer",
+                        # "date": self.user2_id.generation_time
+                    },
                 ]
             },
             {
@@ -240,7 +393,10 @@ class Populate:
                     "_id": self.epic1_id,
                     "title": self.epic1_title,
                 },
-                "sprint": "1",
+                "sprint": {
+                    "_id": self.sprint1_q1_team1,
+                    "name": "S1-Q1-2024"
+                },
                 "estimation": "5",
                 "tags": ["Buscador"],
                 "priority": "Medium",
@@ -287,7 +443,10 @@ class Populate:
                     "_id": self.epic1_id,
                     "title": self.epic1_title,
                 },
-                "sprint": "1",
+                "sprint": {
+                    "_id": self.sprint1_q1_team1,
+                    "name": "S1-Q1-2024"
+                },
                 "estimation": "1",
                 "tags": ["UX", "Accesibilidad"],
                 "priority": "Medium",
@@ -322,7 +481,10 @@ class Populate:
                     "_id": self.epic1_id,
                     "title": self.epic1_title,
                 },
-                "sprint": "1",
+                "sprint": {
+                    "_id": self.sprint1_q1_team1,
+                    "name": "S1-Q1-2024"
+                },
                 "estimation": "3",
                 "tags": ["QA", "Performance"],
                 "priority": "Medium",
@@ -478,3 +640,240 @@ class Populate:
         }]
         self.helper.post_to_collection("permissions", permissions)
         print("populated permissions")
+    
+    def populate_sprints(self):
+        sprints = [
+            {
+                "_id": self.backlog_team1,
+                "name": 'Backlog',
+                "target": 'COMPLETAR',
+                "status": SprintStatus.ACTIVE.value,
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint1_q1_team1,
+                "name": 'S1-Q1-2024',
+                "sprint_number": '1',
+                "quarter": '1',
+                "year": '2024',
+                "name": "S1-Q1-2024",
+                "start_date": datetime.datetime(2024, 1, 1),
+                "end_date": datetime.datetime(2024, 1, 14),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint2_q1_team1,
+                "name": 'S2-Q1-2024',
+                "sprint_number": '2',
+                "quarter": '1',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 1, 15),
+                "end_date": datetime.datetime(2024, 1, 28),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint3_q1_team1,
+                "name": 'S3-Q1-2024',
+                "sprint_number": '3',
+                "quarter": '1',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 1, 29),
+                "end_date": datetime.datetime(2024, 2, 11),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint4_q1_team1,
+                "name": 'S4-Q1-2024',
+                "sprint_number": '4',
+                "quarter": '1',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 2, 12),
+                "end_date": datetime.datetime(2024, 2, 25),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint5_q1_team1,
+                "name": 'S5-Q1-2024',
+                "sprint_number": '5',
+                "quarter": '1',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 2, 26),
+                "end_date": datetime.datetime(2024, 3, 10),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint6_q1_team1,
+                "name": 'S6-Q1-2024',
+                "sprint_number": '6',
+                "quarter": '1',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 3, 11),
+                "end_date": datetime.datetime(2024, 3, 24),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint1_q2_team1,
+                "name": 'S1-Q2-2024',
+                "sprint_number": '1',
+                "quarter": '2',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 3, 25),
+                "end_date": datetime.datetime(2024, 4, 7),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint2_q2_team1,
+                "name": 'S2-Q2-2024',
+                "sprint_number": '2',
+                "quarter": '2',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 4, 15),
+                "end_date": datetime.datetime(2024, 4, 28),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint3_q2_team1,
+                "name": 'S3-Q2-2024',
+                "sprint_number": '3',
+                "quarter": '2',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 4, 29),
+                "end_date": datetime.datetime(2024, 5, 12),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint4_q2_team1,
+                "name": 'S4-Q2-2024',
+                "sprint_number": '4',
+                "quarter": '2',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 5, 13),
+                "end_date": datetime.datetime(2024, 5, 26),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint5_q2_team1,
+                "name": 'S5-Q2-2024',
+                "sprint_number": '5',
+                "quarter": '2',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 5, 27),
+                "end_date": datetime.datetime(2024, 6, 9),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint6_q2_team1,
+                "name": 'S6-Q2-2024',
+                "sprint_number": '6',
+                "quarter": '2',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 6, 10),
+                "end_date": datetime.datetime(2024, 6, 23),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint1_q3_team1,
+                "name": 'S1-Q3-2024',
+                "sprint_number": '1',
+                "quarter": '3',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 6, 24),
+                "end_date": datetime.datetime(2024, 7, 7),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint2_q3_team1,
+                "name": 'S2-Q3-2024',
+                "sprint_number": '2',
+                "quarter": '3',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 7, 8),
+                "end_date": datetime.datetime(2024, 7, 21),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint3_q3_team1,
+                "name": 'S3-Q3-2024',
+                "sprint_number": '3',
+                "quarter": '3',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 7, 22),
+                "end_date": datetime.datetime(2024, 8, 4),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint4_q3_team1,
+                "name": 'S4-Q3-2024',
+                "sprint_number": '4',
+                "quarter": '3',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 8, 5),
+                "end_date": datetime.datetime(2024, 8, 18),
+                "status": SprintStatus.CURRENT.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint5_q3_team1,
+                "name": 'S5-Q3-2024',
+                "sprint_number": '5',
+                "quarter": '3',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 8, 19),
+                "end_date": datetime.datetime(2024, 9, 1),
+                "status": SprintStatus.FUTURE.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint6_q3_team1,
+                "name": 'S6-Q3-2024',
+                "sprint_number": '6',
+                "quarter": '3',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 9, 2),
+                "end_date": datetime.datetime(2024, 9, 15),
+                "status": SprintStatus.FUTURE.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.backlog_team2,
+                "name": 'Backlog',
+                "target": 'COMPLETAR',
+                "status": SprintStatus.ACTIVE.value,
+                "team": self.team2_id
+            },
+        ]
+        self.helper.post_to_collection("sprints", sprints)
+        print("populated sprints")

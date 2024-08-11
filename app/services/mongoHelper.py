@@ -12,11 +12,17 @@ class MongoHelper:
     def get_collection(self, collection_name):
         return self.get_document_by(collection_name, {})
     
-    def get_document_by(self, collection_name, filter):
-        document = self.astra.db[collection_name].find_one(filter)
+    def get_document_by(self, collection_name, filter, sort=None):
+        document = self.astra.db[collection_name].find_one(filter, sort=sort)
         document = json_util.dumps(document)
         document = json.loads(document)
         return document
+    
+    def get_documents_by(self, collection_name, filter, sort=None):
+        documents = self.astra.db[collection_name].find(filter, sort=sort)
+        documents = json_util.dumps(documents)
+        documents = json.loads(documents)
+        return documents
     
     def add_new_element_to_collection(self, collection_name, element):
         return self.astra.db[collection_name].insert_one(element)
