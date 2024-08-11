@@ -1,4 +1,4 @@
-from flask import Blueprint, g
+from flask import Blueprint, g, request
 from webargs import fields
 from webargs.flaskparser import use_args
 
@@ -10,9 +10,19 @@ from app.routes.utils import validate_user_is_member_of_team
 
 teams = Blueprint('teams', __name__)
 
+excluded_routes = [
+    {
+        'route': '/teams/permissions',
+        'methods': ['GET']
+    }
+]
 
 @teams.before_request
 def apply_validate_user_is_member_of_team():
+    for excluded_route in excluded_routes:
+        if request.path.startswith(excluded_route['route']) and (request.method in excluded_route['methods']):
+            return None
+
     return validate_user_is_member_of_team()
 
 @teams.route('/members', methods=['GET'])
@@ -112,5 +122,48 @@ def update_mandatory_fields(args):
 def update_sprint_set_up(args):
     Team.update_sprint_set_up(g.team_id, args)
     return send_response([], [], 200, **g.req_data)
+
+ceremony_args = {
+    "days": fields.List(fields.Str(), required=True),
+    "when": fields.Str(required=True),
+    "time": fields.Str(required=True)
+}
+
+ceremonies_settings_args = {
+    "planning": fields.Nested(ceremony_args, required=True),
+    "standup": fields.Nested(ceremony_args, required=True),
+    "retrospective": fields.Nested(ceremony_args, required=True)
+}
+@teams.route('/ceremonies_frequency/<team_id>', methods=['PUT'])
+@use_args(ceremonies_settings_args, location='json')
+def update_ceremonies_frequency(args, team_id):
+    try:
+        team_id = ObjectId(team_id)
+    except:
+        return send_response([], [f"Team id {team_id} is not valid"], 403, **g.req_data)
+    
+    if not User.is_user_in_team(g._id, team_id):
+        return send_response([], ["Forbidden. User is not authorized to access this resource"], 403, **g.req_data)
+
+    Team.update_ceremonies_settings(team_id, args)
+    return send_response([], [], 200, **g.req_data)
+
+permit_args = {
+    'role': fields.Str(required=True),
+    'options': fields.List(fields.Str(), required=True)
+}
+permissions_args = {
+    'permits': fields.List(fields.Nested(permit_args), required=True)
+}
+@teams.route('/permissions', methods=['PUT'])
+@use_args(permissions_args, location='json')
+def update_permissions(args):
+    Team.update_permissions(g.team_id, args['permits'])
+    return send_response([], [], 200, **g.req_data)
+
+@teams.route('/permissions', methods=['GET'])
+def permissions():
+    permissions = Team.get_base_permissions()
+    return send_response(permissions, [], 200, **g.req_data)
 
 # @teams.route('/update_member_role/<team_id>/<member_id>', methods=['PUT'])
