@@ -1,7 +1,7 @@
 from flask import Blueprint, g, request
 from webargs import fields
 from webargs.flaskparser import use_args
-
+from datetime import datetime
 from app.models.ceremony import Ceremony
 from app.models.team import Team
 from app.models.user import User
@@ -198,14 +198,26 @@ def add_ceremony(args):
     
     return send_response([], ["Error adding ceremony"], 500, **g.req_data)
 
-@teams.route('/ceremonies/<ceremony_id>', methods=['PUT'])
-@use_args(ceremony_schema, location='json')
-def update_ceremony(ceremony_id, args):
-    success = Ceremony.update_ceremony(ceremony_id, args)
+update_ceremony_time_schema = {
+    'date': fields.Str(required=True)  # Solo el campo de la fecha/hora
+}
+
+@teams.route('/ceremonies/<ceremony_id>/time', methods=['PUT'])
+@use_args(update_ceremony_time_schema, location='json')
+def update_ceremony_time(ceremony_id, args):
+    members = Team.get_team_members(g.team_id)
+    if not user_is_scrum_master_of_team(members, g._id):
+        return send_response([], ["User not authorized to update ceremonies"], 403, **g.req_data)
+    
+    new_date = datetime.strptime(args['date'], '%Y-%m-%dT%H:%M:%S')
+    if new_date <= datetime.now():
+        return send_response([], ["Ceremony date must be in the future"], 400, **g.req_data)
+
+    success = Ceremony.update_ceremony_time(ceremony_id, args['date'])  # Asumiendo que has implementado este método
     if success:
         return send_response([], [], 200, **g.req_data)
     
-    return send_response([], ["Error updating ceremony"], 500, **g.req_data)
+    return send_response([], ["Error updating ceremony time"], 500, **g.req_data)
 
 @teams.route('/ceremonies/<ceremony_id>', methods=['DELETE'])
 def delete_ceremony(ceremony_id):
