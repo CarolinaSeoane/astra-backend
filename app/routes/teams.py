@@ -2,6 +2,7 @@ from flask import Blueprint, g, request
 from webargs import fields
 from webargs.flaskparser import use_args
 
+from app.models.ceremony import Ceremony
 from app.models.team import Team
 from app.models.user import User
 from app.utils import send_response
@@ -167,3 +168,54 @@ def permissions():
     return send_response(permissions, [], 200, **g.req_data)
 
 # @teams.route('/update_member_role/<team_id>/<member_id>', methods=['PUT'])
+ceremony_schema = {
+    'type': fields.Str(required=True),
+    'title': fields.Str(required=True),
+    'date': fields.Str(required=True),
+    'duration': fields.Str(required=True),
+    'status': fields.Str(required=True)
+}
+@teams.route('/ceremonies', methods=['POST'])
+@use_args(ceremony_schema, location='json')
+def add_ceremony(args):
+    team_id = g.team_id
+    team = Team.get_team(team_id)
+    if team is None:
+        return send_response([], ["Team not found"], 404, **g.req_data)
+    
+    # Add ceremony to the ceremonies list of the team
+    ceremony_data = {
+        'type': args['type'],
+        'title': args['title'],
+        'date': args['date'],
+        'duration': args['duration'],
+        'status': args['status']
+    }
+    
+    success = Ceremony.add_ceremony(ceremony_data)
+    if success:
+        return send_response([], [], 200, **g.req_data)
+    
+    return send_response([], ["Error adding ceremony"], 500, **g.req_data)
+
+@teams.route('/ceremonies/<ceremony_id>', methods=['PUT'])
+@use_args(ceremony_schema, location='json')
+def update_ceremony(ceremony_id, args):
+    success = Ceremony.update_ceremony(ceremony_id, args)
+    if success:
+        return send_response([], [], 200, **g.req_data)
+    
+    return send_response([], ["Error updating ceremony"], 500, **g.req_data)
+
+@teams.route('/ceremonies/<ceremony_id>', methods=['DELETE'])
+def delete_ceremony(ceremony_id):
+    success = Ceremony.delete_ceremony(ceremony_id)
+    if success:
+        return send_response([], [], 200, **g.req_data)
+    
+    return send_response([], ["Error deleting ceremony"], 500, **g.req_data)
+
+@teams.route('/ceremonies', methods=['GET'])
+def get_team_ceremonies():
+    ceremonies = Ceremony.get_all_ceremonies(g.team_id)
+    return send_response(ceremonies, [], 200, **g.req_data)
