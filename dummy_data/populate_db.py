@@ -15,6 +15,8 @@ class Populate:
     user5_id = ObjectId()
     user6_id = ObjectId()
     user7_id = ObjectId()
+    user8_id = ObjectId()
+    user9_id = ObjectId()
     
     username1 = "CarolinaSeoane"
     username2 = "BelenSeoane"
@@ -23,6 +25,8 @@ class Populate:
     username5 = "Melisa"
     username6 = "Pedro07"
     username7 = "Nicolas"
+    username8 = "MatiasMasseretti"
+    username9 = "FedeUTN"
     
     pfp1 = "6"
     pfp2 = "4"
@@ -31,6 +35,9 @@ class Populate:
     pfp5 = "10"
     pfp6 = "8"
     pfp7 = "9"
+    pfp8 = "16"
+    pfp9 = "1"
+    
 
     team1_id = ObjectId()
     team2_id = ObjectId()
@@ -196,6 +203,42 @@ class Populate:
                     }
                 ]
             },
+            {
+                "_id": self.user8_id,
+                "name": "Matias",
+                "surname": "Masseretti",
+                "username": self.username8,
+                "email": "matmass03@gmail.com",
+                "profile_picture": self.pfp8,
+                "teams": [
+                    {
+                        "_id": self.team1_id,
+                        "name": "Argo",
+                    },
+                    {
+                        "_id": self.team2_id,
+                        "name": "Flyers",
+                    }
+                ]
+            },
+            {
+                "_id": self.user9_id,
+                "name": "Federico",
+                "surname": "Sepulveda",
+                "username": self.username9,
+                "email": "guderianfront2000@gmail.com",
+                "profile_picture": self.pfp9,
+                "teams": [
+                    {
+                        "_id": self.team1_id,
+                        "name": "Argo",
+                    },
+                    {
+                        "_id": self.team2_id,
+                        "name": "Flyers",
+                    }
+                ]
+            },
         ]
         self.helper.post_to_collection("users", users)
         print("populated users")
@@ -298,6 +341,20 @@ class Populate:
                         "role": "Developer",
                         # "date": self.user2_id.generation_time
                     },
+                    {
+                        "_id": self.user8_id,
+                        "username": self.username8,
+                        "email": "matmass03@gmail.com",
+                        "profile_picture": self.pfp8,
+                        "role": "Developer"
+                    },
+                    {
+                        "_id": self.user9_id,
+                        "username": self.username9,
+                        "email": "guderianfront2000@gmail.com",
+                        "profile_picture": self.pfp9,
+                        "role": "Developer"
+                    }
                 ]
             },
             {
@@ -347,6 +404,20 @@ class Populate:
                         "profile_picture": self.pfp1,
                         "role": "Scrum Master",
                         "date": self.user1_id.generation_time
+                    },
+                    {
+                        "_id": self.user8_id,
+                        "username": self.username8,
+                        "email": "matmass03@gmail.com",
+                        "profile_picture": self.pfp8,
+                        "role": "Developer"
+                    },
+                    {
+                        "_id": self.user9_id,
+                        "username": self.username9,
+                        "email": "guderianfront2000@gmail.com",
+                        "profile_picture": self.pfp9,
+                        "role": "Developer"
                     }
                 ]
             }
