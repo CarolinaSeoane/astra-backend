@@ -1,23 +1,68 @@
 from bson import ObjectId
+import datetime
 
 from dummy_data.db_helper import DBHelper
+from app.models.sprint import SprintStatus
 
 class Populate:
     org1_id = ObjectId()
     org2_id = ObjectId()
 
     user1_id = ObjectId()
-    username1 = "CarolinaSeoane"
-    pfp1 = "2"
     user2_id = ObjectId()
+    user3_id = ObjectId()
+    user4_id = ObjectId()
+    user5_id = ObjectId()
+    user6_id = ObjectId()
+    user7_id = ObjectId()
+    
+    username1 = "CarolinaSeoane"
     username2 = "BelenSeoane"
-    pfp2 = "5"
+    username3 = "MariaJose"
+    username4 = "JuanP"
+    username5 = "Melisa"
+    username6 = "Pedro07"
+    username7 = "Nicolas"
+    
+    pfp1 = "6"
+    pfp2 = "4"
+    pfp3 = "3"
+    pfp4 = "5"
+    pfp5 = "10"
+    pfp6 = "8"
+    pfp7 = "9"
 
     team1_id = ObjectId()
     team2_id = ObjectId()
 
     epic1_id = ObjectId()
-    epic1_title = "Mejoras del Buscador"
+    epic2_id = ObjectId()
+    epic1_title = "Mejoras del buscador"
+    epic2_title = "Migracion de ordernes a base NoSql"
+
+    backlog_team1 = ObjectId() # Backlog is handled as a sprint
+    sprint1_q1_team1 = ObjectId()
+    sprint2_q1_team1 = ObjectId()
+    sprint3_q1_team1 = ObjectId()
+    sprint4_q1_team1 = ObjectId()
+    sprint5_q1_team1 = ObjectId()
+    sprint6_q1_team1 = ObjectId()
+
+    sprint1_q2_team1 = ObjectId()
+    sprint2_q2_team1 = ObjectId()
+    sprint3_q2_team1 = ObjectId()
+    sprint4_q2_team1 = ObjectId()
+    sprint5_q2_team1 = ObjectId()
+    sprint6_q2_team1 = ObjectId()
+
+    sprint1_q3_team1 = ObjectId()
+    sprint2_q3_team1 = ObjectId()
+    sprint3_q3_team1 = ObjectId()
+    sprint4_q3_team1 = ObjectId()
+    sprint5_q3_team1 = ObjectId()
+    sprint6_q3_team1 = ObjectId()
+
+    backlog_team2 = ObjectId()
 
     def __init__(self):
         self.helper = DBHelper()
@@ -27,21 +72,21 @@ class Populate:
         self.populate_organizations()
         self.populate_users()
         self.populate_teams()
+        self.populate_sprints()
         self.populate_epics()
         self.populate_stories()
         self.populate_story_fields()
+        self.populate_permissions()
 
     def populate_organizations(self):
         organizations = [
             {
                 "_id": self.org1_id, 
-                "name": "Google",
-                "epics": [self.epic1_id]
+                "name": "Google"
             },
             {   
                 "_id": self.org2_id,
-                "name": "IBM",
-                "epics": []
+                "name": "IBM"
             }
         ]
         self.helper.post_to_collection("organizations", organizations)
@@ -67,7 +112,6 @@ class Populate:
                     }
                 ]
             },
-
             {
                 "_id": self.user2_id,
                 "name": "Belen",
@@ -81,7 +125,77 @@ class Populate:
                         "name": "Argo"
                     },
                 ]
-            }
+            },
+            {
+                "_id": self.user3_id,
+                "name": "Maria José",
+                "surname": "Saenz",
+                "username": self.username3,
+                "email": "msaenz@gmail.com",
+                "profile_picture": self.pfp3,
+                "teams": [
+                    {
+                        "_id": self.team1_id,
+                        "name": "Argo",
+                    }
+                ]
+            },
+            {
+                "_id": self.user4_id,
+                "name": "Juan",
+                "surname": "Politi",
+                "username": self.username4,
+                "email": "juan.pol@gmail.com",
+                "profile_picture": self.pfp4,
+                "teams": [
+                    {
+                        "_id": self.team1_id,
+                        "name": "Argo",
+                    }
+                ]
+            },
+            {
+                "_id": self.user5_id,
+                "name": "Melisa Camila",
+                "surname": "León",
+                "username": self.username5,
+                "email": "melisa_leon@gmail.com",
+                "profile_picture": self.pfp5,
+                "teams": [
+                    {
+                        "_id": self.team1_id,
+                        "name": "Argo",
+                    }
+                ]
+            },
+            {
+                "_id": self.user6_id,
+                "name": "Pedro",
+                "surname": "Lombardo",
+                "username": self.username6,
+                "email": "pepilombardo@gmail.com",
+                "profile_picture": self.pfp6,
+                "teams": [
+                    {
+                        "_id": self.team1_id,
+                        "name": "Argo",
+                    }
+                ]
+            },
+            {
+                "_id": self.user7_id,
+                "name": "Nicolás",
+                "surname": "Justo",
+                "username": self.username7,
+                "email": "nic.justo@gmail.com",
+                "profile_picture": self.pfp7,
+                "teams": [
+                    {
+                        "_id": self.team1_id,
+                        "name": "Argo",
+                    }
+                ]
+            },
         ]
         self.helper.post_to_collection("users", users)
         print("populated users")
@@ -95,17 +209,17 @@ class Populate:
                 "team_settings": {
                     "ceremonies": {
                         "planning": {
-                            "days": [1], # Tuesday
-                            "when": "beginnig", # "beginning" or "end"
+                            "days": ["tue"],
+                            "when": "beginning", # "beginning" or "end"
                             "time": "10:00" # "HH:MM
                         },
                         "standup": {
-                            "days": [0, 2, 3], # Monday, Wednesday, Thursday
-                            "when": "every_week",
+                            "days": ["mon", "wed", "thu"],
+                            "when": "every",
                             "time": "09:30" # "HH:MM
                         },
                         "retrospective": {
-                            "days": [1], # Tuesday
+                            "days": ["tue"],
                             "when": "end", # "beginning" or "end"
                             "time": "10:00" # "HH:MM
                         }
@@ -119,20 +233,11 @@ class Populate:
                     "permits": [
                         {
                             "role": "Product Owner",
-                            "options": {
-                                "edit_story": True,
-                                "delete_story": False,
-                                "add_team_members": False,
-                                "join_standup": False,
-                                "all_time_metrics": True
-                            }
+                            "options": ["edit_story", "add_team_members", "join_standup", "all_time_metrics"]
                         },
                         {
                             "role": "Developer",
-                            "options": {
-                                "create_story": True,
-                                "edit_story": True
-                            }
+                            "options": ["create_story", "edit_story"]
                         }
                     ]
                 },
@@ -152,7 +257,47 @@ class Populate:
                         "profile_picture": self.pfp2,
                         "role": "Scrum Master",
                         # "date": self.user2_id.generation_time
-                    }
+                    },
+                    {
+                        "_id": self.user3_id,
+                        "username": self.username3,
+                        "email": "msaenz@gmail.com",
+                        "profile_picture": self.pfp3,
+                        "role": "Developer",
+                        # "date": self.user2_id.generation_time
+                    },
+                    {
+                        "_id": self.user4_id,
+                        "username": self.username4,
+                        "email": "juan.pol@gmail.com",
+                        "profile_picture": self.pfp4,
+                        "role": "Developer",
+                        # "date": self.user2_id.generation_time
+                    },
+                    {
+                        "_id": self.user5_id,
+                        "username": self.username5,
+                        "email": "melisa_leon@gmail.com",
+                        "profile_picture": self.pfp5,
+                        "role": "Developer",
+                        # "date": self.user2_id.generation_time
+                    },
+                    {
+                        "_id": self.user6_id,
+                        "username": self.username6,
+                        "email": "pepilombardo@gmail.com",
+                        "profile_picture": self.pfp6,
+                        "role": "Developer",
+                        # "date": self.user2_id.generation_time
+                    },
+                    {
+                        "_id": self.user7_id,
+                        "username": self.username7,
+                        "email": "nic.justo@gmail.com",
+                        "profile_picture": self.pfp7,
+                        "role": "Developer",
+                        # "date": self.user2_id.generation_time
+                    },
                 ]
             },
             {
@@ -162,17 +307,17 @@ class Populate:
                 "team_settings": {
                     "ceremonies": {
                         "planning": {
-                            "days": [1], # Tuesday
-                            "when": "beginnig", # "beginning" or "end"
+                            "days": ["tu"],
+                            "when": "beginning", # "beginning" or "end"
                             "time": "10:00" # "HH:MM
                         },
                         "standup": {
-                            "days": [0, 2, 3], # Monday, Wednesday, Thursday
-                            "when": "every_week",
+                            "days": ["mon", "wed", "thu"],
+                            "when": "every",
                             "time": "09:30" # "HH:MM
                         },
                         "retrospective": {
-                            "days": [1], # Tuesday
+                            "days": ["tue"],
                             "when": "end", # "beginning" or "end"
                             "time": "10:00" # "HH:MM
                         }
@@ -186,20 +331,11 @@ class Populate:
                     "permits": [
                         {
                             "role": "Product Owner",
-                            "options": {
-                                "edit_story": False,
-                                "delete_story": False,
-                                "add_team_members": False,
-                                "join_standup": True,
-                                "all_time_metrics": True
-                            }
+                            "options": ["edit_story", "delete_story", "join_standup", "all_time_metrics"]
                         },
                         {
                             "role": "Developer",
-                            "options": {
-                                "create_story": False,
-                                "edit_story": False
-                            }
+                            "options": ["create_story", "edit_story"]
                         }
                     ]
                 },
@@ -224,13 +360,23 @@ class Populate:
                 "_id": self.epic1_id,
                 "title": self.epic1_title,
                 "description": "Mejorar la precision del buscador para mejorar la experiencia de los usuarios.",
-                "sprints": "1,2",
-                "creator": {
-                    "_id": self.user1_id,
-                    "username": self.username1,
-                    "profile_picture": self.pfp1
+                "team": {
+                    "_id": self.team1_id,
+                    "name": "Argo",
                 },
-                "priority": "High"
+                "priority": "High",
+                "organization": self.org1_id
+            },
+            {
+                "_id": self.epic2_id,
+                "title": self.epic2_title,
+                "description": "Migrar el schema Ordenes a MongoDB",
+                "team": {
+                    "_id": self.team2_id,
+                    "name": "Flyers",
+                },
+                "priority": "High",
+                "organization": self.org1_id
             }
         ]
         self.helper.post_to_collection("epics", epics)
@@ -257,7 +403,10 @@ class Populate:
                     "_id": self.epic1_id,
                     "title": self.epic1_title,
                 },
-                "sprint": "1",
+                "sprint": {
+                    "_id": self.sprint4_q3_team1,
+                    "name": "S4-Q3-2024"
+                },
                 "estimation": "5",
                 "tags": ["Buscador"],
                 "priority": "Medium",
@@ -287,9 +436,9 @@ class Populate:
             },
             {
                 "story_id": "ARGO-2",
-                "title": "Cambiar color del botón de Login",
-                "description": "Como usuario quiero que el color del buscador cambie para que sea accesible",
-                "acceptance_criteria": "El botón de Login se visualiza con el color #1D4ED8",
+                "title": "Cambiar color del botón de Buscar",
+                "description": "Como usuario quiero que el color del boton del buscador cambie para que sea accesible",
+                "acceptance_criteria": "El botón de Buscar se visualiza con el color #1D4ED8",
                 "creator": {
                     "_id": self.user2_id,
                     "username": self.username2,
@@ -304,7 +453,10 @@ class Populate:
                     "_id": self.epic1_id,
                     "title": self.epic1_title,
                 },
-                "sprint": "1",
+                "sprint": {
+                    "_id": self.sprint4_q3_team1,
+                    "name": "S4-Q3-2024"
+                },
                 "estimation": "1",
                 "tags": ["UX", "Accesibilidad"],
                 "priority": "Medium",
@@ -339,7 +491,10 @@ class Populate:
                     "_id": self.epic1_id,
                     "title": self.epic1_title,
                 },
-                "sprint": "1",
+                "sprint": {
+                    "_id": self.sprint1_q1_team1,
+                    "name": "S1-Q1-2024"
+                },
                 "estimation": "3",
                 "tags": ["QA", "Performance"],
                 "priority": "Medium",
@@ -360,87 +515,399 @@ class Populate:
         print("populated stories")
 
     def populate_story_fields(self):
-        story_fields = [{
-            "fields": [
-                {
-                    "value": 'title',
-                    "label": 'Title',
-                    "modifiable": 0,
-                    "description": 'The title of the story or task.'
-                },
-                {
-                    "value": 'description',
-                    "label": 'Description',
-                    "modifiable": 0,
-                    "description": 'A detailed description of the story or task.'
-                },
-                {
-                    "value": 'acceptanceCriteria',
-                    "label": 'Acceptance Criteria',
-                    "modifiable": 1,
-                    "description": 'The conditions that must be met for the story to be accepted.'
-                },
-                {
-                    "value": 'creator',
-                    "label": 'Creator',
-                    "modifiable": 0,
-                    "description": 'The person who created the story or task.'
-                },
-                {
-                    "value": 'assigned_to',
-                    "label": 'Assigned To',
-                    "modifiable": 0,
-                    "description": 'The person responsible for completing the story or task.'
-                },
-                {
-                    "value": 'epic',
-                    "label": 'Epic',
-                    "modifiable": 1,
-                    "description": 'The larger body of work that this story or task belongs to.'
-                },
-                {
-                    "value": 'sprint',
-                    "label": 'Sprint',
-                    "modifiable": 0,
-                    "description": 'The sprint in which the story or task is being worked on.'
-                },
-                {
-                    "value": 'points',
-                    "label": 'Story Points',
-                    "modifiable": 0,
-                    "description": 'The estimated effort required to complete the story or task.'
-                },
-                {
-                    "value": 'tags',
-                    "label": 'Tags',
-                    "modifiable": 1,
-                    "description": 'Keywords associated with the story or task for categorization.'
-                },
-                {
-                    "value": 'priority',
-                    "label": 'Priority',
-                    "modifiable": 1,
-                    "description": 'The importance level of the story or task.'
-                },
-                {
-                    "value": 'type',
-                    "label": 'Type',
-                    "modifiable": 1,
-                    "description": 'The classification of the story or task (e.g., bug, feature, chore).'
-                },
-                {
-                    "value": 'estimation_method',
-                    "label": 'Estimation Method',
-                    "modifiable": 0,
-                    "description": 'The method used to estimate the effort for the story or task.'
-                },
-                {
-                    "value": 'tasks',
-                    "label": 'Tasks',
-                    "modifiable": 0,
-                    "description": 'The sub-tasks that need to be completed to finish the story.'
-                }
-            ]
-        }]
+        story_fields = [
+            {
+                "value": 'title',
+                "label": 'Title',
+                "modifiable": 0,
+                "description": 'The title of the story or task.',
+                "section": 'general',
+                "type": "input_field"
+            },
+            {
+                "value": 'description',
+                "label": 'Description',
+                "modifiable": 0,
+                "description": 'A detailed description of the story or task.',
+                "section": 'general',
+                "type": "text_area"
+            },
+            {
+                "value": 'acceptanceCriteria',
+                "label": 'Acceptance Criteria',
+                "modifiable": 1,
+                "description": 'The conditions that must be met for the story to be accepted.',
+                "section": 'additional_information',
+                "type": "text_area"
+            },
+            {
+                "value": 'creator',
+                "label": 'Creator',
+                "modifiable": 0,
+                "description": 'The person who created the story or task.',
+                "section": "users",
+                "type": "NA"
+            },
+            {
+                "value": 'assigned_to',
+                "label": 'Assigned To',
+                "modifiable": 0,
+                "description": 'The person responsible for completing the story or task.',
+                "section": 'users',
+                "type": "dropdown"
+            },
+            {
+                "value": 'epic',
+                "label": 'Epic',
+                "modifiable": 1,
+                "description": 'The larger body of work that this story or task belongs to.',
+                "section": 'general',
+                "type": "dropdown"
+            },
+            {
+                "value": 'sprint',
+                "label": 'Sprint',
+                "modifiable": 0,
+                "description": 'The sprint in which the story or task is being worked on.',
+                "section": 'general',
+                "type": "dropdown"
+            },
+            {
+                "value": 'points',
+                "label": 'Story Points',
+                "modifiable": 0,
+                "description": 'The estimated effort required to complete the story or task.',
+                "section": 'general',
+                "type": "dropdown"
+            },
+            {
+                "value": 'tags',
+                "label": 'Tags',
+                "modifiable": 1,
+                "description": 'Keywords associated with the story or task for categorization.',
+                "section": 'additional_information',
+                "type": "select"
+            },
+            {
+                "value": 'priority',
+                "label": 'Priority',
+                "modifiable": 1,
+                "description": 'The importance level of the story or task.',
+                "section": 'additional_information',
+                "type": "dropdown"
+            },
+            {
+                "value": 'type',
+                "label": 'Type',
+                "modifiable": 1,
+                "description": 'The classification of the story or task (e.g., bug, feature, chore).',
+                "section": 'additional_information',
+                "type": "select"
+            },
+            {
+                "value": 'estimation_method',
+                "label": 'Estimation Method',
+                "modifiable": 0,
+                "description": 'The method used to estimate the effort for the story or task.',
+                "section": 'hidden',
+                "type": "NA"
+            },
+            {
+                "value": 'tasks',
+                "label": 'Tasks',
+                "modifiable": 0,
+                "description": 'The sub-tasks that need to be completed to finish the story.',
+                "section": 'tasks',
+                "type": "text_area"
+            }
+        ]
         self.helper.post_to_collection("story_fields", story_fields)
         print("populated story_fields")
+
+    def populate_permissions(self):
+        permissions = [{
+            'options': [{
+                "role": "Product Owner",
+                "actions": [
+                    {
+                        "value": "edit_story",
+                        "label": "Edit story"
+                    },
+                    {
+                        'value': 'delete_story',
+                        'label': 'Delete story'
+                    },
+                    {
+                        'value': 'add_team_members',
+                        'label': 'Add team members'
+                    },
+                    {
+                        'value': 'join_standup',
+                        'label': 'Join standup'
+                    },
+                    {
+                        'value': 'all_time_metrics',
+                        'label': 'Access to all time metrics'
+                    }
+                ]
+            }, {
+                "role": "Developer",
+                "actions": [
+                    {
+                        "value": "create_story",
+                        'label': 'Create story'
+                    },
+                    {
+                        "value": "edit_story",
+                        'label': 'Edit story'
+                    },
+                    {
+                        "value": "delete_story",
+                        'label': 'Delete story'
+                    },
+                    {
+                        'value': 'modify_sprint_schedule',
+                        'label': 'Modify sprint schedule'
+                    }
+                ]}
+            ] 
+        }]
+        self.helper.post_to_collection("permissions", permissions)
+        print("populated permissions")
+    
+    def populate_sprints(self):
+        sprints = [
+            {
+                "_id": self.backlog_team1,
+                "name": 'Backlog',
+                "target": 'COMPLETAR',
+                "status": SprintStatus.ACTIVE.value,
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint1_q1_team1,
+                "name": 'S1-Q1-2024',
+                "sprint_number": '1',
+                "quarter": '1',
+                "year": '2024',
+                "name": "S1-Q1-2024",
+                "start_date": datetime.datetime(2024, 1, 1),
+                "end_date": datetime.datetime(2024, 1, 14),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint2_q1_team1,
+                "name": 'S2-Q1-2024',
+                "sprint_number": '2',
+                "quarter": '1',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 1, 15),
+                "end_date": datetime.datetime(2024, 1, 28),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint3_q1_team1,
+                "name": 'S3-Q1-2024',
+                "sprint_number": '3',
+                "quarter": '1',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 1, 29),
+                "end_date": datetime.datetime(2024, 2, 11),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint4_q1_team1,
+                "name": 'S4-Q1-2024',
+                "sprint_number": '4',
+                "quarter": '1',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 2, 12),
+                "end_date": datetime.datetime(2024, 2, 25),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint5_q1_team1,
+                "name": 'S5-Q1-2024',
+                "sprint_number": '5',
+                "quarter": '1',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 2, 26),
+                "end_date": datetime.datetime(2024, 3, 10),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint6_q1_team1,
+                "name": 'S6-Q1-2024',
+                "sprint_number": '6',
+                "quarter": '1',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 3, 11),
+                "end_date": datetime.datetime(2024, 3, 24),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint1_q2_team1,
+                "name": 'S1-Q2-2024',
+                "sprint_number": '1',
+                "quarter": '2',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 3, 25),
+                "end_date": datetime.datetime(2024, 4, 7),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint2_q2_team1,
+                "name": 'S2-Q2-2024',
+                "sprint_number": '2',
+                "quarter": '2',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 4, 15),
+                "end_date": datetime.datetime(2024, 4, 28),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint3_q2_team1,
+                "name": 'S3-Q2-2024',
+                "sprint_number": '3',
+                "quarter": '2',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 4, 29),
+                "end_date": datetime.datetime(2024, 5, 12),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint4_q2_team1,
+                "name": 'S4-Q2-2024',
+                "sprint_number": '4',
+                "quarter": '2',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 5, 13),
+                "end_date": datetime.datetime(2024, 5, 26),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint5_q2_team1,
+                "name": 'S5-Q2-2024',
+                "sprint_number": '5',
+                "quarter": '2',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 5, 27),
+                "end_date": datetime.datetime(2024, 6, 9),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint6_q2_team1,
+                "name": 'S6-Q2-2024',
+                "sprint_number": '6',
+                "quarter": '2',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 6, 10),
+                "end_date": datetime.datetime(2024, 6, 23),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint1_q3_team1,
+                "name": 'S1-Q3-2024',
+                "sprint_number": '1',
+                "quarter": '3',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 6, 24),
+                "end_date": datetime.datetime(2024, 7, 7),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint2_q3_team1,
+                "name": 'S2-Q3-2024',
+                "sprint_number": '2',
+                "quarter": '3',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 7, 8),
+                "end_date": datetime.datetime(2024, 7, 21),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint3_q3_team1,
+                "name": 'S3-Q3-2024',
+                "sprint_number": '3',
+                "quarter": '3',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 7, 22),
+                "end_date": datetime.datetime(2024, 8, 4),
+                "status": SprintStatus.FINISHED.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint4_q3_team1,
+                "name": 'S4-Q3-2024',
+                "sprint_number": '4',
+                "quarter": '3',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 8, 5),
+                "end_date": datetime.datetime(2024, 8, 18),
+                "status": SprintStatus.CURRENT.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint5_q3_team1,
+                "name": 'S5-Q3-2024',
+                "sprint_number": '5',
+                "quarter": '3',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 8, 19),
+                "end_date": datetime.datetime(2024, 9, 1),
+                "status": SprintStatus.FUTURE.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.sprint6_q3_team1,
+                "name": 'S6-Q3-2024',
+                "sprint_number": '6',
+                "quarter": '3',
+                "year": '2024',
+                "start_date": datetime.datetime(2024, 9, 2),
+                "end_date": datetime.datetime(2024, 9, 15),
+                "status": SprintStatus.FUTURE.value,
+                "target": 'COMPLETAR',
+                "team": self.team1_id
+            },
+            {
+                "_id": self.backlog_team2,
+                "name": 'Backlog',
+                "target": 'COMPLETAR',
+                "status": SprintStatus.ACTIVE.value,
+                "team": self.team2_id
+            },
+        ]
+        self.helper.post_to_collection("sprints", sprints)
+        print("populated sprints")

@@ -1,9 +1,8 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request
 from webargs import fields
 from webargs.flaskparser import use_args
 from bson import json_util
 import json
-from app.db_connection import mongo
 from app.services.google_auth import validate_credentials
 from app.services.token import generate_jwt
 from app.models.user import User
@@ -86,18 +85,3 @@ def sign_up(args):
     }
 
     return send_response(data, [], 201, **req_data)
-
-@users.route('/', methods=['GET'])
-def get_users():
-    try:
-        users = mongo.db.users.find({})
-        user_list = []
-        for user in users:
-            user_list.append({
-                "_id": str(user['_id']),
-                "username": user.get('username', 'Unknown'),
-                "profile_picture": user.get('picture', '')
-            })
-        return jsonify(user_list), 200
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500

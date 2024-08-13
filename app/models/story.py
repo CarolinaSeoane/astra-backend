@@ -8,11 +8,11 @@ from app.services.mongoHelper import MongoHelper
 
 class Type(Enum):
     BUGFIX = "Bugfix"
-    FEATURE = "Featue"
+    FEATURE = "Feature"
     DISCOVERY = "Discovery"
     DEPLOYMENT = "Deployments"
 
-class Type(Enum):
+class Priority(Enum):
     LOW = "Low"
     MEDIUM = "Medium"
     HIGH = "High"
@@ -44,7 +44,7 @@ class Story:
         self.team = team
 
     @classmethod
-    def get_stories_by_team_id(cls, team_id: ObjectId, view_type):
+    def get_stories_by_team_id(cls, team_id: ObjectId, view_type, **kwargs):
         '''
         returns [] if no stories are found for the given team_id
         '''
@@ -59,6 +59,21 @@ class Story:
             "team": { "$eq": team_id },
         }
 
+        # Add optional filters if provided in kwargs
+        # for key, value in kwargs.items():
+        #     print("%s == %s" % (key, value))
+
+        if 'assigned_to' in kwargs and kwargs['assigned_to']:
+            filter["assigned_to.username"] = kwargs['assigned_to']
+        if 'sprint' in kwargs and kwargs['sprint']:
+            filter["sprint.name"] = kwargs['sprint']
+        if 'epic' in kwargs and kwargs['epic']:
+            filter["epic.title"] = kwargs['epic']
+        if 'priority' in kwargs and kwargs['priority']:
+            filter["priority"] = kwargs['priority']
+        if 'type' in kwargs and kwargs['type']:
+            filter["type"] = kwargs['type']
+
         stories_list = list(mongo.db.stories.find(filter = filter, projection = projection))
         response = json_util.dumps(stories_list) # mongoDb doc to JSON-encoded string.
         stories = json.loads(response) # JSON-encoded string to Python list of dictionaries.
@@ -72,4 +87,13 @@ class Story:
 
     @classmethod
     def get_story_fields(cls):
-        return MongoHelper().get_collection('story_fields')
+        # return MongoHelper().get_collection('story_fields')
+        pipeline = [
+            {
+                '$group': {
+                    'section': '$section',
+                    'data': '$value'
+                }
+            }
+        ]
+        return MongoHelper().get_documents_grouped_by('story_fields', pipeline)

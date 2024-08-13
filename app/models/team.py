@@ -76,6 +76,10 @@ class Team:
     @classmethod
     def get_team_settings(cls, team_id):
         return cls.get_team(team_id)['team_settings']
+    
+    @classmethod
+    def get_base_permissions(cls):
+        return MongoHelper().get_collection('permissions')
 
     @classmethod
     def update_mandatory_fields(cls, team_id, settings):
@@ -88,3 +92,16 @@ class Team:
         filter = {'_id': team_id}
         update = {'$set': {'team_settings.sprint_set_up': set_up}}
         MongoHelper().update_collection('teams', filter, update)
+
+    @classmethod
+    def update_ceremonies_settings(cls, team_id, ceremonies_settings):
+        filter = {'_id': team_id}
+        update = {'$set': {'team_settings.ceremonies': ceremonies_settings}}
+        MongoHelper().update_collection('teams', filter, update)
+
+    @classmethod
+    def update_permissions(cls, team_id, permits):
+        filter = {'_id': team_id}
+        update = {'$set': {'team_settings.permits': permits}}
+        MongoHelper().update_collection('teams', filter, update)
+        

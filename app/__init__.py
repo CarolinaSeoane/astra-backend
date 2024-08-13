@@ -24,7 +24,7 @@ def create_app():
     print('Creating app...')
     app = Flask(__name__)   
     load_env_vars_onto_app(app, dotenv_path)
-    CORS(app, expose_headers='Authorization', support_credentials=True)
+    CORS(app, expose_headers='Authorization', support_credentials=True, )
   
     # Setup db connection
     print('Setting up db connection...')
@@ -47,20 +47,20 @@ def load_env_vars_onto_app(app, dotenv_path):
     for key, value in env_vars.items():
         app.config[key] = value
 
-#def dotenv_to_dict(dotenv_path):
-#    env_vars = {}
-#    with open(dotenv_path) as f:
-#        for line in f:
-#            key, value = line.split("=")
-#            env_vars[key] = value
-#    return env_vars
-
 def dotenv_to_dict(dotenv_path):
-    env_vars = {}
-    with open(dotenv_path) as f:
-        for line in f:
-            line = line.strip()
-            if line and not line.startswith('#'):
-                key, value = line.split('=', 1)
-                env_vars[key.strip()] = value.strip()
-    return env_vars
+   env_vars = {}
+   with open(dotenv_path) as f:
+       for line in f:
+           key, value = line.split("=")
+           env_vars[key] = value
+   return env_vars
+
+# def dotenv_to_dict(dotenv_path):
+#     env_vars = {}
+#     with open(dotenv_path) as f:
+#         for line in f:
+#             line = line.strip()
+#             if line and not line.startswith('#'):
+#                 key, value = line.split('=', 1)
+#                 env_vars[key.strip()] = value.strip()
+#     return env_vars

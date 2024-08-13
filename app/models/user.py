@@ -3,7 +3,6 @@ from bson import ObjectId
 from app.db_connection import mongo
 from app.services.mongoHelper import MongoHelper
 
-
 class User:
 
     def __init__(self, name, surname, username, email, profile_picture, teams=list(), _id=ObjectId()):
@@ -36,8 +35,7 @@ class User:
             "_id": { "$eq": ObjectId(_id) },
             "teams": { "$elemMatch": {"_id": { "$eq": team_id }}} 
         }
-        
-        return mongo.db.users.count_documents(filter) > 0 # TODO use mongoHelper
+        return MongoHelper().document_exists('users', filter)
     
     def save_user(self):
         mongo.db.users.insert_one(self.__dict__) # TODO use mongoHelper
