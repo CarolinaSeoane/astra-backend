@@ -20,20 +20,17 @@ def confirm_attendance(ceremony_id):
     user_id = data.get('user_id')
     justification = data.get('justification', "")
 
-    # Encuentra la ceremonia por ID
     ceremonies_collection = mongo.db.ceremonies
     ceremony = ceremonies_collection.find_one({"_id": ObjectId(ceremony_id)})
     if not ceremony:
         return jsonify({"error": "Ceremony not found"}), 404
 
-    # Añadir asistente a la ceremonia
     attendees = ceremony.get('attendees', [])
     attendees.append({
         "user_id": user_id,
         "justification": justification
     })
 
-    # Actualizar la ceremonia en la base de datos
     ceremonies_collection.update_one(
         {"_id": ObjectId(ceremony_id)},
         {"$set": {"attendees": attendees}}
