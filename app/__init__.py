@@ -9,7 +9,7 @@ from app.routes.index import index
 from app.routes.astra import astra
 from app.routes.users import users
 from app.routes.teams import teams
-
+from app.routes.post_its import post_its
 # TODO create custom logger
 
 def create_app():
@@ -36,7 +36,7 @@ def create_app():
     app.register_blueprint(astra, url_prefix='/astra')
     app.register_blueprint(users, url_prefix='/users')
     app.register_blueprint(teams, url_prefix='/teams')
-
+    app.register_blueprint(post_its, url_prefix='/post_its')
     return app
 
 def load_env_vars_onto_app(app, dotenv_path):
@@ -44,10 +44,20 @@ def load_env_vars_onto_app(app, dotenv_path):
     for key, value in env_vars.items():
         app.config[key] = value
 
+#def dotenv_to_dict(dotenv_path):
+#    env_vars = {}
+#    with open(dotenv_path) as f:
+#        for line in f:
+#            key, value = line.split("=")
+#            env_vars[key] = value
+#    return env_vars
+
 def dotenv_to_dict(dotenv_path):
     env_vars = {}
     with open(dotenv_path) as f:
         for line in f:
-            key, value = line.split("=")
-            env_vars[key] = value
+            line = line.strip()
+            if line and not line.startswith('#'):
+                key, value = line.split('=', 1)
+                env_vars[key.strip()] = value.strip()
     return env_vars
