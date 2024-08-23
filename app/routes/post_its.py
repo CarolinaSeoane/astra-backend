@@ -8,7 +8,7 @@ from bson import ObjectId
 
 post_its = Blueprint("post_its", __name__)
 
-# Rutas excluidas de la validación de usuario
+
 excluded_routes = []
 
 @post_its.before_request
@@ -22,15 +22,15 @@ def apply_validate_user_is_member_of_team():
 def get_post_its(args):
     team_id = args.get('team_id')
 
-    # Verifica si el team_id es válido
+
     if not team_id:
         return jsonify({"error": "team_id is required"}), 400
 
-    # Consulta de post-its por team_id
+
     post_its_cursor = mongo.db.post_its.find({"team_id": team_id})
     post_its = list(post_its_cursor)
 
-    # Transforma el ObjectId en string
+
     for post_it in post_its:
         post_it['_id'] = str(post_it['_id'])
 
@@ -41,9 +41,9 @@ def get_post_its(args):
 def add_post_it(args):
     content = args.get('content')
     category = args.get('category')
-    team_id = request.args.get('team_id')  # Obtener team_id desde la query string
+    team_id = request.args.get('team_id') 
 
-    # Validación de datos
+
     if not content or not category or not team_id:
         return jsonify({"error": "Content, category, and team_id are required"}), 400
 
@@ -63,6 +63,12 @@ def add_post_it(args):
 def update_post_it(args, post_it_id):
     content = args.get('content')
     category = args.get('category')
+    team_id = request.args.get('team_id')
+    if not team_id:
+        return jsonify({"errors": ["Missing team_id in query parameters"]}), 422
+
+    if not ObjectId.is_valid(post_it_id):
+        return jsonify({"error": "Invalid post_it_id"}), 400
 
     # Validación de datos
     if not content or not category:
@@ -83,11 +89,11 @@ def update_post_it(args, post_it_id):
 @post_its.route("/<post_it_id>", methods=['DELETE'])
 def delete_post_it(post_it_id):
     try:
-        # Verifica si el ID es un ObjectId válido
+
         if not ObjectId.is_valid(post_it_id):
             return jsonify({"error": "Invalid post_it_id"}), 400
         
-        # Elimina el post-it de la base de datos
+
         result = mongo.db.post_its.delete_one({"_id": ObjectId(post_it_id)})
         if result.deleted_count == 0:
             return jsonify({"error": "Post-It not found"}), 404
