@@ -41,17 +41,24 @@ def add_post_it(args):
     content = args.get('content')
     sprint_id = args.get('sprint_id')
     
+    print("contenido a guardar:" +  content)
+    print("print_id: " + sprint_id)
+
     # Validación de datos
     if not content or not sprint_id:
         return jsonify({"error": "Both content and sprint_id are required"}), 400
     
     new_post_it = PostIt(content=content, sprint_id=sprint_id)
-    
+    print("antes del try")
     # Inserción de nuevo post-it
-    try:
-        result = mongo.db.post_its.insert_one(new_post_it.to_dict())
-        new_post_it['_id'] = str(result.inserted_id)
-        return jsonify(new_post_it.to_dict()), 201
+    try:        
+        # Convertimos el objeto PostIt a un diccionario
+        post_it_dict = new_post_it.to_dict()
+        result = mongo.db.post_its.insert_one(post_it_dict)
+        post_it_dict['_id'] = str(result.inserted_id)  # Asignamos el _id al diccionario
+        print("guardado exitoso")
+        return jsonify(post_it_dict), 201  # Retornamos el diccionario
     except Exception as e:
+        print("Ocurrió una excepción:", str(e))  # Debugging: Ver el error exacto
         # Manejo de errores en la base de datos
         return jsonify({"error": str(e)}), 500
