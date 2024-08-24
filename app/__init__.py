@@ -10,6 +10,7 @@ from app.routes.astra import astra
 from app.routes.users import users
 from app.routes.teams import teams
 from app.routes.post_its import post_its
+from app.routes.ceremonies import ceremonies
 # TODO create custom logger
 
 def create_app():
@@ -37,6 +38,8 @@ def create_app():
     app.register_blueprint(users, url_prefix='/users')
     app.register_blueprint(teams, url_prefix='/teams')
     app.register_blueprint(post_its, url_prefix='/post_its')
+    app.register_blueprint(ceremonies, url_prefix='/ceremonies')
+    
     return app
 
 def load_env_vars_onto_app(app, dotenv_path):
