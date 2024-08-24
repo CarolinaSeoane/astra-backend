@@ -77,6 +77,7 @@ class Populate:
         self.populate_stories()
         self.populate_story_fields()
         self.populate_permissions()
+        self.populate_estimation_methods()
 
     def populate_organizations(self):
         organizations = [
@@ -229,7 +230,7 @@ class Populate:
                         "sprint_duration": "2", # weeks
                         "sprint_begins_on": "mon"
                     },
-                    "story_fields": ['title', 'description', 'creator', 'assigned_to', 'epic', 'sprint', 'points', 'type', 'estimation_method', 'tasks'],
+                    "story_fields": ['title', 'description', 'creator', 'assigned_to', 'epic', 'sprint', 'points', 'story_type', 'estimation_method', 'tasks'],
                     "permits": [
                         {
                             "role": "Product Owner",
@@ -327,7 +328,7 @@ class Populate:
                         "sprint_duration": "3", # weeks
                         "sprint_begins_on": "mon",
                     },
-                    "story_fields": ['title', 'description', 'acceptanceCriteria', 'creator', 'assigned_to', 'epic', 'sprint', 'points', 'tags', 'type', 'estimation_method', 'tasks'],
+                    "story_fields": ['title', 'description', 'acceptanceCriteria', 'creator', 'assigned_to', 'epic', 'sprint', 'points', 'tags', 'story_type', 'estimation_method', 'tasks'],
                     "permits": [
                         {
                             "role": "Product Owner",
@@ -410,7 +411,7 @@ class Populate:
                 "estimation": "5",
                 "tags": ["Buscador"],
                 "priority": "Medium",
-                "type": "Feature",
+                "story_type": "Feature",
                 "estimation_method": "Fibonacci",
                 "tasks": [
                     {
@@ -460,7 +461,7 @@ class Populate:
                 "estimation": "1",
                 "tags": ["UX", "Accesibilidad"],
                 "priority": "Medium",
-                "type": "Feature",
+                "story_type": "Feature",
                 "estimation_method": "Fibonacci",
                 "tasks": [
                     {
@@ -498,7 +499,7 @@ class Populate:
                 "estimation": "3",
                 "tags": ["QA", "Performance"],
                 "priority": "Medium",
-                "type": "Feature",
+                "story_type": "Feature",
                 "estimation_method": "Fibonacci",
                 "tasks": [
                     {
@@ -522,7 +523,8 @@ class Populate:
                 "modifiable": 0,
                 "description": 'The title of the story or task.',
                 "section": 'general',
-                "type": "input_field"
+                "type": "input_field",
+                "order": 1
             },
             {
                 "value": 'description',
@@ -530,7 +532,8 @@ class Populate:
                 "modifiable": 0,
                 "description": 'A detailed description of the story or task.',
                 "section": 'general',
-                "type": "text_area"
+                "type": "text_area",
+                "order": 2
             },
             {
                 "value": 'acceptanceCriteria',
@@ -546,7 +549,7 @@ class Populate:
                 "modifiable": 0,
                 "description": 'The person who created the story or task.',
                 "section": "users",
-                "type": "NA"
+                "type": "user"
             },
             {
                 "value": 'assigned_to',
@@ -562,7 +565,8 @@ class Populate:
                 "modifiable": 1,
                 "description": 'The larger body of work that this story or task belongs to.',
                 "section": 'general',
-                "type": "dropdown"
+                "type": "dropdown",
+                "order": 4
             },
             {
                 "value": 'sprint',
@@ -570,15 +574,17 @@ class Populate:
                 "modifiable": 0,
                 "description": 'The sprint in which the story or task is being worked on.',
                 "section": 'general',
-                "type": "dropdown"
+                "type": "dropdown",
+                "order": 5
             },
             {
-                "value": 'points',
-                "label": 'Story Points',
+                "value": 'estimation',
+                "label": 'Estimation',
                 "modifiable": 0,
                 "description": 'The estimated effort required to complete the story or task.',
-                "section": 'general',
-                "type": "dropdown"
+                "section": 'estimation',
+                "type": "select",
+                "order": 1
             },
             {
                 "value": 'tags',
@@ -594,15 +600,16 @@ class Populate:
                 "modifiable": 1,
                 "description": 'The importance level of the story or task.',
                 "section": 'additional_information',
-                "type": "dropdown"
+                "type": "select"
             },
             {
-                "value": 'type',
-                "label": 'Type',
+                "value": 'story_type',
+                "label": 'Story type',
                 "modifiable": 1,
                 "description": 'The classification of the story or task (e.g., bug, feature, chore).',
-                "section": 'additional_information',
-                "type": "select"
+                "section": 'general',
+                "type": "select",
+                "order": 3
             },
             {
                 "value": 'estimation_method',
@@ -610,7 +617,6 @@ class Populate:
                 "modifiable": 0,
                 "description": 'The method used to estimate the effort for the story or task.',
                 "section": 'hidden',
-                "type": "NA"
             },
             {
                 "value": 'tasks',
@@ -619,7 +625,16 @@ class Populate:
                 "description": 'The sub-tasks that need to be completed to finish the story.',
                 "section": 'tasks',
                 "type": "text_area"
-            }
+            },
+            {
+                "value": 'story_id',
+                "label": 'Story ID',
+                "modifiable": 0,
+                "description": 'The ID of the story.',
+                "section": 'general',
+                "type": "input_field",
+                "order": 0
+            },
         ]
         self.helper.post_to_collection("story_fields", story_fields)
         print("populated story_fields")
@@ -911,3 +926,24 @@ class Populate:
         ]
         self.helper.post_to_collection("sprints", sprints)
         print("populated sprints")
+    
+    def populate_estimation_methods(self):
+        estimation_methods = [
+            {
+                "label": "Fibonacci",
+                "key": "fibonacci",
+                "options": [1, 2, 3, 5, 8, 13, 21, 34]
+            },
+            {
+                "label": "Days",
+                "key": "days",
+            },
+            {
+                "label": "Sizes",
+                "key": "sizes",
+                "options": ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL']
+            },
+        ]
+        self.helper.post_to_collection("estimation_methods", estimation_methods)
+        print("populated estimation_methods")
+

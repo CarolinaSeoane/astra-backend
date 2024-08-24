@@ -10,7 +10,7 @@ class Type(Enum):
     BUGFIX = "Bugfix"
     FEATURE = "Feature"
     DISCOVERY = "Discovery"
-    DEPLOYMENT = "Deployments"
+    DEPLOYMENT = "Deployment"
 
 class Priority(Enum):
     LOW = "Low"
@@ -22,7 +22,7 @@ class Story:
 
     def __init__(self, title, description, acceptance_criteria, creator, assigned_to,
                  epic, sprint, estimation, tags, priority, attachments, comments,
-                 type, tasks, related_stories, story_id, team, _id=ObjectId()):
+                 story_type, tasks, related_stories, story_id, team, _id=ObjectId()):
         self.title = title
         self.description = description
         self.acceptance_criteria = acceptance_criteria
@@ -35,7 +35,7 @@ class Story:
         self.priority = priority
         self.attachments = attachments
         self.comments = comments
-        self.type = type
+        self.story_type = story_type
         self.tasks = tasks
         self.related_stories = related_stories
         self._id = _id
@@ -51,7 +51,7 @@ class Story:
         if view_type == 'kanban':
             projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.title', 'tasks.status'}          
         elif view_type == 'list':
-            projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.status', 'type', 'description'}          
+            projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.status', 'story_type', 'description'}          
         else:
             projection = None
 
@@ -71,8 +71,8 @@ class Story:
             filter["epic.title"] = kwargs['epic']
         if 'priority' in kwargs and kwargs['priority']:
             filter["priority"] = kwargs['priority']
-        if 'type' in kwargs and kwargs['type']:
-            filter["type"] = kwargs['type']
+        if 'story_type' in kwargs and kwargs['story_type']:
+            filter["story_type"] = kwargs['story_type']
 
         stories_list = list(mongo.db.stories.find(filter = filter, projection = projection))
         response = json_util.dumps(stories_list) # mongoDb doc to JSON-encoded string.
@@ -86,14 +86,12 @@ class Story:
             return stories
 
     @classmethod
-    def get_story_fields(cls):
-        # return MongoHelper().get_collection('story_fields')
-        pipeline = [
-            {
-                '$group': {
-                    'section': '$section',
-                    'data': '$value'
-                }
-            }
-        ]
-        return MongoHelper().get_documents_grouped_by('story_fields', pipeline)
+    def get_story_fields(cls, sections=False):
+        story_fields =  MongoHelper().get_documents_by('story_fields', sort={'order': 1})
+        if sections:
+            story_sections = {}
+            for story_field in story_fields:
+                sec = story_sections.setdefault(story_field["section"], [])
+                sec.append(story_field)
+            return story_sections
+        return story_fields

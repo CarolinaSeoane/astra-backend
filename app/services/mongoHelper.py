@@ -10,7 +10,7 @@ class MongoHelper:
         self.astra = mongo
 
     def get_collection(self, collection_name):
-        return self.get_document_by(collection_name, {})
+        return self.get_documents_by(collection_name, {})
     
     def get_document_by(self, collection_name, filter, sort=None):
         document = self.astra.db[collection_name].find_one(filter, sort=sort)
@@ -20,12 +20,6 @@ class MongoHelper:
     
     def get_documents_by(self, collection_name, filter=None, sort=None):
         documents = self.astra.db[collection_name].find(filter, sort=sort)
-        documents = json_util.dumps(documents)
-        documents = json.loads(documents)
-        return documents
-    
-    def get_documents_grouped_by(self, collection_name, group_by):
-        documents = self.astra.db[collection_name].aggregate(group_by)
         documents = json_util.dumps(documents)
         documents = json.loads(documents)
         return documents

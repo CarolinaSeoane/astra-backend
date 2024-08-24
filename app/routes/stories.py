@@ -2,6 +2,7 @@ from flask import Blueprint, g, request
 from webargs.flaskparser import use_args
 from webargs import fields
 import datetime
+import random
 
 from app.models.story import Story, Priority, Type
 from app.models.user import User
@@ -10,6 +11,7 @@ from app.routes.utils import validate_user_is_member_of_team
 from app.models.team import Team
 from app.models.sprint import Sprint
 from app.models.epic import Epic
+from app.models.settings import Settings
 
 
 stories = Blueprint("stories", __name__)
@@ -31,15 +33,16 @@ def apply_validate_user_is_member_of_team():
     'assigned_to': fields.Str(required=False),
     'epic': fields.Str(required=False),
     'priority': fields.Str(required=False),
-    'type': fields.Str(required=False),
+    'story_type': fields.Str(required=False),
     }, location='query')
 def stories_list(args, view_type):
     stories = Story.get_stories_by_team_id(g.team_id, view_type, **args)
     return send_response(stories, [], 200, **g.req_data)
 
 @stories.route("/fields", methods=['GET'])
-def story_fields():
-    fields = Story.get_story_fields()
+@use_args({"sections": fields.Boolean(required=False, missing=False)}, location='query')
+def story_fields(args):
+    fields = Story.get_story_fields(args["sections"])
     return send_response(fields, [], 200, **g.req_data)
 
 @stories.route("/filters", methods=['GET'])
@@ -49,7 +52,8 @@ def story_fields():
     'members': fields.Boolean(required=False, missing=True),
     'epics': fields.Boolean(required=False, missing=True),
     'priority': fields.Boolean(required=False, missing=True),
-    'type': fields.Boolean(required=False, missing=True),
+    'story_type': fields.Boolean(required=False, missing=True),
+    'estimation': fields.Boolean(required=False, missing=True),
     ## customization
     'quarter': fields.Str(required=False, missing=str(get_current_quarter(datetime.datetime.today()))),
     'year': fields.Str(required=False, missing=str(datetime.datetime.today().year)),
@@ -58,8 +62,10 @@ def filters(args):
     sprints_filter = []
     members_filter = []
     epics_filter = []
-    priorities = []
-    types = []
+    priority = []
+    story_type = []
+    estimation = []
+    filters = {}
     
     if args['sprints']:
         sprints = Sprint.get_sprints(g.team_id, args['quarter'], args['year'])
@@ -70,6 +76,11 @@ def filters(args):
                 'status': sprint['status']
             }
             sprints_filter.append(sprint_option)
+        
+        filters['sprint'] = {
+            'label': 'Sprint',
+            'options': sprints_filter
+        }
 
     if args['members'] or args['epics']:
         team = Team.get_team(g.team_id)
@@ -79,9 +90,17 @@ def filters(args):
         for member in members:
             member_option = {
                 'key': member['_id']['$oid'],
-                'label': member['username'] + (' (You)' if member['_id']['$oid'] == g._id else '')
-            }
+                'label': member['username'] + (' (You)' if member['_id']['$oid'] == g._id else ''),
+                'username': member['username'],
+                'profile_picture': member['profile_picture'],
+                'email': member['email'],
+            }     
             members_filter.append(member_option)
+        
+        filters['assigned_to'] = {
+            'label': 'Assigned to',
+            'options': members_filter
+        }       
 
     if args['epics']:
         org_id = team["organization"]['$oid']
@@ -94,39 +113,49 @@ def filters(args):
                 'team': epic['team']
             }
             epics_filter.append(epic_option)
-
-    if args['priority']:
-        priorities = [{'key': priority.value, 'label': priority.value} for priority in Priority]
-
-    if args['type']:
-        types = [{'key': _type.value, 'label': _type.value} for _type in Type]
-
-    filters = { 
-        'sprint': {
-            'label': 'Sprint',
-            'options': sprints_filter
-        },
-        'assigned_to': {
-            'label': 'Assigned to',
-            'options': members_filter
-        },
-        'epic': {
+        
+        filters['epic'] = {
             'label': 'Epic',
             'options': epics_filter
-        },
-        'priorities': {
+        }  
+
+    if args['priority']:
+        priority = [{'key': priority.value, 'label': priority.value} for priority in Priority]
+        filters['priority'] = {
             'label': 'Priority',
-            'options': priorities         
-        },
-        'types': {
-            'label': 'Type',
-            'options': types
-        }
-    }
+            'options': priority
+        }      
+
+    if args['story_type']:
+        story_type = [{'key': _type.value, 'label': _type.value} for _type in Type]
+        filters['story_type'] = {
+            'label': 'Story type',
+            'options': story_type
+        } 
+
+    if args['estimation']:
+        estimation_methods = team['team_settings']['sprint_set_up']['estimation_method']
+        try:
+            estimation_methods.remove('planning_poker')
+        except:
+            pass
+        estimation = Settings.get_estimation_method_options(estimation_methods[0])
+        filters['estimation'] = {
+            'label': estimation['label'],
+            'options': estimation['options']
+        } 
+
     return send_response(filters, [], 200, **g.req_data)
 
+@stories.route('/generate_id', methods=['GET'])
+def generate_story_id():
+    team_name = Team.get_team(g.team_id)['name'].replace(" ", "_").upper()
+    number = random.randint(1, 999999)
+    complete_number = str(number).rjust(6, '0')
 
+    story_id = team_name + "-" + complete_number
 
+    return send_response([story_id], [], 200, **g.req_data)
 
 
 
