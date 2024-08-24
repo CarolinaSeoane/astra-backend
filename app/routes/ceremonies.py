@@ -1,4 +1,4 @@
-from flask import Blueprint, request, jsonify
+from flask import Blueprint, request, jsonify, g
 from webargs.flaskparser import use_args
 from webargs import fields
 from bson import ObjectId
@@ -15,7 +15,6 @@ def apply_validate_user_is_member_of_team():
         return None
     return validate_user_is_member_of_team()
 
-# Ruta para crear una nueva ceremonia
 @ceremonies.route("/", methods=['POST'])
 @use_args({'name': fields.Str(required=True), 'start_time': fields.Str(required=True)}, location='json')
 def add_ceremony(args):
@@ -29,7 +28,8 @@ def add_ceremony(args):
     new_ceremony = {
         "name": name,
         "start_time": start_time,
-        "team_id": team_id
+        "team_id": team_id,
+        "attendees": []  
     }
 
     try:
@@ -39,7 +39,7 @@ def add_ceremony(args):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-# Ruta para actualizar la hora de una ceremonia
+
 @ceremonies.route("/<ceremony_id>/time", methods=['PUT'])
 @use_args({'new_time': fields.Str(required=True)}, location='json')
 def update_ceremony_time(args, ceremony_id):
@@ -61,5 +61,62 @@ def update_ceremony_time(args, ceremony_id):
             return jsonify({"error": "Ceremony not found"}), 404
         
         return jsonify({"message": "Ceremony time updated successfully"}), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@ceremonies.route("/<ceremony_id>/attendance", methods=['PUT'])
+def confirm_attendance(ceremony_id):
+    user_id = g.get('_id')  
+    if not user_id:
+        return jsonify({"error": "User ID is required"}), 400
+
+    confirmed = request.json.get('confirmed')
+    justification = request.json.get('justification')
+
+    if confirmed is None:
+        return jsonify({"error": "Confirmation status is required"}), 400
+
+    if not ObjectId.is_valid(ceremony_id):
+        return jsonify({"error": "Invalid ceremony_id"}), 400
+
+    try:
+        result = mongo.db.ceremonies.update_one(
+            {"_id": ObjectId(ceremony_id), "attendees.user_id": user_id},
+            {"$set": {
+                "attendees.$.confirmed": confirmed,
+                "attendees.$.justification": justification
+            }}
+        )
+
+        if result.matched_count == 0:
+            mongo.db.ceremonies.update_one(
+                {"_id": ObjectId(ceremony_id)},
+                {"$push": {
+                    "attendees": {
+                        "user_id": user_id,
+                        "confirmed": confirmed,
+                        "justification": justification
+                    }
+                }}
+            )
+
+        return jsonify({"message": "Attendance updated successfully"}), 200
+
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+    
+@ceremonies.route("/<ceremony_id>/attendance", methods=['GET'])
+def get_attendance(ceremony_id):
+    if not ObjectId.is_valid(ceremony_id):
+        return jsonify({"error": "Invalid ceremony_id"}), 400
+
+    try:
+        ceremony = mongo.db.ceremonies.find_one({"_id": ObjectId(ceremony_id)}, {"attendees": 1})
+        if not ceremony:
+            return jsonify({"error": "Ceremony not found"}), 404
+
+        attendees = ceremony.get('attendees', [])
+        return jsonify(attendees), 200
+
     except Exception as e:
         return jsonify({"error": str(e)}), 500
