@@ -79,6 +79,7 @@ def filters(args):
         
         filters['sprint'] = {
             'label': 'Sprint',
+            'value': 'sprint',
             'options': sprints_filter
         }
 
@@ -99,6 +100,7 @@ def filters(args):
         
         filters['assigned_to'] = {
             'label': 'Assigned to',
+            'value': 'assigned_to',
             'options': members_filter
         }       
 
@@ -116,6 +118,7 @@ def filters(args):
         
         filters['epic'] = {
             'label': 'Epic',
+            'value': 'epic',
             'options': epics_filter
         }  
 
@@ -123,6 +126,7 @@ def filters(args):
         priority = [{'key': priority.value, 'label': priority.value} for priority in Priority]
         filters['priority'] = {
             'label': 'Priority',
+            'value': 'priority',
             'options': priority
         }      
 
@@ -130,6 +134,7 @@ def filters(args):
         story_type = [{'key': _type.value, 'label': _type.value} for _type in Type]
         filters['story_type'] = {
             'label': 'Story type',
+            'value': 'story_type',
             'options': story_type
         } 
 
@@ -142,6 +147,7 @@ def filters(args):
         estimation = Settings.get_estimation_method_options(estimation_methods[0])
         filters['estimation'] = {
             'label': estimation['label'],
+            'value': 'estimation',
             'options': estimation['options']
         } 
 

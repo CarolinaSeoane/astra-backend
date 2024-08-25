@@ -624,7 +624,27 @@ class Populate:
                 "modifiable": 0,
                 "description": 'The sub-tasks that need to be completed to finish the story.',
                 "section": 'tasks',
-                "type": "text_area"
+                "type": "task",
+                "components": [
+                    {
+                        "value": 'task_0_title',
+                        "label": 'Task title',
+                        "modifiable": 0,
+                        "description": 'The title of the task.',
+                        "section": 'task',
+                        "type": "input_field",
+                        "order": 1
+                    },
+                    {
+                        "value": 'task_0_description',
+                        "label": 'Task description',
+                        "modifiable": 0,
+                        "description": 'A detailed description of the task.',
+                        "section": 'task',
+                        "type": "text_area",
+                        "order": 2
+                    },
+                ]
             },
             {
                 "value": 'story_id',
