@@ -1,6 +1,5 @@
 from enum import Enum
-from bson import ObjectId, json_util
-import json
+from bson import ObjectId
 
 from app.db_connection import mongo
 from app.utils import kanban_format, list_format
@@ -49,9 +48,9 @@ class Story:
         returns [] if no stories are found for the given team_id
         '''
         if view_type == 'kanban':
-            projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.title', 'tasks.status'}          
+            projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.title', 'tasks.status'}
         elif view_type == 'list':
-            projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.status', 'story_type', 'description'}          
+            projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.status', 'story_type', 'description'}
         else:
             projection = None
 
@@ -73,11 +72,11 @@ class Story:
             filter["priority"] = kwargs['priority']
         if 'story_type' in kwargs and kwargs['story_type']:
             filter["story_type"] = kwargs['story_type']
+        if 'story_id' in kwargs and kwargs['story_id']:
+            filter["story_id"] = kwargs['story_id']
 
-        stories_list = list(mongo.db.stories.find(filter = filter, projection = projection))
-        response = json_util.dumps(stories_list) # mongoDb doc to JSON-encoded string.
-        stories = json.loads(response) # JSON-encoded string to Python list of dictionaries.
-        
+        stories = MongoHelper().get_documents_by('stories', filter=filter, projection=projection)
+      
         if view_type == 'kanban':
             return kanban_format(stories)
         elif view_type == 'list':
@@ -95,3 +94,12 @@ class Story:
                 sec.append(story_field)
             return story_sections
         return story_fields
+    
+    @classmethod
+    def is_story_id_taken(cls, story_id):
+        filter = {'story_id': story_id}
+        return MongoHelper().document_exists("stories", filter)
+    
+    @classmethod
+    def create_story(cls, story_document):
+        return MongoHelper().create_document('stories', story_document)

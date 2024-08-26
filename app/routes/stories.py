@@ -5,7 +5,6 @@ import datetime
 import random
 
 from app.models.story import Story, Priority, Type
-from app.models.user import User
 from app.utils import send_response, get_current_quarter
 from app.routes.utils import validate_user_is_member_of_team
 from app.models.team import Team
@@ -34,6 +33,7 @@ def apply_validate_user_is_member_of_team():
     'epic': fields.Str(required=False),
     'priority': fields.Str(required=False),
     'story_type': fields.Str(required=False),
+    'story_id': fields.Str(required=False)
     }, location='query')
 def stories_list(args, view_type):
     stories = Story.get_stories_by_team_id(g.team_id, view_type, **args)
@@ -155,148 +155,24 @@ def filters(args):
 
 @stories.route('/generate_id', methods=['GET'])
 def generate_story_id():
-    team_name = Team.get_team(g.team_id)['name'].replace(" ", "_").upper()
-    number = random.randint(1, 999999)
-    complete_number = str(number).rjust(6, '0')
 
-    story_id = team_name + "-" + complete_number
+    def generate_new_id():
+        number = random.randint(1, 999999)
+        complete_number = str(number).rjust(6, '0')
+        team_name = Team.get_team(g.team_id)['name'].replace(" ", "_").upper()
+        return team_name + "-" + complete_number
+    
+    story_id = generate_new_id()
+    while Story.is_story_id_taken(story_id):
+        story_id = generate_new_id()
 
     return send_response([story_id], [], 200, **g.req_data)
 
-
-
-
-
-
-
-
-
-# Validacion para la creacion de stories
-assigned_to_args = {
-    '_id': fields.Str(required=True),
-    'username': fields.Str(required=True),
-    'profile_picture': fields.Str(required=True)
-}
-
-story_args = {
-    'title': fields.Str(required=True),
-    'description': fields.Str(required=True),
-    'assigned_to': fields.Nested(assigned_to_args, required=False),
-    'acceptance_criteria': fields.Str(required=True),
-    'epic': fields.Str(required=True),
-    'sprint': fields.Int(required=True),
-    'story_points': fields.Int(required=True),
-    'tags': fields.List(fields.Str(), required=True),
-    'priority': fields.Str(required=True),
-    'estimation_method': fields.Str(required=True),
-    'type': fields.Str(required=True),
-    'tasks': fields.List(fields.Str(), required=True), 
-    'story_id': fields.Str(required=True),
-    'estimation': fields.Str(required=True),
-    'team': fields.Str(required=True)
-}
-@stories.route('/create', methods=['POST'])
-@use_args(story_args, location='json')
-def create_story(args):
-    current_user = g._id
-
-    if args.get('assigned_to'):
-        if not User.is_user_in_team(args['assigned_to']['_id'], g.team_id):
-            return send_response([], ['Assigned user is not part of the team'], 400, **g.req_data)
-    # else: assigned_to isnt required!
-
-    # creator_data = {
-    #     "_id": current_user['sub'],
-    #     "username": current_user.get('username', 'Unknown'),
-    #     "profile_picture": current_user.get('picture', '')
-    # }
-
-    # # Obtener los datos completos de las tareas 
-    # tasks = []
-    # for task_id in args.get('tasks', []):
-    #     print("Task ID:", task_id)
-    #     task = mongo.db.tasks.find_one({"_id": ObjectId(task_id)})
-    #     if task:
-    #         tasks.append({
-    #             "title": task.get("title"),
-    #             "description": task.get("description"),
-    #             "app": task.get("app"),
-    #             "status": task.get("status")
-    #         })
-    #     else:
-    #         return jsonify({"message": f"Task with ID {task_id} not found."}), 404
-
-    # # Obtener los datos de las epics
-    # epic_id = args.get('epic')
-    # if ObjectId.is_valid(epic_id):
-    #     epic_id = ObjectId(epic_id)
-    #     epic_data = mongo.db.epics.find_one({"_id": epic_id})
-    #     if epic_data:
-    #         epic_info = {
-    #             "_id": epic_data["_id"],  
-    #             "title": epic_data.get("title")
-    #         }
-    #     else:
-    #         return jsonify({"message": f"Epic with ID {epic_id} not found."}), 404
-    # else:
-    #     return jsonify({"message": f"Invalid epic ID {epic_id}."}), 400
-
-    # # Obtener los datos del equipo
-    # team_id = args.get('team')
-    # if team_id and ObjectId.is_valid(team_id):
-    #     team_id = ObjectId(team_id)
-    #     team_data = mongo.db.teams.find_one({"_id": team_id})
-    #     if team_data:
-    #         team_info = {
-    #             "_id": team_data["_id"],  
-    #             "name": team_data.get("name")
-    #         }
-    #     else:
-    #         return jsonify({"message": f"Team with ID {team_id} not found."}), 404
-    # else:
-    #     team_info = None
-        
-    # story_data = {
-    #     'title': args['title'],
-    #     'description': args.get('description', ''),
-    #     'acceptance_criteria': args.get('acceptance_criteria', ''),
-    #     'sprint': args.get('sprint', []),
-    #     'story_points': args.get('story_points', 0),
-    #     'tags': args.get('tags', []),
-    #     'priority': args.get('priority', ''),
-    #     'estimation_method': args.get('estimation_method', ''),
-    #     'type': args.get('type', ''),
-    #     'story_id': args.get('story_id', ''),
-    #     'estimation': args.get('estimation', 0),
-    #     'creator': creator_data,
-    #     'assigned_to': assigned_to_users,
-    #     'tasks': tasks,
-    #     'epic': epic_info,
-    #     'team': team_info
-    # }
-
-    # result = mongo.db.stories.insert_one(story_data)
-    # created_story = mongo.db.stories.find_one({"_id": result.inserted_id})
-    # created_story = convert_objectid_to_str(created_story)
-    # return jsonify(created_story), 201
-    return send_response(['ok'], [], 200, **g.req_data)
-
-
-# @stories.route('/', methods=['GET'])
-# def get_stories():
-#     try:
-#         current_user = get_current_user(request)
-        
-#         if current_user is None:
-#             return jsonify({"message": "Unauthorized"}), 401
- 
-#         stories_cursor = mongo.db.stories.find({"creator._id": current_user['sub']})
-#         stories_list = [convert_objectid_to_str(story) for story in stories_cursor]
-#         return jsonify(stories_list), 200
-#     except Exception as e:
-#         print(f"Exception: {e}")  
-#         return jsonify({"error": str(e)}), 500
-
+@stories.route('/create_story', methods=['POST'])
+def create_story():
+    print(f"la story es: {request.json}")
+    Story.create_story(request.json)
+    return send_response("stories", [], 200, **g.req_data)
 
 # Validacion para la actualizacion de stories
 # update_story_args = {

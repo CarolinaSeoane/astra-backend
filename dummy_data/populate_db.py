@@ -3,6 +3,7 @@ import datetime
 
 from dummy_data.db_helper import DBHelper
 from app.models.sprint import SprintStatus
+from app.models.story import Type, Priority
 
 class Populate:
     org1_id = ObjectId()
@@ -386,7 +387,7 @@ class Populate:
     def populate_stories(self):
         stories = [
             {
-                "story_id": "ARGO-1",
+                "story_id": "ARGO-000001",
                 "title": "Mejorar el buscador teniendo en cuenta búsquedas recientes",
                 "description": "Como usuario quiero que el buscador tenga en cuenta mis búsquedas recientes para obtener resultados más precisos",
                 "acceptance_criteria": "La búsqueda devuelve resultados más precisos según el historial del usuario",
@@ -410,8 +411,8 @@ class Populate:
                 },
                 "estimation": "5",
                 "tags": ["Buscador"],
-                "priority": "Medium",
-                "story_type": "Feature",
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "tasks": [
                     {
@@ -436,7 +437,7 @@ class Populate:
                 "team": self.team1_id
             },
             {
-                "story_id": "ARGO-2",
+                "story_id": "ARGO-000002",
                 "title": "Cambiar color del botón de Buscar",
                 "description": "Como usuario quiero que el color del boton del buscador cambie para que sea accesible",
                 "acceptance_criteria": "El botón de Buscar se visualiza con el color #1D4ED8",
@@ -460,8 +461,8 @@ class Populate:
                 },
                 "estimation": "1",
                 "tags": ["UX", "Accesibilidad"],
-                "priority": "Medium",
-                "story_type": "Feature",
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "tasks": [
                     {
@@ -474,7 +475,7 @@ class Populate:
                 "team": self.team1_id
             },
             {
-                "story_id": "ARGO-3",
+                "story_id": "ARGO-000003",
                 "title": "Solicitar pruebas de performance del MS user",
                 "description": "Como usuario quiero que el microservicio pase por pruebas de performance para asegurar su buen rendimiento",
                 "acceptance_criteria": "Pruebas de performance pasan con resultado satisfactorio",
@@ -498,8 +499,8 @@ class Populate:
                 },
                 "estimation": "3",
                 "tags": ["QA", "Performance"],
-                "priority": "Medium",
-                "story_type": "Feature",
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "tasks": [
                     {
@@ -507,6 +508,43 @@ class Populate:
                         "description": "Crear ticket para pedir prueba de performance",
                         "app": "MS USER",
                         "status": "Done"
+                    }
+                ],
+                "team": self.team1_id # change to _id?
+            },
+            {
+                "story_id": "ARGO-000004",
+                "title": "Arreglar click en botón Buscar",
+                "description": "Como usuario quiero que al hacer click en el botón buscar no aumente el tamaño del input field",
+                "acceptance_criteria": "El tamaño del input field permanece constante",
+                "creator": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2
+                },
+                "assigned_to": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1
+                },
+                "epic": {
+                    "_id": self.epic1_id,
+                    "title": self.epic1_title,
+                },
+                "sprint": {
+                    "_id": self.sprint5_q3_team1,
+                    "name": "S5-Q3-2024"
+                },
+                "estimation": "1",
+                "tags": ["Frontend"],
+                "priority": Priority.LOW.value,
+                "story_type": Type.BUGFIX.value,
+                "estimation_method": "Fibonacci",
+                "tasks": [
+                    {
+                        "title": "Modificar componente buscador",
+                        "description": "Eliminar propiedad de width en el componente buscador",
+                        "status": "Doing"
                     }
                 ],
                 "team": self.team1_id # change to _id?

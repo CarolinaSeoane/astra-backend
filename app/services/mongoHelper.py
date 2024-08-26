@@ -18,8 +18,8 @@ class MongoHelper:
         document = json.loads(document)
         return document
     
-    def get_documents_by(self, collection_name, filter=None, sort=None):
-        documents = self.astra.db[collection_name].find(filter, sort=sort)
+    def get_documents_by(self, collection_name, filter=None, sort=None, projection=None):
+        documents = self.astra.db[collection_name].find(filter, sort=sort, projection=projection)
         documents = json_util.dumps(documents)
         documents = json.loads(documents)
         return documents
@@ -47,3 +47,8 @@ class MongoHelper:
         returns False if no documents match the query
         '''
         return self.astra.db[collection_name].count_documents(filter) > 0
+    
+    def create_document(self, collection_name, document):
+        return self.astra.db[collection_name].insert_one(document)
+    
+
