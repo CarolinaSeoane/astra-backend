@@ -168,11 +168,14 @@ def generate_story_id():
 
     return send_response([story_id], [], 200, **g.req_data)
 
-@stories.route('/create_story', methods=['POST'])
+@stories.route('/create', methods=['POST'])
 def create_story():
-    print(f"la story es: {request.json}")
-    Story.create_story(request.json)
-    return send_response("stories", [], 200, **g.req_data)
+    story = request.json
+    story['team'] = g.team_id
+    print(f"la story es: {story}")
+    # Add team id
+    Story.create_story(story)
+    return send_response(["stories"], [], 201, **g.req_data)
 
 # Validacion para la actualizacion de stories
 # update_story_args = {
