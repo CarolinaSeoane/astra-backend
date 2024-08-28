@@ -67,9 +67,17 @@ def update_ceremony_time(args, ceremony_id):
 @ceremonies.route("/<ceremony_id>/attendance", methods=['PUT'])
 def confirm_attendance(ceremony_id):
     user_id = g.get('_id')  
-    if not user_id:
-        return jsonify({"error": "User ID is required"}), 400
 
+    if not user_id:
+        return jsonify({"error": "User ID"}), 400
+    
+    user_id = ObjectId(user_id)
+    
+    user = mongo.db.users.find_one({"_id": user_id}, {"username": 1})
+    if not user:
+        return jsonify({"error": "User not found"}), 404
+
+    username = user.get('username')
     confirmed = request.json.get('confirmed')
     justification = request.json.get('justification')
 
@@ -84,7 +92,8 @@ def confirm_attendance(ceremony_id):
             {"_id": ObjectId(ceremony_id), "attendees.user_id": user_id},
             {"$set": {
                 "attendees.$.confirmed": confirmed,
-                "attendees.$.justification": justification
+                "attendees.$.justification": justification,
+                "attendees.$.username": username
             }}
         )
 
@@ -94,6 +103,7 @@ def confirm_attendance(ceremony_id):
                 {"$push": {
                     "attendees": {
                         "user_id": user_id,
+                        "username": username,
                         "confirmed": confirmed,
                         "justification": justification
                     }

@@ -46,7 +46,7 @@ def add_post_it(args):
 
     if not content or not category or not team_id:
         return jsonify({"error": "Content, category, and team_id are required"}), 400
-
+   
     new_post_it = PostIt(content=content, team_id=team_id, category=category)
 
     try:
@@ -64,9 +64,10 @@ def update_post_it(args, post_it_id):
     content = args.get('content')
     category = args.get('category')
     team_id = request.args.get('team_id')
+    
     if not team_id:
         return jsonify({"errors": ["Missing team_id in query parameters"]}), 422
-
+    
     if not ObjectId.is_valid(post_it_id):
         return jsonify({"error": "Invalid post_it_id"}), 400
 
@@ -76,7 +77,7 @@ def update_post_it(args, post_it_id):
 
     try:
         result = mongo.db.post_its.update_one(
-            {"_id": ObjectId(post_it_id)},
+            {"_id": ObjectId(post_it_id), "team_id": team_id},
             {"$set": {"content": content, "category": category}}
         )
         if result.matched_count == 0:
@@ -100,4 +101,5 @@ def delete_post_it(post_it_id):
         
         return jsonify({"message": "Post-It deleted successfully"}), 200
     except Exception as e:
+        print(f"Error: {str(e)}")
         return jsonify({"error": str(e)}), 500
