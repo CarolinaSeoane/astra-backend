@@ -25,7 +25,7 @@ def create_app():
     app = Flask(__name__)   
     load_env_vars_onto_app(app, dotenv_path)
     CORS(app, expose_headers='Authorization', support_credentials=True, )
-  
+
     # Setup db connection
     print('Setting up db connection...')
     app.config['MONGO_URI'] = os.getenv('MONGO_URI')
