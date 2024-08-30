@@ -231,7 +231,7 @@ class Populate:
                         "sprint_duration": "2", # weeks
                         "sprint_begins_on": "mon"
                     },
-                    "story_fields": ['title', 'description', 'creator', 'assigned_to', 'epic', 'sprint', 'points', 'story_type', 'estimation_method', 'tasks'],
+                    "story_fields": ['title', 'description', 'creator', 'assigned_to', 'epic', 'sprint', 'estimation', 'story_type', 'estimation_method', 'tasks'],
                     "permits": [
                         {
                             "role": "Product Owner",
@@ -329,7 +329,7 @@ class Populate:
                         "sprint_duration": "3", # weeks
                         "sprint_begins_on": "mon",
                     },
-                    "story_fields": ['title', 'description', 'acceptanceCriteria', 'creator', 'assigned_to', 'epic', 'sprint', 'points', 'tags', 'story_type', 'estimation_method', 'tasks'],
+                    "story_fields": ['title', 'description', 'acceptanceCriteria', 'creator', 'assigned_to', 'epic', 'sprint', 'estimation', 'tags', 'story_type', 'estimation_method', 'tasks'],
                     "permits": [
                         {
                             "role": "Product Owner",
@@ -630,7 +630,7 @@ class Populate:
                 "modifiable": 1,
                 "description": 'Keywords associated with the story or task for categorization.',
                 "section": 'additional_information',
-                "type": "select"
+                "type": "hidden"
             },
             {
                 "value": 'priority',
@@ -648,13 +648,6 @@ class Populate:
                 "section": 'general',
                 "type": "select",
                 "order": 3
-            },
-            {
-                "value": 'estimation_method',
-                "label": 'Estimation Method',
-                "modifiable": 0,
-                "description": 'The method used to estimate the effort for the story or task.',
-                "section": 'hidden',
             },
             {
                 "value": 'tasks',
@@ -692,6 +685,14 @@ class Populate:
                 "section": 'general',
                 "type": "input_field",
                 "order": 0
+            },
+            {
+                "value": 'estimation_method',
+                "label": 'Estimation method',
+                "modifiable": 0,
+                "description": 'The method used to estimate the effort for the story or task.',
+                "section": 'estimation',
+                "type": "hidden"
             },
         ]
         self.helper.post_to_collection("story_fields", story_fields)

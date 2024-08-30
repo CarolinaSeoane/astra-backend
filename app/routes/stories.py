@@ -11,6 +11,7 @@ from app.models.team import Team
 from app.models.sprint import Sprint
 from app.models.epic import Epic
 from app.models.settings import Settings
+from app.models.task import Task
 
 
 stories = Blueprint("stories", __name__)
@@ -172,10 +173,25 @@ def generate_story_id():
 def create_story():
     story = request.json
     story['team'] = g.team_id
-    print(f"la story es: {story}")
-    # Add team id
-    Story.create_story(story)
-    return send_response(["stories"], [], 201, **g.req_data)
+
+    tasks = Task.format(story)
+    story['tasks'] = tasks
+
+    try:
+        response = Story.create_story(story)
+        print(response)
+        return send_response(["stories"], [], 201, **g.req_data)
+    except Exception as e:
+        return send_response([], [f"Failed to create story: {e}"], 500, **g.req_data)
+
+
+
+
+
+
+
+
+
 
 # Validacion para la actualizacion de stories
 # update_story_args = {
