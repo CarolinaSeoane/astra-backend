@@ -1,4 +1,4 @@
-from flask import Blueprint, g, request
+from flask import Blueprint, g, request,jsonify
 from webargs import fields
 from webargs.flaskparser import use_args
 
@@ -6,7 +6,9 @@ from app.models.team import Team
 from app.models.user import User
 from app.utils import send_response
 from app.routes.utils import validate_user_is_member_of_team
-
+from app.db_connection import mongo
+from datetime import datetime
+from bson import ObjectId
 
 teams = Blueprint('teams', __name__)
 
@@ -167,3 +169,33 @@ def permissions():
     return send_response(permissions, [], 200, **g.req_data)
 
 # @teams.route('/update_member_role/<team_id>/<member_id>', methods=['PUT'])
+@teams.route('/future_ceremonies', methods=['GET'])
+def future_ceremonies():
+    now = datetime.utcnow()
+
+    try:
+        # Obtener ceremonias futuras de la base de datos
+        future_ceremonies_cursor = mongo.db.ceremonies.find({
+            'date': {'$gt': now}
+        })
+        
+        # Convertir el cursor a lista de dicts
+        future_ceremonies_list = []
+        for ceremony in future_ceremonies_cursor:
+            # Convertir la fecha a una cadena en formato ISO
+            ceremony_date = ceremony['date']
+            if isinstance(ceremony_date, datetime):
+                ceremony_date = ceremony_date.isoformat()
+            else:
+                # Si 'date' no es un datetime, manejar como una cadena
+                ceremony_date = str(ceremony_date)
+            
+            future_ceremonies_list.append({
+                'name': ceremony['name'],
+                'date': ceremony_date,
+                'time': ceremony.get('time', 'N/A')
+            })
+        
+        return jsonify(future_ceremonies_list), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
