@@ -23,23 +23,44 @@ class Sprint:
         self.team: team
     
     @classmethod
-    def get_sprints(cls, team_id, quarter, year):
+    def get_sprints(cls, team_id, quarter, year, future):
         '''
         returns None if the team has no sprints
         '''
-        filter = {
-            '$or': [
-                {
-                    'team': ObjectId(team_id),
-                    'quarter': quarter, 
-                    'year': year
-                },
-                {
-                    'team': ObjectId(team_id),
-                    'name': 'Backlog'
-                },
-            ]
-        }
+        filter = {}
+        
+        if future:
+            filter = {
+                '$or': [
+                    {
+                        'team': ObjectId(team_id),
+                        'status': SprintStatus.CURRENT.value
+                    },
+                    {
+                        'team': ObjectId(team_id),
+                        'status': SprintStatus.FUTURE.value
+                    },
+                    {
+                        'team': ObjectId(team_id),
+                        'name': 'Backlog'
+                    },
+                ]
+            }
+        else:
+            filter = {
+                '$or': [
+                    {
+                        'team': ObjectId(team_id),
+                        'quarter': quarter, 
+                        'year': year
+                    },
+                    {
+                        'team': ObjectId(team_id),
+                        'name': 'Backlog'
+                    },
+                ]
+            }
+        
         sort = {'start_date': 1}
         documents = MongoHelper().get_documents_by('sprints', filter, sort)
 

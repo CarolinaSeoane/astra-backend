@@ -4,6 +4,8 @@ import datetime
 from dummy_data.db_helper import DBHelper
 from app.models.sprint import SprintStatus
 from app.models.story import Type, Priority
+from app.models.epic import Color
+from app.models.member import Role
 
 class Populate:
     org1_id = ObjectId()
@@ -77,6 +79,7 @@ class Populate:
         self.populate_epics()
         self.populate_stories()
         self.populate_story_fields()
+        self.populate_epic_fields()
         self.populate_permissions()
         self.populate_estimation_methods()
 
@@ -234,11 +237,11 @@ class Populate:
                     "story_fields": ['title', 'description', 'creator', 'assigned_to', 'epic', 'sprint', 'estimation', 'story_type', 'estimation_method', 'tasks'],
                     "permits": [
                         {
-                            "role": "Product Owner",
+                            "role": Role.PRODUCT_OWNER.value,
                             "options": ["edit_story", "add_team_members", "join_standup", "all_time_metrics"]
                         },
                         {
-                            "role": "Developer",
+                            "role": Role.DEV.value,
                             "options": ["create_story", "edit_story"]
                         }
                     ]
@@ -249,7 +252,7 @@ class Populate:
                         "username": self.username1,
                         "email": "carolina.b.seoane@gmail.com",
                         "profile_picture": self.pfp1,
-                        "role": "Developer",
+                        "role": Role.DEV.value,
                         # "date": self.user1_id.generation_time
                     },
                     {
@@ -257,7 +260,7 @@ class Populate:
                         "username": self.username2,
                         "email": "seoane.m.b@gmail.com",
                         "profile_picture": self.pfp2,
-                        "role": "Scrum Master",
+                        "role": Role.SCRUM_MASTER.value,
                         # "date": self.user2_id.generation_time
                     },
                     {
@@ -265,7 +268,7 @@ class Populate:
                         "username": self.username3,
                         "email": "msaenz@gmail.com",
                         "profile_picture": self.pfp3,
-                        "role": "Developer",
+                        "role": Role.DEV.value,
                         # "date": self.user2_id.generation_time
                     },
                     {
@@ -273,7 +276,7 @@ class Populate:
                         "username": self.username4,
                         "email": "juan.pol@gmail.com",
                         "profile_picture": self.pfp4,
-                        "role": "Developer",
+                        "role": Role.DEV.value,
                         # "date": self.user2_id.generation_time
                     },
                     {
@@ -281,7 +284,7 @@ class Populate:
                         "username": self.username5,
                         "email": "melisa_leon@gmail.com",
                         "profile_picture": self.pfp5,
-                        "role": "Developer",
+                        "role": Role.DEV.value,
                         # "date": self.user2_id.generation_time
                     },
                     {
@@ -289,7 +292,7 @@ class Populate:
                         "username": self.username6,
                         "email": "pepilombardo@gmail.com",
                         "profile_picture": self.pfp6,
-                        "role": "Developer",
+                        "role": Role.DEV.value,
                         # "date": self.user2_id.generation_time
                     },
                     {
@@ -297,7 +300,7 @@ class Populate:
                         "username": self.username7,
                         "email": "nic.justo@gmail.com",
                         "profile_picture": self.pfp7,
-                        "role": "Developer",
+                        "role": Role.DEV.value,
                         # "date": self.user2_id.generation_time
                     },
                 ]
@@ -332,11 +335,11 @@ class Populate:
                     "story_fields": ['title', 'description', 'acceptanceCriteria', 'creator', 'assigned_to', 'epic', 'sprint', 'estimation', 'tags', 'story_type', 'estimation_method', 'tasks'],
                     "permits": [
                         {
-                            "role": "Product Owner",
+                            "role": Role.PRODUCT_OWNER.value,
                             "options": ["edit_story", "delete_story", "join_standup", "all_time_metrics"]
                         },
                         {
-                            "role": "Developer",
+                            "role": Role.DEV.value,
                             "options": ["create_story", "edit_story"]
                         }
                     ]
@@ -347,7 +350,7 @@ class Populate:
                         "username": self.username1,
                         "email": "carolina.b.seoane@gmail.com",
                         "profile_picture": self.pfp1,
-                        "role": "Scrum Master",
+                        "role": Role.SCRUM_MASTER.value,
                         "date": self.user1_id.generation_time
                     }
                 ]
@@ -366,8 +369,9 @@ class Populate:
                     "_id": self.team1_id,
                     "name": "Argo",
                 },
-                "priority": "High",
-                "organization": self.org1_id
+                "priority": Priority.HIGH.value,
+                "organization": self.org1_id,
+                "color": Color.YELLOW.value
             },
             {
                 "_id": self.epic2_id,
@@ -377,8 +381,9 @@ class Populate:
                     "_id": self.team2_id,
                     "name": "Flyers",
                 },
-                "priority": "High",
-                "organization": self.org1_id
+                "priority": Priority.HIGH.value,
+                "organization": self.org1_id,
+                "color": Color.PURPLE.value
             }
         ]
         self.helper.post_to_collection("epics", epics)
@@ -575,7 +580,7 @@ class Populate:
             },
             {
                 "value": 'acceptanceCriteria',
-                "label": 'Acceptance Criteria',
+                "label": 'Acceptance criteria',
                 "modifiable": 1,
                 "description": 'The conditions that must be met for the story to be accepted.',
                 "section": 'additional_information',
@@ -698,10 +703,66 @@ class Populate:
         self.helper.post_to_collection("story_fields", story_fields)
         print("populated story_fields")
 
+    def populate_epic_fields(self):
+        epic_fields = [
+            {
+                "value": 'title',
+                "label": 'Title',
+                "modifiable": 0,
+                "description": 'The title of the epic.',
+                "section": 'general',
+                "type": "input_field",
+                "order": 1
+            },
+            {
+                "value": 'description',
+                "label": 'Description',
+                "modifiable": 0,
+                "description": 'A detailed description of the epic.',
+                "section": 'general',
+                "type": "text_area",
+                "order": 2
+            },
+            {
+                "value": 'creator',
+                "label": 'Creator',
+                "modifiable": 0,
+                "description": 'The person who created the story or task.',
+                "section": "users",
+                "type": "user"
+            },
+            # {
+            #     "value": 'assigned_to',
+            #     "label": 'Assigned To',
+            #     "modifiable": 0,
+            #     "description": 'The person responsible for completing the story or task.',
+            #     "section": 'users',
+            #     "type": "dropdown"
+            # },
+            {
+                "value": 'priority',
+                "label": 'Priority',
+                "modifiable": 1,
+                "description": 'The importance level of the epic.',
+                "section": 'general',
+                "type": "select"
+            },
+            {
+                "value": 'epic_color',
+                "label": 'Color',
+                "modifiable": 1,
+                "description": 'The color associated to the epic.',
+                "section": 'general',
+                "type": "select"
+            },
+        ]
+        self.helper.post_to_collection("epic_fields", epic_fields)
+        print("populated epic_fields")
+
     def populate_permissions(self):
         permissions = [{
             'options': [{
-                "role": "Product Owner",
+                "role": Role.PRODUCT_OWNER.value,
                 "actions": [
                     {
                         "value": "edit_story",
@@ -725,7 +786,7 @@ class Populate:
                     }
                 ]
             }, {
-                "role": "Developer",
+                "role": Role.DEV.value,
                 "actions": [
                     {
                         "value": "create_story",

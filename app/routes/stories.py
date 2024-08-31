@@ -56,8 +56,9 @@ def story_fields(args):
     'story_type': fields.Boolean(required=False, missing=True),
     'estimation': fields.Boolean(required=False, missing=True),
     ## customization
-    'quarter': fields.Str(required=False, missing=str(get_current_quarter(datetime.datetime.today()))),
-    'year': fields.Str(required=False, missing=str(datetime.datetime.today().year)),
+    'quarter': fields.Str(required=False, missing=str(get_current_quarter(datetime.datetime.today()))), # affects sprints (TODO: should affect epics too!!!!)
+    'year': fields.Str(required=False, missing=str(datetime.datetime.today().year)), # affects sprints (TODO: should affect epics too!!!!)
+    'future': fields.Str(required=False, missing=False), # affects sprints (TODO: should affect epics too!!!!)
     }, location='query')
 def filters(args):
     sprints_filter = []
@@ -69,7 +70,7 @@ def filters(args):
     filters = {}
     
     if args['sprints']:
-        sprints = Sprint.get_sprints(g.team_id, args['quarter'], args['year'])
+        sprints = Sprint.get_sprints(g.team_id, args['quarter'], args['year'], args['future'])
         for sprint in sprints:
             sprint_option = {
                 'key': sprint['_id']['$oid'],
@@ -179,8 +180,7 @@ def create_story():
 
     try:
         response = Story.create_story(story)
-        print(response)
-        return send_response(["stories"], [], 201, **g.req_data)
+        return send_response([response.acknowledged], [], 201, **g.req_data)
     except Exception as e:
         return send_response([], [f"Failed to create story: {e}"], 500, **g.req_data)
 
