@@ -134,18 +134,10 @@ ceremonies_settings_args = {
     "standup": fields.Nested(ceremony_args, required=True),
     "retrospective": fields.Nested(ceremony_args, required=True)
 }
-@teams.route('/ceremonies_frequency/<team_id>', methods=['PUT'])
+@teams.route('/ceremonies_frequency', methods=['PUT'])
 @use_args(ceremonies_settings_args, location='json')
-def update_ceremonies_frequency(args, team_id):
-    try:
-        team_id = ObjectId(team_id)
-    except:
-        return send_response([], [f"Team id {team_id} is not valid"], 403, **g.req_data)
-    
-    if not User.is_user_in_team(g._id, team_id):
-        return send_response([], ["Forbidden. User is not authorized to access this resource"], 403, **g.req_data)
-
-    Team.update_ceremonies_settings(team_id, args)
+def update_ceremonies_frequency(args):
+    Team.update_ceremonies_settings(g.team_id, args)
     return send_response([], [], 200, **g.req_data)
 
 permit_args = {
@@ -155,6 +147,7 @@ permit_args = {
 permissions_args = {
     'permits': fields.List(fields.Nested(permit_args), required=True)
 }
+
 @teams.route('/permissions', methods=['PUT'])
 @use_args(permissions_args, location='json')
 def update_permissions(args):
@@ -165,5 +158,3 @@ def update_permissions(args):
 def permissions():
     permissions = Team.get_base_permissions()
     return send_response(permissions, [], 200, **g.req_data)
-
-# @teams.route('/update_member_role/<team_id>/<member_id>', methods=['PUT'])

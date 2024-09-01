@@ -34,13 +34,18 @@ def list_format(stories_dict):
         total_tasks = 0
         tasks_completed = 0
 
-        for task in story['tasks']:
+        for task in story.get('tasks', []):
             total_tasks += 1
             if task['status'] == Status.DONE.value:
                 tasks_completed += 1
 
-        story['completeness'] = round(tasks_completed/total_tasks * 100)
-        story.pop('tasks')
+        try:
+            completness = round(tasks_completed/total_tasks * 100)
+            story.pop('tasks')
+        except Exception:
+            completness = 0
+
+        story['completeness'] = completness
     return stories_dict
 
 

@@ -1,5 +1,7 @@
 from enum import Enum
 
+from app.services.mongoHelper import MongoHelper
+
 
 class Estimation(Enum):
     FIBONACCI = "Fibonacci"
@@ -18,3 +20,11 @@ class Settings:
         self.estimation_method = estimation_method
         self.mandatory_fields = mandatory_fields
         self.permits = permits
+
+    @classmethod
+    def get_estimation_method_options(cls, estimation_method):
+        '''
+        returns None if estimation_method is not found and dict if found
+        '''
+        return MongoHelper().get_document_by('estimation_methods', {'key': estimation_method})
+
