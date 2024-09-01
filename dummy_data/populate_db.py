@@ -6,6 +6,7 @@ from app.models.sprint import SprintStatus
 from app.models.story import Type, Priority
 from app.models.epic import Color
 from app.models.member import Role
+from app.models.task import Status
 
 class Populate:
     org1_id = ObjectId()
@@ -332,7 +333,7 @@ class Populate:
                         "sprint_duration": "3", # weeks
                         "sprint_begins_on": "mon",
                     },
-                    "story_fields": ['title', 'description', 'acceptanceCriteria', 'creator', 'assigned_to', 'epic', 'sprint', 'estimation', 'tags', 'story_type', 'estimation_method', 'tasks'],
+                    "story_fields": ['title', 'description', 'acceptance_criteria', 'creator', 'assigned_to', 'epic', 'sprint', 'estimation', 'tags', 'story_type', 'estimation_method', 'tasks'],
                     "permits": [
                         {
                             "role": Role.PRODUCT_OWNER.value,
@@ -365,25 +366,35 @@ class Populate:
                 "_id": self.epic1_id,
                 "title": self.epic1_title,
                 "description": "Mejorar la precision del buscador para mejorar la experiencia de los usuarios.",
-                "team": {
-                    "_id": self.team1_id,
-                    "name": "Argo",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1
                 },
                 "priority": Priority.HIGH.value,
+                "epic_color": Color.YELLOW.value,
+                "acceptance_criteria": "El 90% de las pruebas son positivas.",
+                "business_value": "Si el buscador es más preciso, los usuarios van a utilizarlo más.",
+                "team": self.team1_id,
                 "organization": self.org1_id,
-                "color": Color.YELLOW.value
+                "status": Status.DOING.value,
             },
             {
                 "_id": self.epic2_id,
                 "title": self.epic2_title,
                 "description": "Migrar el schema Ordenes a MongoDB",
-                "team": {
-                    "_id": self.team2_id,
-                    "name": "Flyers",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1
                 },
                 "priority": Priority.HIGH.value,
+                "epic_color": Color.GREEN.value,
+                "acceptance_criteria": "100% del schema migrado exitosamente.",
+                "business_value": "MongoDB permitirá reducir el tiempo de las consultas, haciendo la aplicación más rápida, lo que generará una mejor experiencia de los usuarios.",
+                "team": self.team2_id,
                 "organization": self.org1_id,
-                "color": Color.PURPLE.value
+                "status": Status.DOING.value,
             }
         ]
         self.helper.post_to_collection("epics", epics)
@@ -424,19 +435,19 @@ class Populate:
                         "title": "Revisar implementacion de libreria",
                         "description": "Ajustar parametros de la libreria de busqueda",
                         "app": "GOOGLE-SEARCH",
-                        "status": "Doing"
+                        "status": Status.DOING.value
                     },
                     {
                         "title": "Guardar busquedas recientes en cache",
                         "description": "Guardar las busquedas de las ultimas 24 horas en cache",
                         "app": "GOOGLE-SEARCH",
-                        "status": "Done"
+                        "status": Status.DONE.value
                     },
                     {
                         "title": "Agregar parametro de precision al endpoint /search",
                         "description": "Agregar parametro precision como entrada que tome un int",
                         "app": "GOOGLE-SEARCH",
-                        "status": "Done"
+                        "status": Status.DONE.value
                     }
                 ],
                 "team": self.team1_id
@@ -474,7 +485,7 @@ class Populate:
                         "title": "Modificar valor de font-color",
                         "description": "En el archivo de configuración modificar el valor de la propiedad font-color",
                         "app": "GOOGLE-UI",
-                        "status": "Not Started"
+                        "status": Status.NOT_STARTED.value
                     }
                 ],
                 "team": self.team1_id
@@ -512,7 +523,7 @@ class Populate:
                         "title": "Solicitar pruebas de performance para GET /user/id",
                         "description": "Crear ticket para pedir prueba de performance",
                         "app": "MS USER",
-                        "status": "Done"
+                        "status": Status.DONE.value
                     }
                 ],
                 "team": self.team1_id # change to _id?
@@ -549,7 +560,7 @@ class Populate:
                     {
                         "title": "Modificar componente buscador",
                         "description": "Eliminar propiedad de width en el componente buscador",
-                        "status": "Doing"
+                        "status": Status.DOING.value
                     }
                 ],
                 "team": self.team1_id # change to _id?
@@ -579,7 +590,7 @@ class Populate:
                 "order": 2
             },
             {
-                "value": 'acceptanceCriteria',
+                "value": 'acceptance_criteria',
                 "label": 'Acceptance criteria',
                 "modifiable": 1,
                 "description": 'The conditions that must be met for the story to be accepted.',
@@ -596,7 +607,7 @@ class Populate:
             },
             {
                 "value": 'assigned_to',
-                "label": 'Assigned To',
+                "label": 'Assigned to',
                 "modifiable": 0,
                 "description": 'The person responsible for completing the story or task.',
                 "section": 'users',
@@ -649,7 +660,7 @@ class Populate:
                 "value": 'story_type',
                 "label": 'Story type',
                 "modifiable": 1,
-                "description": 'The classification of the story or task (e.g., bug, feature, chore).',
+                "description": 'The classification of the story.',
                 "section": 'general',
                 "type": "select",
                 "order": 3
@@ -699,6 +710,7 @@ class Populate:
                 "section": 'estimation',
                 "type": "hidden"
             },
+            # Add hidden values? team, status, etc?
         ]
         self.helper.post_to_collection("story_fields", story_fields)
         print("populated story_fields")
@@ -731,30 +743,41 @@ class Populate:
                 "section": "users",
                 "type": "user"
             },
-            # {
-            #     "value": 'assigned_to',
-            #     "label": 'Assigned To',
-            #     "modifiable": 0,
-            #     "description": 'The person responsible for completing the story or task.',
-            #     "section": 'users',
-            #     "type": "dropdown"
-            # },
             {
                 "value": 'priority',
                 "label": 'Priority',
-                "modifiable": 1,
+                "modifiable": 0,
                 "description": 'The importance level of the epic.',
                 "section": 'general',
-                "type": "select"
+                "type": "select",
+                "order": 4
             },
             {
                 "value": 'epic_color',
                 "label": 'Color',
-                "modifiable": 1,
+                "modifiable": 0,
                 "description": 'The color associated to the epic.',
                 "section": 'general',
-                "type": "select"
+                "type": "select",
+                "order": 3
             },
+            {
+                "value": 'acceptance_criteria',
+                "label": 'Acceptance criteria',
+                "modifiable": 0,
+                "description": 'The conditions that must be met for the epic to be accepted.',
+                "section": 'additional_information',
+                "type": "text_area"
+            },
+            {
+                "value": 'business_value',
+                "label": 'Business value',
+                "modifiable": 0,
+                "description": 'Benefit that this epic brings to the business.',
+                "section": 'additional_information',
+                "type": "text_area"
+            },
+            # team, org, status
         ]
         self.helper.post_to_collection("epic_fields", epic_fields)
         print("populated epic_fields")

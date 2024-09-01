@@ -12,8 +12,8 @@ class MongoHelper:
     def get_collection(self, collection_name):
         return self.get_documents_by(collection_name, {})
     
-    def get_document_by(self, collection_name, filter, sort=None):
-        document = self.astra.db[collection_name].find_one(filter, sort=sort)
+    def get_document_by(self, collection_name, filter, sort=None, projection=None):
+        document = self.astra.db[collection_name].find_one(filter, sort=sort, projection=projection)
         document = json_util.dumps(document)
         document = json.loads(document)
         return document

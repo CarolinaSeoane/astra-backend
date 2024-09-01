@@ -109,6 +109,7 @@ def filters(args):
     if args['epics']:
         org_id = team["organization"]['$oid']
         epics = Epic.get_epics_from_organization(org_id)
+        # print(epics)
         
         for epic in epics:
             epic_option = {

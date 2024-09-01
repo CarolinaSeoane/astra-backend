@@ -104,4 +104,9 @@ class Team:
         filter = {'_id': team_id}
         update = {'$set': {'team_settings.permits': permits}}
         MongoHelper().update_collection('teams', filter, update)
+    
+    @classmethod
+    def get_organization(cls, team_id):
+        return MongoHelper().get_document_by('teams', {'_id': ObjectId(team_id)}, projection={'organization'})['organization']
+
         
