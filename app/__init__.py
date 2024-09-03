@@ -28,8 +28,10 @@ def create_app():
   
     # Setup db connection
     print('Setting up db connection...')
-    app.config['MONGO_URI'] = os.getenv('MONGO_URI')
-    mongo.init_app(app) 
+    # app.config['MONGO_URI'] = os.getenv('MONGO_URI')
+    app.config['MONGO_URI'] = "mongodb+srv://matias:astra-utn@cluster0.kytik4p.mongodb.net/astra?retryWrites=true&w=majority&appName=Cluster0"
+
+    mongo.init_app(app)
 
     # Register blueprints
     app.register_blueprint(index, url_prefix='/')
