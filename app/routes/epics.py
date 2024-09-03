@@ -2,6 +2,7 @@ from flask import Blueprint, request, g
 from webargs.flaskparser import use_args
 from webargs import fields
 from bson import ObjectId
+from math import ceil
 
 from app.utils import send_response
 from app.models.epic import Epic, Color
@@ -79,6 +80,27 @@ def filters(args):
         }   
 
     return send_response(filters, [], 200, **g.req_data)
+
+@epics.route("/get_epic_count_by_sprint", methods=['GET'])
+@use_args({"sprint_id": fields.Str(required=True)}, location='query')
+def get_epic_count_by_sprint(args):
+    cursor = Epic.get_count_by_sprint(args['sprint_id'], g.team_id)
+    cursor_list = list(cursor)
+    results = []
+    total = 0
+    for doc in cursor_list:
+        total += doc['count']
+        print(doc)
+    
+    for doc in cursor_list:
+        per = ceil(doc['count'] * 100 / total)
+        epic_info = {
+            "name": doc['_id'],
+            "value": doc['count'],
+            "percentage": f"{per}%"
+        }
+        results.append(epic_info)
+    return send_response(results, [], 200, **g.req_data)
 
 
 # Validación para la actualización de epics

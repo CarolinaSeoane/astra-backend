@@ -1,4 +1,4 @@
-from bson import json_util
+from bson import ObjectId, json_util
 import json
 
 from app.db_connection import mongo
@@ -51,4 +51,6 @@ class MongoHelper:
     def create_document(self, collection_name, document):
         return self.astra.db[collection_name].insert_one(document)
     
-
+    def aggregate(self, collection_name, match, group):
+        pipeline = [{"$match": match}, {"$group": group}]
+        return self.astra.db[collection_name].aggregate(pipeline)
