@@ -1,39 +1,15 @@
 from flask import request, g
-from flask_socketio import SocketIO
+
 from app.services.token import validate_jwt
 from app.utils import send_response
-from flask_cors import CORS
+
 from app import create_app
-from socketio_manager import socketio
+
 app = create_app()
 
-# Initialize SocketIO
-socketio.init_app(app)
-
-CORS(app)
-# Define your SocketIO event handlers
-@socketio.on('connect')
-def handle_connect():
-    print('Client connected')
-
-@socketio.on('disconnect')
-def handle_disconnect():
-    print('Client disconnected')
-
-@socketio.on('update_postit')
-def handle_update_postit(data):
-    #socketio.emit('postit_updated', data, broadcast=True)
-    socketio.emit('postit_updated', data)
-@socketio.on('delete_postit')
-def handle_delete_postit(data):
-    #socketio.emit('postit_deleted', data, broadcast=True)
-    socketio.emit('postit_deleted', data)
-@socketio.on('add_postit')
-def handle_add_postit(data):
-    #socketio.emit('postit_added', data, broadcast=True)
-    socketio.emit('postit_added', data)
 if __name__ == "__main__":
     app.run(debug=True)
+
 
 excluded_routes = [
     '/users',

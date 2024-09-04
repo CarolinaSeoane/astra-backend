@@ -22,7 +22,8 @@ def create_app():
 
     # Creating flask app and loading env vars
     print('Creating app...')
-    app = Flask(__name__)   
+    app = Flask(__name__)  
+     
     load_env_vars_onto_app(app, dotenv_path)
     CORS(app, expose_headers='Authorization', support_credentials=True, )
 
