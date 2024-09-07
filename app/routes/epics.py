@@ -90,7 +90,6 @@ def get_epic_count_by_sprint(args):
     total = 0
     for doc in cursor_list:
         total += doc['count']
-        print(doc)
     
     for doc in cursor_list:
         per = ceil(doc['count'] * 100 / total)

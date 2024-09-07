@@ -65,3 +65,13 @@ class Sprint:
         documents = MongoHelper().get_documents_by('sprints', filter, sort)
 
         return documents[1:] + [documents[0]] # Send first element (backlog) to the back
+
+    @classmethod
+    def get_velocity(cls, team_id):
+        filter = {
+            "team": { "$eq": team_id },
+            "name": { "$ne": "Backlog" }
+        }
+        sort = {'sprint_number': 1}
+        projection = {"name", "target", "completed"}
+        return MongoHelper().get_documents_by("sprints", filter=filter, sort=sort, projection=projection)

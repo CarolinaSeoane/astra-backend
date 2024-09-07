@@ -909,7 +909,6 @@ class Populate:
             {
                 "_id": self.backlog_team1,
                 "name": 'Backlog',
-                "target": 'COMPLETAR',
                 "status": SprintStatus.ACTIVE.value,
                 "team": self.team1_id
             },
@@ -923,7 +922,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 1, 1),
                 "end_date": datetime.datetime(2024, 1, 14),
                 "status": SprintStatus.FINISHED.value,
-                "target": 'COMPLETAR',
+                "target": '97',
+                "completed": "105",
                 "team": self.team1_id
             },
             {
@@ -935,7 +935,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 1, 15),
                 "end_date": datetime.datetime(2024, 1, 28),
                 "status": SprintStatus.FINISHED.value,
-                "target": 'COMPLETAR',
+                "target": '103',
+                "completed": "88",
                 "team": self.team1_id
             },
             {
@@ -947,7 +948,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 1, 29),
                 "end_date": datetime.datetime(2024, 2, 11),
                 "status": SprintStatus.FINISHED.value,
-                "target": 'COMPLETAR',
+                "target": '102',
+                "completed": "102",
                 "team": self.team1_id
             },
             {
@@ -959,7 +961,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 2, 12),
                 "end_date": datetime.datetime(2024, 2, 25),
                 "status": SprintStatus.FINISHED.value,
-                "target": 'COMPLETAR',
+                "target": '95',
+                "completed": "100",
                 "team": self.team1_id
             },
             {
@@ -971,7 +974,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 2, 26),
                 "end_date": datetime.datetime(2024, 3, 10),
                 "status": SprintStatus.FINISHED.value,
-                "target": 'COMPLETAR',
+                "target": '90',
+                "completed": "94",
                 "team": self.team1_id
             },
             {
@@ -983,7 +987,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 3, 11),
                 "end_date": datetime.datetime(2024, 3, 24),
                 "status": SprintStatus.FINISHED.value,
-                "target": 'COMPLETAR',
+                "target": '110',
+                "completed": "100",
                 "team": self.team1_id
             },
             {
@@ -995,7 +1000,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 3, 25),
                 "end_date": datetime.datetime(2024, 4, 7),
                 "status": SprintStatus.FINISHED.value,
-                "target": 'COMPLETAR',
+                "target": '97',
+                "completed": "105",
                 "team": self.team1_id
             },
             {
@@ -1007,7 +1013,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 4, 15),
                 "end_date": datetime.datetime(2024, 4, 28),
                 "status": SprintStatus.FINISHED.value,
-                "target": 'COMPLETAR',
+                "target": '107',
+                "completed": "89",
                 "team": self.team1_id
             },
             {
@@ -1019,7 +1026,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 4, 29),
                 "end_date": datetime.datetime(2024, 5, 12),
                 "status": SprintStatus.FINISHED.value,
-                "target": 'COMPLETAR',
+                "target": '98',
+                "completed": "98",
                 "team": self.team1_id
             },
             {
@@ -1031,7 +1039,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 5, 13),
                 "end_date": datetime.datetime(2024, 5, 26),
                 "status": SprintStatus.FINISHED.value,
-                "target": 'COMPLETAR',
+                "target": '93',
+                "completed": "100",
                 "team": self.team1_id
             },
             {
@@ -1043,7 +1052,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 5, 27),
                 "end_date": datetime.datetime(2024, 6, 9),
                 "status": SprintStatus.FINISHED.value,
-                "target": 'COMPLETAR',
+                "target": '95',
+                "completed": "99",
                 "team": self.team1_id
             },
             {
@@ -1055,7 +1065,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 6, 10),
                 "end_date": datetime.datetime(2024, 6, 23),
                 "status": SprintStatus.FINISHED.value,
-                "target": 'COMPLETAR',
+                "target": '103',
+                "completed": "100",
                 "team": self.team1_id
             },
             {
@@ -1067,7 +1078,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 6, 24),
                 "end_date": datetime.datetime(2024, 7, 7),
                 "status": SprintStatus.FINISHED.value,
-                "target": 'COMPLETAR',
+                "target": '97',
+                "completed": "97",
                 "team": self.team1_id
             },
             {
@@ -1079,7 +1091,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 7, 8),
                 "end_date": datetime.datetime(2024, 7, 21),
                 "status": SprintStatus.FINISHED.value,
-                "target": 'COMPLETAR',
+                "target": '100',
+                "completed": "103",
                 "team": self.team1_id
             },
             {
@@ -1091,7 +1104,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 7, 22),
                 "end_date": datetime.datetime(2024, 8, 4),
                 "status": SprintStatus.FINISHED.value,
-                "target": 'COMPLETAR',
+                "target": '94',
+                "completed": "103",
                 "team": self.team1_id
             },
             {
@@ -1103,7 +1117,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 8, 5),
                 "end_date": datetime.datetime(2024, 8, 18),
                 "status": SprintStatus.CURRENT.value,
-                "target": 'COMPLETAR',
+                "target": '85',
+                "completed": "80",
                 "team": self.team1_id
             },
             {
@@ -1115,7 +1130,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 8, 19),
                 "end_date": datetime.datetime(2024, 9, 1),
                 "status": SprintStatus.FUTURE.value,
-                "target": 'COMPLETAR',
+                "target": '97',
+                "completed": "109",
                 "team": self.team1_id
             },
             {
@@ -1127,13 +1143,13 @@ class Populate:
                 "start_date": datetime.datetime(2024, 9, 2),
                 "end_date": datetime.datetime(2024, 9, 15),
                 "status": SprintStatus.FUTURE.value,
-                "target": 'COMPLETAR',
+                "target": '115',
+                "completed": "109",
                 "team": self.team1_id
             },
             {
                 "_id": self.backlog_team2,
                 "name": 'Backlog',
-                "target": 'COMPLETAR',
                 "status": SprintStatus.ACTIVE.value,
                 "team": self.team2_id
             },
