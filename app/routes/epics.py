@@ -82,9 +82,9 @@ def filters(args):
     return send_response(filters, [], 200, **g.req_data)
 
 @epics.route("/get_epic_count_by_sprint", methods=['GET'])
-@use_args({"sprint_id": fields.Str(required=True)}, location='query')
+@use_args({"sprint_name": fields.Str(required=True)}, location='query')
 def get_epic_count_by_sprint(args):
-    cursor = Epic.get_count_by_sprint(args['sprint_id'], g.team_id)
+    cursor = Epic.get_count_by_sprint(args['sprint_name'], g.team_id)
     cursor_list = list(cursor)
     results = []
     total = 0

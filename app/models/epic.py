@@ -60,9 +60,9 @@ class Epic:
         return [doc['value'] for doc in docs]
     
     @classmethod
-    def get_count_by_sprint(cls, sprint_id, team_id):
+    def get_count_by_sprint(cls, sprint_name, team_id):
         match = {
-            "sprint._id": ObjectId(sprint_id),
+            "sprint.name": sprint_name,
             "team": team_id
         }
         group = {
