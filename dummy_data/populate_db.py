@@ -255,6 +255,10 @@ class Populate:
                 "_id": self.team1_id,
                 "name": "Argo",
                 "organization": self.org1_id,
+                "google_meet_config": {
+                    "meeting_code": "",
+                    "meeting_space": ""
+                },
                 "team_settings": {
                     "ceremonies": {
                         "planning": {
@@ -366,7 +370,11 @@ class Populate:
             {
                 "_id": self.team2_id,
                 "name": "Flyers",
-                "organization": self.org1_id, 
+                "organization": self.org1_id,
+                "google_meet_config": {
+                    "meeting_code": "",
+                    "meeting_space": ""
+                },
                 "team_settings": {
                     "ceremonies": {
                         "planning": {

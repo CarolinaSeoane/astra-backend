@@ -12,7 +12,13 @@ from app.utils import send_response
 users = Blueprint('users', __name__)
 
 @users.route('/login', methods=['POST'])
-@use_args({'credential': fields.Str(required=True)}, location='json')
+@use_args({'access_token': fields.Str(required=True),
+           'authuser': fields.Str(required=True),
+           'expires_in': fields.Integer(required=True),
+           'prompt': fields.Str(required=True),
+           'scope': fields.Str(required=True),
+           'hd': fields.Str(required=False),
+           'token_type': fields.Str(required=True)}, location='json')
 def handle_login(args):
     # TODO: handle already existing jwt?
 
@@ -22,7 +28,7 @@ def handle_login(args):
     }
     
     try:
-        id_info = validate_credentials(args['credential'])
+        id_info = validate_credentials(args['access_token'])
     except ValueError as err:
         # Invalid token 
         print(err)

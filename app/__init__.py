@@ -11,6 +11,7 @@ from app.routes.users import users
 from app.routes.teams import teams
 from app.routes.epics import epics
 from app.routes.tasks import tasks
+from app.routes.ceremonies import ceremonies
 # TODO create custom logger
 
 def create_app():
@@ -39,6 +40,7 @@ def create_app():
     app.register_blueprint(teams, url_prefix='/teams')
     app.register_blueprint(epics, url_prefix='/epics')
     app.register_blueprint(tasks, url_prefix='/tasks')
+    app.register_blueprint(ceremonies, url_prefix='/ceremonies')
 
     return app
 
