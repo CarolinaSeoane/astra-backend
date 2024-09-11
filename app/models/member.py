@@ -6,7 +6,10 @@ class Role(Enum):
     PRODUCT_OWNER = "Product Owner"
     DEV = "Developer"
 
-
+class MemberStatus(Enum):
+    ACTIVE = "Active"
+    PENDING = "Pending"
+    
 class Member:
 
     def __init__(self, user, role, date):

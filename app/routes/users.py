@@ -3,6 +3,7 @@ from webargs import fields
 from webargs.flaskparser import use_args
 from bson import json_util
 import json
+
 from app.services.google_auth import validate_credentials
 from app.services.token import generate_jwt
 from app.models.user import User

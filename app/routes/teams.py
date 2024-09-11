@@ -1,6 +1,7 @@
 from flask import Blueprint, g, request
 from webargs import fields
 from webargs.flaskparser import use_args
+from bson import ObjectId
 
 from app.models.team import Team
 from app.models.user import User
@@ -13,6 +14,10 @@ teams = Blueprint('teams', __name__)
 excluded_routes = [
     {
         'route': '/teams/permissions',
+        'methods': ['GET']
+    },
+    {
+        'route': '/teams/join',
         'methods': ['GET']
     }
 ]
@@ -51,7 +56,7 @@ def add_team_member(args):
         print(f"adding user: {user}")
         if user is None:
             return send_response([], [f"No user found with email {new_member_email}"], 404, **g.req_data)
-        if user['_id']['$oid'] in [member['_id']['$oid'] for member in members]: # TODO change id to _id
+        if Team.is_user_part_of_team(user['_id']['$oid'], members):
             return send_response([], [f"User {new_member_email} is already a member of the team"], 400, **g.req_data)
         
         # users in team have: user_id, username, email, profile_picture, role, date
@@ -158,3 +163,31 @@ def update_permissions(args):
 def permissions():
     permissions = Team.get_base_permissions()
     return send_response(permissions, [], 200, **g.req_data)
+
+@teams.route('/join/<team_id>', methods=['GET'])
+def join_team_by_id(team_id):
+    try:
+        ObjectId(team_id)
+    except:
+        return send_response([], ['Invalid ID format'], 400, **g.req_data)
+
+    team_to_join = Team.get_team(team_id)
+    
+    if not team_to_join:
+        return send_response([], [f"Couldn't find a team with ID {team_id}"], 404, **g.req_data)
+    
+    team_members = Team.get_team_members(team_id)
+
+    if Team.is_user_part_of_team(g._id, team_members):
+        return send_response([], [f"User {g.email} is already a member of the team"], 400, **g.req_data)
+
+    user = User.get_user_by({'email': g.email})
+    user_obj = User(**user)
+    success = Team.add_member(team_id, user_obj, None)
+    
+    if success:
+        return send_response([], [], 202, **g.req_data)
+    
+    return send_response([], [f"Error adding user {g.email} to team"], 500, **g.req_data)
+
+

@@ -2,18 +2,19 @@ from bson import ObjectId
 from datetime import datetime
 import pytz
 
+
 from app.models.user import User
 from app.services.mongoHelper import MongoHelper
-
-
+from app.models.member import MemberStatus
 class Team:
 
-    def __init__(self, _id, name, organization, team_settings, members):
+    def __init__(self, _id, name, organization, team_settings, member_status, members):
         self._id = _id
         self.name = name
         self.organization = organization
         self.team_settings = team_settings
         self.members = members
+        self.member_status = member_status
 
     @classmethod
     def get_team(cls, team_id):
@@ -33,7 +34,7 @@ class Team:
         return team['members']
     
     @classmethod
-    def add_member(cls, team_id, new_user, role):
+    def add_member(cls, team_id, new_user, role, status=MemberStatus.PENDING.value):
         current_time = datetime.now(pytz.utc)
         team_member = {
             "_id": new_user._id,
@@ -41,6 +42,7 @@ class Team:
             "email": new_user.email,
             "profile_picture": new_user.profile_picture,
             "role": role,
+            "status": status
             # "date": {
             #     "$date": current_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + '+00:00'
             # }
@@ -108,5 +110,7 @@ class Team:
     @classmethod
     def get_organization(cls, team_id):
         return MongoHelper().get_document_by('teams', {'_id': ObjectId(team_id)}, projection={'organization'})['organization']
-
-        
+    
+    @classmethod
+    def is_user_part_of_team(cls, user_id, team_members):
+        return user_id in [member['_id']['$oid'] for member in team_members] # TODO change id to _id

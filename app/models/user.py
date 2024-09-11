@@ -2,6 +2,7 @@ from bson import ObjectId
 
 from app.db_connection import mongo
 from app.services.mongoHelper import MongoHelper
+from app.models.member import MemberStatus
 
 class User:
 
@@ -26,15 +27,15 @@ class User:
         '''
         returns False if user is not part of the team
         '''
-        # query = {
-        #     "_id": ObjectId(_id),
-        #     "teams._id": team_id
-        # }
-
         filter = {
-            "_id": { "$eq": ObjectId(_id) },
-            "teams": { "$elemMatch": {"_id": { "$eq": team_id }}} 
+            "_id": ObjectId(_id),
+            "teams._id": team_id
         }
+
+        # filter = {
+        #     "_id": { "$eq": ObjectId(_id) },
+        #     "teams": { "$elemMatch": {"_id": { "$eq": team_id }}} 
+        # }
         return MongoHelper().document_exists('users', filter)
     
     def save_user(self):
@@ -45,8 +46,9 @@ class User:
         Add team to user's teams list
         '''
         new_team = {
-            "id": team['_id'],
-            "name": team['name']
+            "_id": ObjectId(team['_id']['$oid']),
+            "name": team['name'],
+            "status": MemberStatus.PENDING.value
         }
         filter = {'_id': ObjectId(self._id['$oid'])}
         update = {'$push': {'teams': new_team}}

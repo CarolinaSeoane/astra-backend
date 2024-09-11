@@ -7,7 +7,7 @@ from app.models.story import Type, Priority
 from app.models.epic import Color
 from app.models.member import Role
 from app.models.task import Status
-
+from app.models.member import MemberStatus
 class Populate:
     org1_id = ObjectId()
     org2_id = ObjectId()
@@ -301,6 +301,7 @@ class Populate:
                         "email": "carolina.b.seoane@gmail.com",
                         "profile_picture": self.pfp1,
                         "role": Role.DEV.value,
+                        "member_status": MemberStatus.ACTIVE.value
                         # "date": self.user1_id.generation_time
                     },
                     {
@@ -309,6 +310,7 @@ class Populate:
                         "email": "seoane.m.b@gmail.com",
                         "profile_picture": self.pfp2,
                         "role": Role.SCRUM_MASTER.value,
+                        "member_status": MemberStatus.ACTIVE.value
                         # "date": self.user2_id.generation_time
                     },
                     {
@@ -317,6 +319,7 @@ class Populate:
                         "email": "msaenz@gmail.com",
                         "profile_picture": self.pfp3,
                         "role": Role.DEV.value,
+                        "member_status": MemberStatus.ACTIVE.value
                         # "date": self.user2_id.generation_time
                     },
                     {
@@ -325,6 +328,7 @@ class Populate:
                         "email": "juan.pol@gmail.com",
                         "profile_picture": self.pfp4,
                         "role": Role.DEV.value,
+                        "member_status": MemberStatus.ACTIVE.value
                         # "date": self.user2_id.generation_time
                     },
                     {
@@ -333,6 +337,7 @@ class Populate:
                         "email": "melisa_leon@gmail.com",
                         "profile_picture": self.pfp5,
                         "role": Role.DEV.value,
+                        "member_status": MemberStatus.ACTIVE.value
                         # "date": self.user2_id.generation_time
                     },
                     {
@@ -341,6 +346,7 @@ class Populate:
                         "email": "pepilombardo@gmail.com",
                         "profile_picture": self.pfp6,
                         "role": Role.DEV.value,
+                        "member_status": MemberStatus.ACTIVE.value
                         # "date": self.user2_id.generation_time
                     },
                     {
@@ -349,6 +355,7 @@ class Populate:
                         "email": "nic.justo@gmail.com",
                         "profile_picture": self.pfp7,
                         "role": Role.DEV.value,
+                        "member_status": MemberStatus.ACTIVE.value
                         # "date": self.user2_id.generation_time
                     },
                     {
@@ -356,14 +363,16 @@ class Populate:
                         "username": self.username8,
                         "email": "matmass03@gmail.com",
                         "profile_picture": self.pfp8,
-                        "role": "Developer"
+                        "role": "Developer",
+                        "member_status": MemberStatus.ACTIVE.value
                     },
                     {
                         "_id": self.user9_id,
                         "username": self.username9,
                         "email": "guderianfront2000@gmail.com",
                         "profile_picture": self.pfp9,
-                        "role": "Developer"
+                        "role": "Developer",
+                        "member_status": MemberStatus.ACTIVE.value,
                     }
                 ]
             },
