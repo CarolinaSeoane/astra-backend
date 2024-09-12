@@ -55,7 +55,7 @@ class Team:
             MongoHelper().update_collection('teams', filter, update) # check what this returns. maybe i dont have to do a get_teams after
             added_to_team = True
             team = cls.get_team(team_id)
-            new_user.add_team(team)
+            new_user.add_team(team, status)
         except Exception as e:
             print(f"Error adding new member to team: {e}")
             if added_to_team:

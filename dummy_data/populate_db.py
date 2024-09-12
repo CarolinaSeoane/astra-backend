@@ -118,10 +118,12 @@ class Populate:
                     {
                         "_id": self.team1_id,
                         "name": "Argo",
+                        "member_status": MemberStatus.ACTIVE.value
                     },
                     {
                         "_id": self.team2_id,
                         "name": "Flyers",
+                        "member_status": MemberStatus.ACTIVE.value
                     }
                 ]
             },
@@ -135,7 +137,8 @@ class Populate:
                 "teams": [
                     {
                         "_id": self.team1_id,
-                        "name": "Argo"
+                        "name": "Argo",
+                        "member_status": MemberStatus.ACTIVE.value
                     },
                 ]
             },
@@ -150,6 +153,7 @@ class Populate:
                     {
                         "_id": self.team1_id,
                         "name": "Argo",
+                        "member_status": MemberStatus.ACTIVE.value
                     }
                 ]
             },
@@ -164,6 +168,7 @@ class Populate:
                     {
                         "_id": self.team1_id,
                         "name": "Argo",
+                        "member_status": MemberStatus.ACTIVE.value
                     }
                 ]
             },
@@ -178,6 +183,7 @@ class Populate:
                     {
                         "_id": self.team1_id,
                         "name": "Argo",
+                        "member_status": MemberStatus.ACTIVE.value
                     }
                 ]
             },
@@ -192,6 +198,7 @@ class Populate:
                     {
                         "_id": self.team1_id,
                         "name": "Argo",
+                        "member_status": MemberStatus.ACTIVE.value
                     }
                 ]
             },
@@ -206,6 +213,7 @@ class Populate:
                     {
                         "_id": self.team1_id,
                         "name": "Argo",
+                        "member_status": MemberStatus.ACTIVE.value
                     }
                 ]
             },
@@ -220,10 +228,12 @@ class Populate:
                     {
                         "_id": self.team1_id,
                         "name": "Argo",
+                        "member_status": MemberStatus.ACTIVE.value
                     },
                     {
                         "_id": self.team2_id,
                         "name": "Flyers",
+                        "member_status": MemberStatus.ACTIVE.value
                     }
                 ]
             },
@@ -238,10 +248,12 @@ class Populate:
                     {
                         "_id": self.team1_id,
                         "name": "Argo",
+                        "member_status": MemberStatus.ACTIVE.value
                     },
                     {
                         "_id": self.team2_id,
                         "name": "Flyers",
+                        "member_status": MemberStatus.ACTIVE.value
                     }
                 ]
             },

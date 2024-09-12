@@ -6,7 +6,7 @@ import random
 
 from app.models.story import Story, Priority, Type
 from app.utils import send_response, get_current_quarter
-from app.routes.utils import validate_user_is_member_of_team
+from app.routes.utils import validate_user_is_active_member_of_team
 from app.models.team import Team
 from app.models.sprint import Sprint
 from app.models.epic import Epic
@@ -21,11 +21,11 @@ excluded_routes = [
 ]
 
 @stories.before_request
-def apply_validate_user_is_member_of_team():
+def apply_validate_user_is_active_member_of_team():
     for route in excluded_routes:
         if request.path.startswith(route):
             return None
-    return validate_user_is_member_of_team()
+    return validate_user_is_active_member_of_team()
 
 @stories.route("/<view_type>", methods=['GET'])
 @use_args({

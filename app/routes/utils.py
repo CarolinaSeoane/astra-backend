@@ -4,7 +4,7 @@ from bson import ObjectId
 from app.models.user import User
 from app.utils import send_response
 
-def validate_user_is_member_of_team():
+def validate_user_is_active_member_of_team():
     '''
     This validation runs before any request made to /teams routes and after token validation
     '''     
