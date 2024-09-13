@@ -1,7 +1,7 @@
 from flask import Blueprint, request
 from webargs import fields
 from webargs.flaskparser import use_args
-from bson import json_util
+from bson import json_util, ObjectId
 import json
 
 from app.services.google_auth import validate_credentials
@@ -54,9 +54,9 @@ def handle_login(args):
     else:
         # User is signed up and we only need to log them in
         session_token = generate_jwt(email, user['_id']['$oid'])
+        user['token'] = session_token
         data = {
             "user": user,
-            "token": session_token
         }
         return send_response(data, [], 200, **req_data)
 
@@ -92,3 +92,17 @@ def sign_up(args):
     }
 
     return send_response(data, [], 201, **req_data)
+
+@users.route('/context/<user_id>', methods=['GET'])
+def refresh_context(user_id):
+    # NEEDS TOKEN VALIDATION (fix excluded routes)
+    req_data = {
+        'method': request.method,
+        'endpoint': request.path,
+    }
+    
+    # Get user from db
+    user = User.get_user_by({'_id': ObjectId(user_id)})
+
+    return send_response(user, [], 200, **req_data)
+
