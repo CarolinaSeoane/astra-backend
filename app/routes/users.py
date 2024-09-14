@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, g
 from webargs import fields
 from webargs.flaskparser import use_args
 from bson import json_util, ObjectId
@@ -18,7 +18,7 @@ users = Blueprint('users', __name__)
            'expires_in': fields.Integer(required=True),
            'prompt': fields.Str(required=True),
            'scope': fields.Str(required=True),
-           'hd': fields.Str(required=False),
+           'hd': fields.Str(required=False), # used for Google Workspace accounts
            'token_type': fields.Str(required=True)}, location='json')
 def handle_login(args):
     # TODO: handle already existing jwt?
@@ -95,14 +95,12 @@ def sign_up(args):
 
 @users.route('/context/<user_id>', methods=['GET'])
 def refresh_context(user_id):
-    # NEEDS TOKEN VALIDATION (fix excluded routes)
-    req_data = {
-        'method': request.method,
-        'endpoint': request.path,
-    }
     
     # Get user from db
     user = User.get_user_by({'_id': ObjectId(user_id)})
 
-    return send_response(user, [], 200, **req_data)
+    session_token = generate_jwt(g.email, user['_id']['$oid'])
+    user['token'] = session_token
+
+    return send_response(user, [], 200, **g.req_data)
 
