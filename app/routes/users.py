@@ -85,13 +85,9 @@ def sign_up(args):
 
     new_user_str = json_util.dumps(new_user.__dict__)
     new_user_dict = json.loads(new_user_str)
-    
-    data = {
-        "user": new_user_dict,
-        "token": session_token
-    }
+    new_user_dict['token'] = session_token
 
-    return send_response(data, [], 201, **req_data)
+    return send_response(new_user_dict, [], 201, **req_data)
 
 @users.route('/context/<user_id>', methods=['GET'])
 def refresh_context(user_id):

@@ -5,7 +5,6 @@ from flask_cors import CORS
 
 from app.db_connection import mongo
 from app.routes.stories import stories
-from app.routes.index import index
 from app.routes.astra import astra
 from app.routes.users import users
 from app.routes.teams import teams
@@ -33,7 +32,6 @@ def create_app():
     mongo.init_app(app) 
 
     # Register blueprints
-    app.register_blueprint(index, url_prefix='/')
     app.register_blueprint(stories, url_prefix='/stories')
     app.register_blueprint(astra, url_prefix='/astra')
     app.register_blueprint(users, url_prefix='/users')

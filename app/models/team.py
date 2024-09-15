@@ -42,7 +42,7 @@ class Team:
             "email": new_user.email,
             "profile_picture": new_user.profile_picture,
             "role": role,
-            "status": status
+            "member_status": status
             # "date": {
             #     "$date": current_time.strftime('%Y-%m-%dT%H:%M:%S.%f')[:-3] + '+00:00'
             # }
@@ -65,10 +65,8 @@ class Team:
 
     @classmethod
     def remove_member(cls, team_id, member_id):
-        print(f"type of member id {type(member_id)}")
         print(f"removing member {member_id} from team {team_id}")
         user = User.get_user_by({'_id': ObjectId(member_id)})
-        print(f"type of user id {user}")
         filter = {'_id': ObjectId(team_id)}
         # update = {'$pull': {'members': {'_id': ObjectId("66a2e863493fe8221a338f0b")}}} # pull is used to remove a value from an existing array
         update = {'$pull': {'members': {'email': user["email"]}}}

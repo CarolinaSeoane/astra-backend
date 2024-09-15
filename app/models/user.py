@@ -33,7 +33,6 @@ class User:
             # "member_status": status
             "teams": { "$elemMatch": {"_id": ObjectId(team_id) , "member_status": status}},
         }
-        print(filter)
         # filter = {
         #     "_id": { "$eq": ObjectId(_id) },
         #     "teams": { "$elemMatch": {"_id": { "$eq": team_id }}}, 
