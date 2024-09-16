@@ -7,7 +7,7 @@ from app.models.team import Team
 from app.models.user import User
 from app.utils import send_response
 from app.routes.utils import validate_user_is_active_member_of_team
-from app.models.member import MemberStatus
+from app.models.member import MemberStatus, Role
 
 teams = Blueprint('teams', __name__)
 
@@ -19,6 +19,10 @@ excluded_routes = [
     {
         'route': '/teams/join',
         'methods': ['GET']
+    },
+    {
+        'route': '/teams/create',
+        'methods': ['POST']
     }
 ]
 
@@ -51,7 +55,7 @@ new_member_schema = {
 def add_team_member(args):
     '''
     Adds a member to the team with MemberStatus = ACTIVE.
-    Also adds the team to the user's document since they're an active member
+    Also adds the team to the user's document with MemberStatus = ACTIVE
     '''
             
     members = Team.get_team_members(g.team_id)
@@ -198,4 +202,45 @@ def join_team_by_id(team_id):
     
     return send_response([], [f"Error adding user {g.email} to team"], 500, **g.req_data)
 
+@teams.route('/create', methods=['POST'])
+@use_args({'team_name': fields.Str(required=True)}, location='json')
+def create_team(args):
+    user_doc = User.get_user_by({'email': g.email})
+    user_obj = User(**user_doc)
+    
+    # Create team entity and add the user as Scrum Master
+    new_team = {        
+        "name": args['team_name'],
+        # "organization": ,
+        "google_meet_config": {
+            "meeting_code": "",
+            "meeting_space": ""
+        },
+        "members": [
+            {
+                "username": user_obj.username,
+                "email": g.email,
+                "profile_picture": user_obj.profile_picture,
+                "role": Role.SCRUM_MASTER.value,
+                "member_status": MemberStatus.ACTIVE.value
+                # "date": self.user1_id.generation_time
+            },
+        ]
+    }
 
+    # Create meeting space for the team
+    #
+    #
+
+    try:
+        # Add new team
+        res = Team.add_team(new_team)
+        
+        # Add team to user collection
+        new_team = Team.get_team(res.inserted_id)
+        user_obj.add_team(new_team, MemberStatus.ACTIVE.value)
+    except Exception as e:
+        print(e)
+        return send_response([], ["Couldn't create team"], 500, **g.req_data)
+  
+    return send_response([f"Team {args['team_name']} created successfully"], [], 200, **g.req_data)

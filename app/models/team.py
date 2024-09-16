@@ -2,10 +2,11 @@ from bson import ObjectId
 from datetime import datetime
 import pytz
 
-
 from app.models.user import User
 from app.services.mongoHelper import MongoHelper
 from app.models.member import MemberStatus
+
+
 class Team:
 
     def __init__(self, _id, name, organization, team_settings, member_status, members):
@@ -111,4 +112,8 @@ class Team:
     
     @classmethod
     def is_user_part_of_team(cls, user_id, team_members):
-        return user_id in [member['_id']['$oid'] for member in team_members] # TODO change id to _id
+        return user_id in [member['_id']['$oid'] for member in team_members]
+    
+    @classmethod
+    def add_team(cls, team_document):
+        return MongoHelper().create_document('teams', team_document)

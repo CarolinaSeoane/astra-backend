@@ -57,7 +57,7 @@ class User:
         }
         filter = {'_id': ObjectId(self._id['$oid'])}
         update = {'$push': {'teams': new_team}}
-        MongoHelper().update_collection('users', filter, update)
+        return MongoHelper().update_collection('users', filter, update)
 
     @classmethod
     def remove_from_team(cls, user_id, team_id):
