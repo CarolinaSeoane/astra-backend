@@ -35,6 +35,15 @@ class Epic:
         return MongoHelper().get_documents_by("epics", filter)
     
     @classmethod
+    def get_epics_from_team(cls, org_id):
+        '''
+        returns None if the team has no epics
+        '''
+        filter = {'team': ObjectId(org_id)}
+
+        return MongoHelper().get_documents_by("epics", filter)
+    
+    @classmethod
     def create_epic(cls, epic_document):
         return MongoHelper().create_document('epics', epic_document)
     

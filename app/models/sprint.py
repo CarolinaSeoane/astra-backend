@@ -64,4 +64,6 @@ class Sprint:
         sort = {'start_date': 1}
         documents = MongoHelper().get_documents_by('sprints', filter, sort)
 
+        if not documents:
+            return None
         return documents[1:] + [documents[0]] # Send first element (backlog) to the back

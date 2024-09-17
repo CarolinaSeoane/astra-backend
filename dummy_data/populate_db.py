@@ -438,21 +438,24 @@ class Populate:
                         "email": "carolina.b.seoane@gmail.com",
                         "profile_picture": self.pfp1,
                         "role": Role.SCRUM_MASTER.value,
-                        "date": self.user1_id.generation_time
+                        "member_status": MemberStatus.ACTIVE.value,
+                        # "date": self.user1_id.generation_time
                     },
                     {
                         "_id": self.user8_id,
                         "username": self.username8,
                         "email": "matmass03@gmail.com",
                         "profile_picture": self.pfp8,
-                        "role": "Developer"
+                        "role": "Developer",
+                        "member_status": MemberStatus.ACTIVE.value,
                     },
                     {
                         "_id": self.user9_id,
                         "username": self.username9,
                         "email": "guderianfront2000@gmail.com",
                         "profile_picture": self.pfp9,
-                        "role": "Developer"
+                        "role": "Developer",
+                        "member_status": MemberStatus.ACTIVE.value,
                     }
                 ]
             }

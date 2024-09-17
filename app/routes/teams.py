@@ -218,6 +218,7 @@ def create_team(args):
         },
         "members": [
             {
+                "_id": ObjectId(g._id),
                 "username": user_obj.username,
                 "email": g.email,
                 "profile_picture": user_obj.profile_picture,
