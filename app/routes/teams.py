@@ -8,6 +8,8 @@ from app.models.user import User
 from app.utils import send_response
 from app.routes.utils import validate_user_is_active_member_of_team
 from app.models.member import MemberStatus, Role
+from app.models.organization import Organization
+from app.models.sprint import Sprint
 
 teams = Blueprint('teams', __name__)
 
@@ -209,9 +211,10 @@ def create_team(args):
     user_obj = User(**user_doc)
     
     # Create team entity and add the user as Scrum Master
+    org = Organization.get_organization_by({'name': 'UTN'})
     new_team = {        
         "name": args['team_name'],
-        # "organization": ,
+        "organization": org['_id'],
         "google_meet_config": {
             "meeting_code": "",
             "meeting_space": ""
@@ -240,6 +243,9 @@ def create_team(args):
         # Add team to user collection
         new_team = Team.get_team(res.inserted_id)
         user_obj.add_team(new_team, MemberStatus.ACTIVE.value)
+
+        # Create backlog (every team starts with an active backlog)
+        Sprint.create_backlog_for_new_team(res.inserted_id)
     except Exception as e:
         print(e)
         return send_response([], ["Couldn't create team"], 500, **g.req_data)

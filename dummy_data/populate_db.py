@@ -11,6 +11,7 @@ from app.models.member import MemberStatus
 class Populate:
     org1_id = ObjectId()
     org2_id = ObjectId()
+    org3_id = ObjectId()
 
     user1_id = ObjectId()
     user2_id = ObjectId()
@@ -41,7 +42,6 @@ class Populate:
     pfp7 = "9"
     pfp8 = "16"
     pfp9 = "1"
-    
 
     team1_id = ObjectId()
     team2_id = ObjectId()
@@ -100,7 +100,12 @@ class Populate:
             {   
                 "_id": self.org2_id,
                 "name": "IBM"
-            }
+            },
+            {   
+                "_id": self.org3_id,
+                "name": "UTN"
+            },
+
         ]
         self.helper.post_to_collection("organizations", organizations)
         print("populated organizations")
@@ -266,7 +271,7 @@ class Populate:
             {
                 "_id": self.team1_id,
                 "name": "Argo",
-                "organization": self.org1_id,
+                "organization": self.org3_id,
                 "google_meet_config": {
                     "meeting_code": "",
                     "meeting_space": ""
@@ -391,7 +396,7 @@ class Populate:
             {
                 "_id": self.team2_id,
                 "name": "Flyers",
-                "organization": self.org1_id,
+                "organization": self.org3_id,
                 "google_meet_config": {
                     "meeting_code": "",
                     "meeting_space": ""
@@ -479,7 +484,7 @@ class Populate:
                 "acceptance_criteria": "El 90% de las pruebas son positivas.",
                 "business_value": "Si el buscador es más preciso, los usuarios van a utilizarlo más.",
                 "team": self.team1_id,
-                "organization": self.org1_id,
+                "organization": self.org3_id,
                 "status": Status.DOING.value,
             },
             {
@@ -496,7 +501,7 @@ class Populate:
                 "acceptance_criteria": "100% del schema migrado exitosamente.",
                 "business_value": "MongoDB permitirá reducir el tiempo de las consultas, haciendo la aplicación más rápida, lo que generará una mejor experiencia de los usuarios.",
                 "team": self.team2_id,
-                "organization": self.org1_id,
+                "organization": self.org3_id,
                 "status": Status.DOING.value,
             }
         ]

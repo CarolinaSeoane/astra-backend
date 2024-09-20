@@ -67,3 +67,12 @@ class Sprint:
         if not documents:
             return None
         return documents[1:] + [documents[0]] # Send first element (backlog) to the back
+    
+    @classmethod
+    def create_backlog_for_new_team(cls, team_id):
+        new_backlog = {
+            "name": 'Backlog',
+            "status": SprintStatus.ACTIVE.value,
+            "team": team_id
+        }
+        return MongoHelper().add_new_element_to_collection('sprints', new_backlog)
