@@ -66,7 +66,8 @@ def handle_login(args):
            'surname': fields.Str(required=True),
            'email': fields.Str(required=True),
            'username': fields.Str(required=True),
-           'profile_picture': fields.Str(required=True)}, location='json')
+           'profile_picture': fields.Str(required=True),
+           'access_token': fields.Str(required=True)}, location='json')
 def sign_up(args):
     req_data = {
         'method': request.method,
@@ -91,7 +92,6 @@ def sign_up(args):
 
 @users.route('/context/<user_id>', methods=['GET'])
 def refresh_context(user_id):
-
     # Get user from db
     user = User.get_user_by({'_id': ObjectId(user_id)})
 

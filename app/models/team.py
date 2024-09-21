@@ -5,7 +5,7 @@ import pytz
 from app.models.user import User
 from app.services.mongoHelper import MongoHelper
 from app.models.member import MemberStatus
-
+from app.models.settings import Settings
 
 class Team:
 
@@ -17,8 +17,8 @@ class Team:
         self.members = members
         self.member_status = member_status
 
-    @classmethod
-    def get_team(cls, team_id):
+    @staticmethod
+    def get_team(team_id):
         '''
         returns None if team is not found and dict if found
         '''
@@ -64,8 +64,8 @@ class Team:
             return False
         return True
 
-    @classmethod
-    def remove_member(cls, team_id, member_id):
+    @staticmethod
+    def remove_member(team_id, member_id):
         print(f"removing member {member_id} from team {team_id}")
         user = User.get_user_by({'_id': ObjectId(member_id)})
         filter = {'_id': ObjectId(team_id)}
@@ -78,42 +78,49 @@ class Team:
     def get_team_settings(cls, team_id):
         return cls.get_team(team_id)['team_settings']
     
-    @classmethod
-    def get_base_permissions(cls):
+    @staticmethod
+    def get_base_permissions():
         return MongoHelper().get_collection('permissions')
 
-    @classmethod
-    def update_mandatory_fields(cls, team_id, settings):
+    @staticmethod
+    def update_mandatory_fields(team_id, settings):
         filter = {'_id': team_id}
         update = {'$set': {'team_settings.story_fields': settings}}
         MongoHelper().update_collection('teams', filter, update)
 
-    @classmethod
-    def update_sprint_set_up(cls, team_id, set_up):
+    @staticmethod
+    def update_sprint_set_up(team_id, set_up):
         filter = {'_id': team_id}
         update = {'$set': {'team_settings.sprint_set_up': set_up}}
         MongoHelper().update_collection('teams', filter, update)
 
-    @classmethod
-    def update_ceremonies_settings(cls, team_id, ceremonies_settings):
+    @staticmethod
+    def update_ceremonies_settings(team_id, ceremonies_settings):
         filter = {'_id': team_id}
         update = {'$set': {'team_settings.ceremonies': ceremonies_settings}}
         MongoHelper().update_collection('teams', filter, update)
 
-    @classmethod
-    def update_permissions(cls, team_id, permits):
+    @staticmethod
+    def update_permissions(team_id, permits):
         filter = {'_id': team_id}
         update = {'$set': {'team_settings.permits': permits}}
         MongoHelper().update_collection('teams', filter, update)
     
-    @classmethod
-    def get_organization(cls, team_id):
+    @staticmethod
+    def get_organization(team_id):
         return MongoHelper().get_document_by('teams', {'_id': ObjectId(team_id)}, projection={'organization'})['organization']
     
-    @classmethod
-    def is_user_part_of_team(cls, user_id, team_members):
+    @staticmethod
+    def is_user_part_of_team(user_id, team_members):
         return user_id in [member['_id']['$oid'] for member in team_members]
     
-    @classmethod
-    def add_team(cls, team_document):
+    @staticmethod
+    def add_team(team_document):
         return MongoHelper().create_document('teams', team_document)
+    
+    @staticmethod
+    def add_default_settings(team_id):
+        default_settings = Settings.get_default_settings()
+        filter = {'_id':ObjectId(team_id)}
+        update = {'$set': {'team_settings': default_settings}}
+        return MongoHelper().update_collection('teams', filter, update)

@@ -10,7 +10,6 @@ class Estimation(Enum):
     HOURS = "Hours"
     DAYS = "Days"
 
-
 class Settings:
 
     def __init__(self, sprint_duration, sprint_begins_on, estimation_method,
@@ -21,10 +20,14 @@ class Settings:
         self.mandatory_fields = mandatory_fields
         self.permits = permits
 
-    @classmethod
-    def get_estimation_method_options(cls, estimation_method):
+    @staticmethod
+    def get_estimation_method_options(estimation_method):
         '''
         returns None if estimation_method is not found and dict if found
         '''
         return MongoHelper().get_document_by('estimation_methods', {'key': estimation_method})
+    
+    @staticmethod
+    def get_default_settings():
+        return MongoHelper().get_document_by('default_settings', {})
 

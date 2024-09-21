@@ -10,6 +10,7 @@ from app.routes.utils import validate_user_is_active_member_of_team
 from app.models.member import MemberStatus, Role
 from app.models.organization import Organization
 from app.models.sprint import Sprint
+from app.services.google_meet import create_space
 
 teams = Blueprint('teams', __name__)
 
@@ -207,7 +208,7 @@ def join_team_by_id(team_id):
 @teams.route('/create', methods=['POST'])
 @use_args({'team_name': fields.Str(required=True)}, location='json')
 def create_team(args):
-    user_doc = User.get_user_by({'email': g.email})
+    user_doc = User.get_user_by({'email': g.email}, True)
     user_obj = User(**user_doc)
     
     # Create team entity and add the user as Scrum Master
@@ -232,10 +233,6 @@ def create_team(args):
         ]
     }
 
-    # Create meeting space for the team
-    #
-    #
-
     try:
         # Add new team
         res = Team.add_team(new_team)
@@ -248,9 +245,11 @@ def create_team(args):
         Sprint.create_backlog_for_new_team(res.inserted_id)
 
         # Create default team settings
-        
+        Team.add_default_settings(new_team['_id']['$oid'])
+
     except Exception as e:
         print(e)
+        #TODO: rollback
         return send_response([], ["Couldn't create team"], 500, **g.req_data)
   
     return send_response([f"Team {args['team_name']} created successfully"], [], 200, **g.req_data)

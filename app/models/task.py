@@ -17,8 +17,8 @@ class Task:
         self.status = status
         self.app = app
 
-    @classmethod
-    def format(cls, story):
+    @staticmethod
+    def format(story):
         tasks = {key: value for key, value in story.items() if key.split('_')[0] == 'task'}
         formatted_tasks = []
 

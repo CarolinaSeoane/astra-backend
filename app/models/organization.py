@@ -9,8 +9,8 @@ class Organization:
         self._id = _id
         self.name = name
 
-    @classmethod
-    def get_organization_by(self, filter):
+    @staticmethod
+    def get_organization_by(filter):
         '''
         returns None if organization is not found and dict if found
         '''

@@ -6,7 +6,7 @@ from app.models.member import MemberStatus
 
 class User:
 
-    def __init__(self, name, surname, username, email, profile_picture, teams=list(), _id=ObjectId()):
+    def __init__(self, name, surname, username, email, profile_picture, access_token=None, teams=list(), _id=ObjectId()):
         self._id = _id
         self.name = name
         self.surname = surname
@@ -14,16 +14,20 @@ class User:
         self.email = email
         self.profile_picture = profile_picture
         self.teams = teams
+        self.access_token = access_token
 
-    @classmethod
-    def get_user_by(cls, filter):
+    @staticmethod
+    def get_user_by(filter, get_access_token=False):
         '''
         returns None if user is not found and dict if found
         '''
-        return MongoHelper().get_document_by('users', filter)
+        projection={}
+        if not get_access_token:
+            projection={'access_token': False}
+        return MongoHelper().get_document_by('users', filter, projection=projection)
 
-    @classmethod
-    def is_user_in_team(cls, _id, team_id, status=MemberStatus.ACTIVE.value):
+    @staticmethod
+    def is_user_in_team(_id, team_id, status=MemberStatus.ACTIVE.value):
         '''
         returns False if user is not part of the team
         '''
@@ -59,8 +63,8 @@ class User:
         update = {'$push': {'teams': new_team}}
         return MongoHelper().update_collection('users', filter, update)
 
-    @classmethod
-    def remove_from_team(cls, user_id, team_id):
+    @staticmethod
+    def remove_from_team(user_id, team_id):
         '''
         Remove user from team
         '''

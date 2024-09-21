@@ -8,6 +8,8 @@ from app.models.epic import Color
 from app.models.member import Role
 from app.models.task import Status
 from app.models.member import MemberStatus
+
+
 class Populate:
     org1_id = ObjectId()
     org2_id = ObjectId()
@@ -90,6 +92,7 @@ class Populate:
         self.populate_epic_fields()
         self.populate_permissions()
         self.populate_estimation_methods()
+        self.populate_default_settings()
 
     def populate_organizations(self):
         organizations = [
@@ -119,6 +122,7 @@ class Populate:
                 "username": self.username1,
                 "email": "carolina.b.seoane@gmail.com",
                 "profile_picture": self.pfp1,
+                "access_token": "COMPLETAR",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -139,6 +143,7 @@ class Populate:
                 "username": self.username2,
                 "email": "seoane.m.b@gmail.com",
                 "profile_picture": self.pfp2,
+                "access_token": "COMPLETAR",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -154,6 +159,7 @@ class Populate:
                 "username": self.username3,
                 "email": "msaenz@gmail.com",
                 "profile_picture": self.pfp3,
+                "access_token": "COMPLETAR",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -169,6 +175,7 @@ class Populate:
                 "username": self.username4,
                 "email": "juan.pol@gmail.com",
                 "profile_picture": self.pfp4,
+                "access_token": "COMPLETAR",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -184,6 +191,7 @@ class Populate:
                 "username": self.username5,
                 "email": "melisa_leon@gmail.com",
                 "profile_picture": self.pfp5,
+                "access_token": "COMPLETAR",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -199,6 +207,7 @@ class Populate:
                 "username": self.username6,
                 "email": "pepilombardo@gmail.com",
                 "profile_picture": self.pfp6,
+                "access_token": "COMPLETAR",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -214,6 +223,7 @@ class Populate:
                 "username": self.username7,
                 "email": "nic.justo@gmail.com",
                 "profile_picture": self.pfp7,
+                "access_token": "COMPLETAR",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -229,6 +239,7 @@ class Populate:
                 "username": self.username8,
                 "email": "matmass03@gmail.com",
                 "profile_picture": self.pfp8,
+                "access_token": "COMPLETAR",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -249,6 +260,7 @@ class Populate:
                 "username": self.username9,
                 "email": "guderianfront2000@gmail.com",
                 "profile_picture": self.pfp9,
+                "access_token": "COMPLETAR",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -272,26 +284,28 @@ class Populate:
                 "_id": self.team1_id,
                 "name": "Argo",
                 "organization": self.org3_id,
-                "google_meet_config": {
-                    "meeting_code": "",
-                    "meeting_space": ""
-                },
                 "team_settings": {
                     "ceremonies": {
                         "planning": {
                             "days": ["tue"],
                             "when": "beginning", # "beginning" or "end"
-                            "time": "10:00" # "HH:MM
+                            "time": "10:00", # "HH:MM,
+                            "google_meet_config": {
+                            },
                         },
                         "standup": {
                             "days": ["mon", "wed", "thu"],
                             "when": "every",
-                            "time": "09:30" # "HH:MM
+                            "time": "09:30", # "HH:MM
+                            "google_meet_config": {
+                            },
                         },
                         "retrospective": {
                             "days": ["tue"],
                             "when": "end", # "beginning" or "end"
-                            "time": "10:00" # "HH:MM
+                            "time": "10:00", # "HH:MM
+                            "google_meet_config": {
+                            },
                         }
                     },
                     "sprint_set_up": {
@@ -406,17 +420,23 @@ class Populate:
                         "planning": {
                             "days": ["tu"],
                             "when": "beginning", # "beginning" or "end"
-                            "time": "10:00" # "HH:MM
+                            "time": "10:00", # "HH:MM
+                            "google_meet_config": {
+                            },
                         },
                         "standup": {
                             "days": ["mon", "wed", "thu"],
                             "when": "every",
-                            "time": "09:30" # "HH:MM
+                            "time": "09:30", # "HH:MM
+                            "google_meet_config": {
+                            },
                         },
                         "retrospective": {
                             "days": ["tue"],
                             "when": "end", # "beginning" or "end"
-                            "time": "10:00" # "HH:MM
+                            "time": "10:00", # "HH:MM
+                            "google_meet_config": {
+                            },
                         }
                     },
                     "sprint_set_up": {
@@ -1197,4 +1217,53 @@ class Populate:
         ]
         self.helper.post_to_collection("estimation_methods", estimation_methods)
         print("populated estimation_methods")
+
+    def populate_default_settings(self):
+        default_settings = [
+            {
+                "ceremonies": {
+                    "planning": {
+                        "days": ["mon"],
+                        "when": "beginning", # "beginning" or "end"
+                        "time": "10:00", # "HH:MM
+                        "google_meet_config": {
+                        },
+                    },
+                    "standup": {
+                        "days": ["mon", "tue", "wed", "thu", "fri"],
+                        "when": "every",
+                        "time": "12:00", # "HH:MM
+                        "google_meet_config": {
+                        },
+                    },
+                    "retrospective": {
+                        "days": ["fri"],
+                        "when": "end", # "beginning" or "end"
+                        "time": "16:00", # "HH:MM
+                        "google_meet_config": {
+                        },
+                    }
+                },
+                "sprint_set_up": {
+                    "estimation_method": ["fibonacci"],
+                    "sprint_duration": "2", # weeks
+                    "sprint_begins_on": "mon",
+                },
+                "story_fields": ['title', 'description', 'acceptance_criteria', 'creator', 'assigned_to', 'epic', 'sprint', 'estimation', 'tags', 'story_type', 'estimation_method', 'tasks'],
+                "permits": [
+                    {
+                        "role": Role.PRODUCT_OWNER.value,
+                        "options": ["edit_story", "delete_story", "join_standup", "all_time_metrics"]
+                    },
+                    {
+                        "role": Role.DEV.value,
+                        "options": ["create_story", "edit_story"]
+                    }
+                ]
+            }
+        ]
+        
+        self.helper.post_to_collection("default_settings", default_settings)
+        print("populated default_settings")
+
 

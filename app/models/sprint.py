@@ -22,8 +22,8 @@ class Sprint:
         self.target: target
         self.team: team
     
-    @classmethod
-    def get_sprints(cls, team_id, quarter, year, future):
+    @staticmethod
+    def get_sprints(team_id, quarter, year, future):
         '''
         returns None if the team has no sprints
         '''
@@ -68,8 +68,8 @@ class Sprint:
             return None
         return documents[1:] + [documents[0]] # Send first element (backlog) to the back
     
-    @classmethod
-    def create_backlog_for_new_team(cls, team_id):
+    @staticmethod
+    def create_backlog_for_new_team(team_id):
         new_backlog = {
             "name": 'Backlog',
             "status": SprintStatus.ACTIVE.value,

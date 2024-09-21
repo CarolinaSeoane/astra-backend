@@ -14,10 +14,6 @@ def validate_credentials(google_access_token):
     }
 
     response = requests.get(url, headers=headers)
-  
-    # url = 'https://meet.googleapis.com/v2/spaces'   PRUEBA DE CREAR UN MEETING SPACE CON EL ACCESS TOKEN. VERIFICAR REFRESH TOKEN
-    # response_2 = requests.post(url, headers=headers, data={})
-    # print(response_2.text, response_2.content)
     
     if response.status_code == 200:
         return response.json()
