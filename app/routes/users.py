@@ -91,9 +91,12 @@ def sign_up(args):
 
 @users.route('/context/<user_id>', methods=['GET'])
 def refresh_context(user_id):
-    
+
     # Get user from db
     user = User.get_user_by({'_id': ObjectId(user_id)})
+
+    if not user:
+        return send_response([], ['Invalid user _id. Login again'], 401, **g.req_data)
 
     session_token = generate_jwt(g.email, user['_id']['$oid'])
     user['token'] = session_token

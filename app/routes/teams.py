@@ -246,6 +246,9 @@ def create_team(args):
 
         # Create backlog (every team starts with an active backlog)
         Sprint.create_backlog_for_new_team(res.inserted_id)
+
+        # Create default team settings
+        
     except Exception as e:
         print(e)
         return send_response([], ["Couldn't create team"], 500, **g.req_data)
