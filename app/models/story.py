@@ -42,8 +42,8 @@ class Story:
         self.estimation_method = estimation
         self.team = team
 
-    @classmethod
-    def get_stories_by_team_id(cls, team_id: ObjectId, view_type, **kwargs):
+    @staticmethod
+    def get_stories_by_team_id(team_id: ObjectId, view_type, **kwargs):
         '''
         returns [] if no stories are found for the given team_id
         '''
@@ -84,8 +84,8 @@ class Story:
         else:
             return stories
 
-    @classmethod
-    def get_story_fields(cls, sections=False):
+    @staticmethod
+    def get_story_fields(sections=False):
         story_fields =  MongoHelper().get_documents_by('story_fields', sort={'order': 1})
         if sections:
             story_sections = {}
@@ -95,11 +95,11 @@ class Story:
             return story_sections
         return story_fields
     
-    @classmethod
-    def is_story_id_taken(cls, story_id):
+    @staticmethod
+    def is_story_id_taken(story_id):
         filter = {'story_id': story_id}
         return MongoHelper().document_exists("stories", filter)
     
-    @classmethod
-    def create_story(cls, story_document):
+    @staticmethod
+    def create_story(story_document):
         return MongoHelper().create_document('stories', story_document)

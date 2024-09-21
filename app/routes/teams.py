@@ -1,12 +1,16 @@
 from flask import Blueprint, g, request
 from webargs import fields
 from webargs.flaskparser import use_args
+from bson import ObjectId
 
 from app.models.team import Team
 from app.models.user import User
 from app.utils import send_response
-from app.routes.utils import validate_user_is_member_of_team
-
+from app.routes.utils import validate_user_is_active_member_of_team
+from app.models.member import MemberStatus, Role
+from app.models.organization import Organization
+from app.models.sprint import Sprint
+from app.services.google_meet import create_space
 
 teams = Blueprint('teams', __name__)
 
@@ -14,16 +18,24 @@ excluded_routes = [
     {
         'route': '/teams/permissions',
         'methods': ['GET']
+    },
+    {
+        'route': '/teams/join',
+        'methods': ['GET']
+    },
+    {
+        'route': '/teams/create',
+        'methods': ['POST']
     }
 ]
 
 @teams.before_request
-def apply_validate_user_is_member_of_team():
+def apply_validate_user_is_active_member_of_team():
     for excluded_route in excluded_routes:
         if request.path.startswith(excluded_route['route']) and (request.method in excluded_route['methods']):
             return None
 
-    return validate_user_is_member_of_team()
+    return validate_user_is_active_member_of_team()
 
 @teams.route('/members', methods=['GET'])
 def get_team_members():
@@ -43,21 +55,26 @@ new_member_schema = {
 
 @teams.route('/add_member', methods=['POST'])
 @use_args(new_member_schema, location='json')
-def add_team_member(args):   
+def add_team_member(args):
+    '''
+    Adds a member to the team with MemberStatus = ACTIVE.
+    Also adds the team to the user's document with MemberStatus = ACTIVE
+    '''
+            
     members = Team.get_team_members(g.team_id)
     if user_is_scrum_master_of_team(members, g._id):
         new_member_email = args['new_member_email']
         user = User.get_user_by({'email': new_member_email})
-        print(f"adding user: {user}")
+        # print(f"adding user: {user}")
         if user is None:
             return send_response([], [f"No user found with email {new_member_email}"], 404, **g.req_data)
-        if user['_id']['$oid'] in [member['_id']['$oid'] for member in members]: # TODO change id to _id
+        if Team.is_user_part_of_team(user['_id']['$oid'], members):
             return send_response([], [f"User {new_member_email} is already a member of the team"], 400, **g.req_data)
         
         # users in team have: user_id, username, email, profile_picture, role, date
         user_obj = User(**user)
-        print(f"the user object: {user_obj.__dict__}")
-        success = Team.add_member(g.team_id, user_obj, args['role'])
+        # print(f"the user object: {user_obj.__dict__}")
+        success = Team.add_member(g.team_id, user_obj, args['role'], MemberStatus.ACTIVE.value)
         if success:
             return send_response([], [], 200, **g.req_data)
         return send_response([], [f"Error adding user {new_member_email} to team"], 500, **g.req_data)
@@ -158,3 +175,81 @@ def update_permissions(args):
 def permissions():
     permissions = Team.get_base_permissions()
     return send_response(permissions, [], 200, **g.req_data)
+
+@teams.route('/join/<team_id>', methods=['GET'])
+def join_team_by_id(team_id):
+    try:
+        ObjectId(team_id)
+    except:
+        return send_response([], ['Invalid ID format'], 400, **g.req_data)
+
+    team_to_join = Team.get_team(team_id)
+    
+    if not team_to_join:
+        return send_response([], [f"Couldn't find a team with ID {team_id}"], 404, **g.req_data)
+    
+    team_members = Team.get_team_members(team_id)
+
+    # if Team.is_user_part_of_team(g._id, team_members):
+    if User.is_user_in_team(g._id, team_id):
+        return send_response([], [f"User {g.email} is already a member of the team"], 400, **g.req_data)
+    elif User.is_user_in_team(g._id, team_id, status=MemberStatus.PENDING.value):
+        return send_response([f"You already sent a request to join {team_id}"], [], 200, **g.req_data)
+
+    user = User.get_user_by({'email': g.email})
+    user_obj = User(**user)
+    success = Team.add_member(team_id, user_obj, None)
+    
+    if success:
+        return send_response([f"Your request to join {team_id} was sent successfully"], [], 202, **g.req_data)
+    
+    return send_response([], [f"Error adding user {g.email} to team"], 500, **g.req_data)
+
+@teams.route('/create', methods=['POST'])
+@use_args({'team_name': fields.Str(required=True)}, location='json')
+def create_team(args):
+    user_doc = User.get_user_by({'email': g.email}, True)
+    user_obj = User(**user_doc)
+    
+    # Create team entity and add the user as Scrum Master
+    org = Organization.get_organization_by({'name': 'UTN'})
+    new_team = {        
+        "name": args['team_name'],
+        "organization": org['_id'],
+        "google_meet_config": {
+            "meeting_code": "",
+            "meeting_space": ""
+        },
+        "members": [
+            {
+                "_id": ObjectId(g._id),
+                "username": user_obj.username,
+                "email": g.email,
+                "profile_picture": user_obj.profile_picture,
+                "role": Role.SCRUM_MASTER.value,
+                "member_status": MemberStatus.ACTIVE.value
+                # "date": self.user1_id.generation_time
+            },
+        ]
+    }
+
+    try:
+        # Add new team
+        res = Team.add_team(new_team)
+        
+        # Add team to user collection
+        new_team = Team.get_team(res.inserted_id)
+        user_obj.add_team(new_team, MemberStatus.ACTIVE.value)
+
+        # Create backlog (every team starts with an active backlog)
+        Sprint.create_backlog_for_new_team(res.inserted_id)
+
+        # Create default team settings
+        Team.add_default_settings(new_team['_id']['$oid'])
+
+    except Exception as e:
+        print(e)
+        #TODO: rollback
+        return send_response([], ["Couldn't create team"], 500, **g.req_data)
+  
+    return send_response([f"Team {args['team_name']} created successfully"], [], 200, **g.req_data)

@@ -22,8 +22,8 @@ class Sprint:
         self.target: target
         self.team: team
     
-    @classmethod
-    def get_sprints(cls, team_id, quarter, year, future):
+    @staticmethod
+    def get_sprints(team_id, quarter, year, future):
         '''
         returns None if the team has no sprints
         '''
@@ -64,4 +64,15 @@ class Sprint:
         sort = {'start_date': 1}
         documents = MongoHelper().get_documents_by('sprints', filter, sort)
 
+        if not documents:
+            return None
         return documents[1:] + [documents[0]] # Send first element (backlog) to the back
+    
+    @staticmethod
+    def create_backlog_for_new_team(team_id):
+        new_backlog = {
+            "name": 'Backlog',
+            "status": SprintStatus.ACTIVE.value,
+            "team": team_id
+        }
+        return MongoHelper().add_new_element_to_collection('sprints', new_backlog)

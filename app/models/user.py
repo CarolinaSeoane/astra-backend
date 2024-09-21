@@ -2,10 +2,11 @@ from bson import ObjectId
 
 from app.db_connection import mongo
 from app.services.mongoHelper import MongoHelper
+from app.models.member import MemberStatus
 
 class User:
 
-    def __init__(self, name, surname, username, email, profile_picture, teams=list(), _id=ObjectId()):
+    def __init__(self, name, surname, username, email, profile_picture, access_token=None, teams=list(), _id=ObjectId()):
         self._id = _id
         self.name = name
         self.surname = surname
@@ -13,47 +14,57 @@ class User:
         self.email = email
         self.profile_picture = profile_picture
         self.teams = teams
+        self.access_token = access_token
 
-    @classmethod
-    def get_user_by(cls, filter):
+    @staticmethod
+    def get_user_by(filter, get_access_token=False):
         '''
         returns None if user is not found and dict if found
         '''
-        return MongoHelper().get_document_by('users', filter)
+        projection={}
+        if not get_access_token:
+            projection={'access_token': False}
+        return MongoHelper().get_document_by('users', filter, projection=projection)
 
-    @classmethod
-    def is_user_in_team(cls, _id, team_id):
+    @staticmethod
+    def is_user_in_team(_id, team_id, status=MemberStatus.ACTIVE.value):
         '''
         returns False if user is not part of the team
         '''
-        # query = {
-        #     "_id": ObjectId(_id),
-        #     "teams._id": team_id
-        # }
-
         filter = {
-            "_id": { "$eq": ObjectId(_id) },
-            "teams": { "$elemMatch": {"_id": { "$eq": team_id }}} 
+            "_id": ObjectId(_id),
+            # "teams._id": team_id,
+            # "member_status": status
+            "teams": { "$elemMatch": {"_id": ObjectId(team_id) , "member_status": status}},
         }
+        # filter = {
+        #     "_id": { "$eq": ObjectId(_id) },
+        #     "teams": { "$elemMatch": {"_id": { "$eq": team_id }}}, 
+        #     "member_status": status
+        # }
         return MongoHelper().document_exists('users', filter)
     
     def save_user(self):
         mongo.db.users.insert_one(self.__dict__) # TODO use mongoHelper
 
-    def add_team(self, team):
+    def add_team(self, team, status=MemberStatus.PENDING.value):
         '''
-        Add team to user's teams list
+        Add team to user's teams list.
+        This list contains the teams for which the user is an active or pending member.
+        When the SM adds a user to a team -> use status = ACTIVE (does not require approval)
+        When the user requests to join a team -> use status = PENDING
         '''
         new_team = {
-            "id": team['_id'],
-            "name": team['name']
+            "_id": ObjectId(team['_id']['$oid']),
+            "name": team['name'],
+            "member_status": status
         }
         filter = {'_id': ObjectId(self._id['$oid'])}
         update = {'$push': {'teams': new_team}}
-        MongoHelper().update_collection('users', filter, update)
+        return MongoHelper().update_collection('users', filter, update)
 
-    @classmethod
-    def remove_from_team(cls, user_id, team_id):
+    @staticmethod
+    def remove_from_team(user_id, team_id):
         '''
         Remove user from team
         '''

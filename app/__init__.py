@@ -5,12 +5,12 @@ from flask_cors import CORS
 
 from app.db_connection import mongo
 from app.routes.stories import stories
-from app.routes.index import index
 from app.routes.astra import astra
 from app.routes.users import users
 from app.routes.teams import teams
 from app.routes.epics import epics
 from app.routes.tasks import tasks
+from app.routes.ceremonies import ceremonies
 # TODO create custom logger
 
 def create_app():
@@ -32,13 +32,13 @@ def create_app():
     mongo.init_app(app) 
 
     # Register blueprints
-    app.register_blueprint(index, url_prefix='/')
     app.register_blueprint(stories, url_prefix='/stories')
     app.register_blueprint(astra, url_prefix='/astra')
     app.register_blueprint(users, url_prefix='/users')
     app.register_blueprint(teams, url_prefix='/teams')
     app.register_blueprint(epics, url_prefix='/epics')
     app.register_blueprint(tasks, url_prefix='/tasks')
+    app.register_blueprint(ceremonies, url_prefix='/ceremonies')
 
     return app
 
