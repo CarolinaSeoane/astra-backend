@@ -1,9 +1,10 @@
 from flask import Blueprint, g, request
+from bson import ObjectId
 from webargs.flaskparser import use_args
 from webargs import fields
 import datetime
 import random
-
+import traceback
 from app.models.story import Story, Priority, Type
 from app.utils import send_response, get_current_quarter
 from app.routes.utils import validate_user_is_member_of_team
@@ -12,7 +13,7 @@ from app.models.sprint import Sprint
 from app.models.epic import Epic
 from app.models.settings import Settings
 from app.models.task import Task
-
+from app.models.notification import Notification
 
 stories = Blueprint("stories", __name__)
 
@@ -178,15 +179,123 @@ def create_story():
 
     tasks = Task.format(story)
     story['tasks'] = tasks
-
+    story['subscribers'] = [] 
+    
     try:
         response = Story.create_story(story)
+        
+        # Generar una notificación para el usuario asignado
+        assigned_user_id_obj = story.get('assigned_to', {}).get('_id', {})
+        if isinstance(assigned_user_id_obj, dict) and '$oid' in assigned_user_id_obj:
+            assigned_user_id_str = assigned_user_id_obj['$oid']
+        elif isinstance(assigned_user_id_obj, str):
+            assigned_user_id_str = assigned_user_id_obj
+        else:
+            assigned_user_id_str = ''
+        
+        if assigned_user_id_str and len(assigned_user_id_str) == 24:
+            assigned_user_id = ObjectId(assigned_user_id_str)
+            notification_data = {
+                'user_id': assigned_user_id,
+                'message': f"Has sido asignado a la historia {story.get('title', 'No Title')}",
+                'story_id': story.get('_id', 'No ID'),
+                'creator': story.get('creator', {}).get('_id', ''),
+                'assigned_to': assigned_user_id,
+                'created_at': datetime.datetime.now().isoformat(),
+                'viewed': False 
+            }
+            Notification.create_notification(notification_data)
+            
+        # Generar una notificación para el creador (reporter) si está presente
+        creator_id_obj = story.get('creator', {}).get('_id', {})
+        if isinstance(creator_id_obj, dict) and '$oid' in creator_id_obj:
+            creator_id_str = creator_id_obj['$oid']
+        elif isinstance(creator_id_obj, str):
+            creator_id_str = creator_id_obj
+        else:
+            creator_id_str = ''
+
+        if creator_id_str and len(creator_id_str) == 24:
+            creator_id = ObjectId(creator_id_str)
+            notification_data = {
+                'user_id': creator_id,
+                'message': f"Has creado la historia {story.get('title', 'No Title')}",
+                'story_id': story.get('_id', 'No ID'),
+                'creator': creator_id,
+                'assigned_to': None, 
+                'created_at': datetime.datetime.now().isoformat(),
+                'viewed': False 
+            }
+            Notification.create_notification(notification_data)
+            
         return send_response([response.acknowledged], [], 201, **g.req_data)
     except Exception as e:
+        print("Error creating story:", e)
+        print("Traceback:", traceback.format_exc())
         return send_response([], [f"Failed to create story: {e}"], 500, **g.req_data)
 
+#@stories.route('/notifications', methods=['GET'])
+#def get_user_notifications():
+#    user_id = request.args.get('user_id')
+#    team_id = request.args.get('team_id')
+    
+#    if not user_id or not team_id:
+#        return send_response([], ['Missing user_id or team_id'], 400, **g.req_data)
+    
+#    print(f"Fetching notifications for user_id: {user_id} and team_id: {team_id}")
+    
+#    notifications = Notification.get_notifications_for_user(user_id)
+    
+    # Debugging output
+#    print(f"Notifications found: {notifications}")
+    
+#    return send_response(notifications, [], 200, **g.req_data)
+
+#@stories.route('/notifications/creator', methods=['GET'])
+#def get_creator_notifications():
+#    user_id = request.args.get('user_id')
+#    team_id = request.args.get('team_id')
+
+#    if not user_id or not team_id:
+#        return send_response([], ['Missing user_id or team_id'], 400, **g.req_data)
+
+#    print(f"Fetching creator notifications for user_id: {user_id} and team_id: {team_id}")
+
+#    notifications = Notification.get_creator_notifications(user_id)
+
+    # Debugging output
+#    print(f"Creator notifications found: {notifications}")
+
+#    return send_response(notifications, [], 200, **g.req_data)
 
 
+#@stories.route('/notifications/assigned', methods=['GET'])
+#def get_assigned_user_notifications():
+#    user_id = request.args.get('user_id')
+#    team_id = request.args.get('team_id')
+
+#    if not user_id or not team_id:
+#        return send_response([], ['Missing user_id or team_id'], 400, **g.req_data)
+
+#    print(f"Fetching assigned user notifications for user_id: {user_id} and team_id: {team_id}")
+
+#    notifications = Notification.get_assigned_user_notifications(user_id)
+
+    # Debugging output
+#    print(f"Assigned user notifications found: {notifications}")
+
+#    return send_response(notifications, [], 200, **g.req_data)
+    
+#@stories.route('/notifications/po', methods=['GET'])
+#def get_po_notifications():
+#    user_id = request.args.get('user_id')
+#    if not user_id:
+#        return send_response([], ["User ID is required"], 400, **g.req_data)
+#    try:
+#        notifications = Notification.get_po_notifications(user_id)
+#        return send_response(notifications, [], 200, **g.req_data)
+#    except Exception as e:
+#        return send_response([], [f"Failed to get notifications: {e}"], 500, **g.req_data)
 
 
 
@@ -324,3 +433,22 @@ def create_story():
 #     except Exception as e:
 #         print(f"Exception: {e}")
 #         return jsonify({"error": str(e)}), 500
+
+@stories.route('/subscribe', methods=['POST'])
+def subscribe_to_story():
+    data = request.json
+    story_id = data.get('story_id')
+    user_id = data.get('user_id')
+
+    if not story_id or not user_id:
+        return send_response([], ["Story ID and User ID are required."], 400, **g.req_data)
+
+    try:
+        # Llamar al método del modelo Story para suscribir al usuario
+        response = Story.subscribe_to_story(story_id, user_id)
+
+        return send_response([response['message']], [], response['status'], **g.req_data)
+    
+    except Exception as e:
+        print("Error subscribing to story:", e)
+        return send_response([], [f"Failed to subscribe: {e}"], 500, **g.req_data)

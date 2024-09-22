@@ -21,7 +21,7 @@ class Story:
 
     def __init__(self, title, description, acceptance_criteria, creator, assigned_to,
                  epic, sprint, estimation, tags, priority, attachments, comments,
-                 story_type, tasks, related_stories, story_id, team, _id=ObjectId()):
+                 story_type, tasks, related_stories, story_id, team, _id=ObjectId(),subscribers=None):
         self.title = title
         self.description = description
         self.acceptance_criteria = acceptance_criteria
@@ -41,6 +41,7 @@ class Story:
         self.story_id = story_id
         self.estimation_method = estimation
         self.team = team
+        self.subscribers = subscribers if subscribers is not None else []
 
     @classmethod
     def get_stories_by_team_id(cls, team_id: ObjectId, view_type, **kwargs):
@@ -103,3 +104,38 @@ class Story:
     @classmethod
     def create_story(cls, story_document):
         return MongoHelper().create_document('stories', story_document)
+    
+    @classmethod
+    def subscribe_to_story(cls, story_id: str, user_id: str):
+        """
+        Suscribe un usuario a una historia específica.
+        """
+        try:
+            # Convertir IDs a ObjectId
+            story_id = ObjectId(story_id)
+            user_id = ObjectId(user_id)
+
+            # Crear instancia de MongoHelper
+            mongo_helper = MongoHelper()
+
+            # Buscar la historia
+            story = mongo_helper.get_document_by('stories', {'_id': story_id})
+            if not story:
+                return {"message": "Story not found", "status": 404}
+
+            # Verificar si el usuario ya está suscrito
+            if user_id in story.get('subscribers', []):
+                return {"message": "User is already subscribed", "status": 400}
+
+            # Agregar el user_id a la lista de suscriptores
+            update = {"$addToSet": {"subscribers": user_id}}
+            result = mongo_helper.update_collection('stories', {'_id': story_id}, update)
+
+            if result.modified_count > 0:
+                return {"message": "User successfully subscribed", "status": 200}
+            else:
+                return {"message": "Failed to subscribe", "status": 500}
+
+        except Exception as e:
+            print("Error subscribing to story:", e)
+            return {"message": f"Failed to subscribe: {e}", "status": 500}

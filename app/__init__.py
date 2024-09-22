@@ -12,6 +12,7 @@ from app.routes.teams import teams
 from app.routes.epics import epics
 from app.routes.tasks import tasks
 from app.routes.post_its import post_its
+from app.routes.notifications import notifications
 # TODO create custom logger
 
 def create_app():
@@ -41,6 +42,7 @@ def create_app():
     app.register_blueprint(epics, url_prefix='/epics')
     app.register_blueprint(tasks, url_prefix='/tasks')
     app.register_blueprint(post_its, url_prefix='/post_its')
+    app.register_blueprint(notifications, url_prefix='/notifications')
 
     return app
 

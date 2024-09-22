@@ -16,6 +16,7 @@ def generate_jwt(user_email, _id):
 
 def validate_jwt(token):
     try:
+        print(token)
         decoded = jwt.decode(token, SECRET_KEY, JWT_ALGORITHM)
         return decoded
     except: # Token has expired or is invalid
