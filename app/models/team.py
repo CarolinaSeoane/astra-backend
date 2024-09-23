@@ -75,8 +75,11 @@ class Team:
         resp = User.remove_from_team(member_id, team_id)
 
     @classmethod
-    def get_team_settings(cls, team_id):
-        return cls.get_team(team_id)['team_settings']
+    def get_team_settings(cls, team_id, section):
+        settings = cls.get_team(team_id)['team_settings']
+        if section:
+            settings = settings[section]
+        return settings
     
     @staticmethod
     def get_base_permissions():
@@ -120,6 +123,11 @@ class Team:
     
     @staticmethod
     def add_default_settings(team_id):
+        '''
+        Adds or overwrites team's settings with default settings from
+        "default_settings" collection. Default settings do not include
+        google Meet info and should be added separately
+        '''
         default_settings = Settings.get_default_settings()
         filter = {'_id':ObjectId(team_id)}
         update = {'$set': {'team_settings': default_settings}}
