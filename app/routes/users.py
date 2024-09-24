@@ -1,8 +1,9 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, g
 from webargs import fields
 from webargs.flaskparser import use_args
-from bson import json_util
+from bson import json_util, ObjectId
 import json
+
 from app.services.google_auth import validate_credentials
 from app.services.token import generate_jwt
 from app.models.user import User
@@ -12,7 +13,13 @@ from app.utils import send_response
 users = Blueprint('users', __name__)
 
 @users.route('/login', methods=['POST'])
-@use_args({'credential': fields.Str(required=True)}, location='json')
+@use_args({'access_token': fields.Str(required=True),
+           'authuser': fields.Str(required=True),
+           'expires_in': fields.Integer(required=True),
+           'prompt': fields.Str(required=True),
+           'scope': fields.Str(required=True),
+           'hd': fields.Str(required=False), # used for Google Workspace accounts
+           'token_type': fields.Str(required=True)}, location='json')
 def handle_login(args):
     # TODO: handle already existing jwt?
 
@@ -22,7 +29,7 @@ def handle_login(args):
     }
     
     try:
-        id_info = validate_credentials(args['credential'])
+        id_info = validate_credentials(args['access_token'])
     except ValueError as err:
         # Invalid token 
         print(err)
@@ -47,9 +54,9 @@ def handle_login(args):
     else:
         # User is signed up and we only need to log them in
         session_token = generate_jwt(email, user['_id']['$oid'])
+        user['token'] = session_token
         data = {
             "user": user,
-            "token": session_token
         }
         return send_response(data, [], 200, **req_data)
 
@@ -59,7 +66,8 @@ def handle_login(args):
            'surname': fields.Str(required=True),
            'email': fields.Str(required=True),
            'username': fields.Str(required=True),
-           'profile_picture': fields.Str(required=True)}, location='json')
+           'profile_picture': fields.Str(required=True),
+           'access_token': fields.Str(required=True)}, location='json')
 def sign_up(args):
     req_data = {
         'method': request.method,
@@ -78,10 +86,20 @@ def sign_up(args):
 
     new_user_str = json_util.dumps(new_user.__dict__)
     new_user_dict = json.loads(new_user_str)
-    
-    data = {
-        "user": new_user_dict,
-        "token": session_token
-    }
+    new_user_dict['token'] = session_token
 
-    return send_response(data, [], 201, **req_data)
+    return send_response(new_user_dict, [], 201, **req_data)
+
+@users.route('/context/<user_id>', methods=['GET'])
+def refresh_context(user_id):
+    # Get user from db
+    user = User.get_user_by({'_id': ObjectId(user_id)})
+
+    if not user:
+        return send_response([], ['Invalid user _id. Login again'], 401, **g.req_data)
+
+    session_token = generate_jwt(g.email, user['_id']['$oid'])
+    user['token'] = session_token
+
+    return send_response(user, [], 200, **g.req_data)
+

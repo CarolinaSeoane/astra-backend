@@ -28,8 +28,8 @@ class Epic:
         self.organization = organization
         self.status = status
 
-    @classmethod
-    def get_epics_from_organization(cls, org_id):
+    @staticmethod
+    def get_epics_from_organization(org_id):
         '''
         returns None if the organization has no epics
         '''
@@ -37,12 +37,21 @@ class Epic:
 
         return MongoHelper().get_documents_by("epics", filter)
     
-    @classmethod
-    def create_epic(cls, epic_document):
+    @staticmethod
+    def get_epics_from_team(org_id):
+        '''
+        returns None if the team has no epics
+        '''
+        filter = {'team': ObjectId(org_id)}
+
+        return MongoHelper().get_documents_by("epics", filter)
+    
+    @staticmethod
+    def create_epic(epic_document):
         return MongoHelper().create_document('epics', epic_document)
     
-    @classmethod
-    def get_epic_fields(cls, sections=False):
+    @staticmethod
+    def get_epic_fields(sections=False):
         epic_fields =  MongoHelper().get_documents_by('epic_fields', sort={'order': 1})
         if sections:
             epic_sections = {}
@@ -52,8 +61,8 @@ class Epic:
             return epic_sections
         return epic_fields
     
-    @classmethod
-    def get_names_of_mandatory_fields(cls):
+    @staticmethod
+    def get_names_of_mandatory_fields():
         filter = { 'modifiable': 0 }
         projection = { 'value' }
         docs = MongoHelper().get_documents_by('epic_fields', filter=filter, sort={'order': 1}, projection=projection)

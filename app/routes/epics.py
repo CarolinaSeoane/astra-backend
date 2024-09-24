@@ -6,7 +6,7 @@ from math import ceil
 
 from app.utils import send_response
 from app.models.epic import Epic, Color
-from app.routes.utils import validate_user_is_member_of_team
+from app.routes.utils import validate_user_is_active_member_of_team
 from app.models.story import Priority
 from app.models.task import Status
 from app.models.team import Team
@@ -18,11 +18,11 @@ excluded_routes = [
 ]
 
 @epics.before_request
-def apply_validate_user_is_member_of_team():
+def apply_validate_user_is_active_member_of_team():
     for route in excluded_routes:
         if request.path.startswith(route):
             return None
-    return validate_user_is_member_of_team()
+    return validate_user_is_active_member_of_team()
 
 @epics.route('/create', methods=['POST'])
 def create_story():

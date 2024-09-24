@@ -6,7 +6,7 @@ import random
 
 from app.models.story import Story, Priority, Type
 from app.utils import send_response, get_current_quarter
-from app.routes.utils import validate_user_is_member_of_team
+from app.routes.utils import validate_user_is_active_member_of_team
 from app.models.team import Team
 from app.models.sprint import Sprint
 from app.models.epic import Epic
@@ -21,11 +21,11 @@ excluded_routes = [
 ]
 
 @stories.before_request
-def apply_validate_user_is_member_of_team():
+def apply_validate_user_is_active_member_of_team():
     for route in excluded_routes:
         if request.path.startswith(route):
             return None
-    return validate_user_is_member_of_team()
+    return validate_user_is_active_member_of_team()
 
 @stories.route("/<view_type>", methods=['GET'])
 @use_args({
@@ -71,13 +71,15 @@ def filters(args):
     
     if args['sprints']:
         sprints = Sprint.get_sprints(g.team_id, args['quarter'], args['year'], args['future'])
-        for sprint in sprints:
-            sprint_option = {
-                'key': sprint['_id']['$oid'],
-                'label': sprint['name'],
-                'status': sprint['status']
-            }
-            sprints_filter.append(sprint_option)
+        
+        if sprints:
+            for sprint in sprints:
+                sprint_option = {
+                    'key': sprint['_id']['$oid'],
+                    'label': sprint['name'],
+                    'status': sprint['status']
+                }
+                sprints_filter.append(sprint_option)
         
         filters['sprint'] = {
             'label': 'Sprint',
@@ -90,15 +92,16 @@ def filters(args):
  
     if args['members']:
         members = team['members']
-        for member in members:
-            member_option = {
-                'key': member['_id']['$oid'],
-                'label': member['username'] + (' (You)' if member['_id']['$oid'] == g._id else ''),
-                'username': member['username'],
-                'profile_picture': member['profile_picture'],
-                'email': member['email'],
-            }     
-            members_filter.append(member_option)
+        if members:
+            for member in members:
+                member_option = {
+                    'key': member['_id']['$oid'],
+                    'label': member['username'] + (' (You)' if member['_id']['$oid'] == g._id else ''),
+                    'username': member['username'],
+                    'profile_picture': member['profile_picture'],
+                    'email': member['email'],
+                }     
+                members_filter.append(member_option)
         
         filters['assigned_to'] = {
             'label': 'Assigned to',
@@ -107,17 +110,20 @@ def filters(args):
         }       
 
     if args['epics']:
-        org_id = team["organization"]['$oid']
-        epics = Epic.get_epics_from_organization(org_id)
-        # print(epics)
+        if team["organization"]:
+            org_id = team["organization"]['$oid']
+            epics = Epic.get_epics_from_organization(org_id)
+        else:
+            epics = Epic.get_epics_from_team(g.team_id)
         
-        for epic in epics:
-            epic_option = {
-                'key': epic['_id']['$oid'],
-                'label': epic['title'],
-                'team': epic['team']
-            }
-            epics_filter.append(epic_option)
+        if epics:
+            for epic in epics:
+                epic_option = {
+                    'key': epic['_id']['$oid'],
+                    'label': epic['title'],
+                    'team': epic['team']
+                }
+                epics_filter.append(epic_option)
         
         filters['epic'] = {
             'label': 'Epic',

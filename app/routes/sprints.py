@@ -17,5 +17,4 @@ def apply_validate_user_is_member_of_team():
 @sprints.route('/velocity', methods=['GET'])
 def get_velocity():
     velocity = Sprint.get_velocity(g.team_id)
-
     return send_response(velocity, [], 200, **g.req_data)
