@@ -6,7 +6,7 @@ from app.models.member import MemberStatus
 
 class User:
 
-    def __init__(self, name, surname, username, email, profile_picture, access_token=None, teams=list(), _id=ObjectId()):
+    def __init__(self, name, surname, username, email, profile_picture, access_token=None, refresh_token=None, teams=list(), _id=ObjectId()):
         self._id = _id
         self.name = name
         self.surname = surname
@@ -15,6 +15,7 @@ class User:
         self.profile_picture = profile_picture
         self.teams = teams
         self.access_token = access_token
+        self.refresh_token = refresh_token
 
     @staticmethod
     def get_user_by(filter, get_access_token=False):

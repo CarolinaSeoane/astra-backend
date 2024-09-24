@@ -123,6 +123,7 @@ class Populate:
                 "email": "carolina.b.seoane@gmail.com",
                 "profile_picture": self.pfp1,
                 "access_token": "ya29.a0AcM612yUpCKXBgIGJ3v-x9Y9Ld2u2E_7qbvZntH0GJJPqL8Cba3W0A-AcZHzehyQnjOLCyVjKT01lPI7WJWylZrzXyLywF8nlZQ6AnuvL2MzNDcJR45RrwTG0yfx9SePh_5x3DEeD0_KYEGEE-N38cyRVt6xgYW_gDsaCgYKASsSARASFQHGX2MiiGM7KNSCWXl35YdLXKVdUw0170",
+                "refresh_token": "",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -144,6 +145,7 @@ class Populate:
                 "email": "seoane.m.b@gmail.com",
                 "profile_picture": self.pfp2,
                 "access_token": "COMPLETAR",
+                "refresh_token": "",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -160,6 +162,7 @@ class Populate:
                 "email": "msaenz@gmail.com",
                 "profile_picture": self.pfp3,
                 "access_token": "COMPLETAR",
+                "refresh_token": "",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -176,6 +179,7 @@ class Populate:
                 "email": "juan.pol@gmail.com",
                 "profile_picture": self.pfp4,
                 "access_token": "COMPLETAR",
+                "refresh_token": "",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -192,6 +196,7 @@ class Populate:
                 "email": "melisa_leon@gmail.com",
                 "profile_picture": self.pfp5,
                 "access_token": "COMPLETAR",
+                "refresh_token": "",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -208,6 +213,7 @@ class Populate:
                 "email": "pepilombardo@gmail.com",
                 "profile_picture": self.pfp6,
                 "access_token": "COMPLETAR",
+                "refresh_token": "",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -224,6 +230,7 @@ class Populate:
                 "email": "nic.justo@gmail.com",
                 "profile_picture": self.pfp7,
                 "access_token": "COMPLETAR",
+                "refresh_token": "",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -240,6 +247,7 @@ class Populate:
                 "email": "matmass03@gmail.com",
                 "profile_picture": self.pfp8,
                 "access_token": "COMPLETAR",
+                "refresh_token": "",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -261,6 +269,7 @@ class Populate:
                 "email": "guderianfront2000@gmail.com",
                 "profile_picture": self.pfp9,
                 "access_token": "COMPLETAR",
+                "refresh_token": "",
                 "teams": [
                     {
                         "_id": self.team1_id,
