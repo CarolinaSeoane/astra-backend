@@ -1,11 +1,14 @@
 from bson import ObjectId
 from datetime import datetime
+
 import pytz
 
 from app.models.user import User
 from app.services.mongoHelper import MongoHelper
 from app.models.member import MemberStatus
 from app.models.settings import Settings
+from app.services.google_meet import create_space
+
 
 class Team:
 
@@ -131,4 +134,15 @@ class Team:
         default_settings = Settings.get_default_settings()
         filter = {'_id':ObjectId(team_id)}
         update = {'$set': {'team_settings': default_settings}}
+        return MongoHelper().update_collection('teams', filter, update)
+    
+    @staticmethod
+    def set_up_google_meet_space(team_id, ceremony, access_token):
+        '''
+        Sets up a google meet space for the specified ceremony using
+        google_meet service
+        '''
+        space = create_space(access_token)
+        filter = {'_id':ObjectId(team_id)}
+        update = {'$set': {f'team_settings.ceremonies.{ceremony.lower()}.google_meet_config': space}}
         return MongoHelper().update_collection('teams', filter, update)

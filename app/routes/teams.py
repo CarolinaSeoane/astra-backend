@@ -10,7 +10,8 @@ from app.routes.utils import validate_user_is_active_member_of_team
 from app.models.member import MemberStatus, Role
 from app.models.organization import Organization
 from app.models.sprint import Sprint
-from app.services.google_meet import create_space
+from app.models.ceremony import CeremonyType
+
 
 teams = Blueprint('teams', __name__)
 
@@ -242,16 +243,19 @@ def create_team(args):
         
         # Add team to user collection
         new_team = Team.get_team(res.inserted_id)
+        new_team_id = new_team['_id']['$oid']
         user_obj.add_team(new_team, MemberStatus.ACTIVE.value)
 
         # Create backlog (every team starts with an active backlog)
         Sprint.create_backlog_for_new_team(res.inserted_id)
 
         # Create default team settings
-        Team.add_default_settings(new_team['_id']['$oid'])
+        Team.add_default_settings(new_team_id)
 
         # Add Google Meet space to each ceremony
-        Team.set_up_google_meet_space("")
+        Team.set_up_google_meet_space(new_team_id, CeremonyType.STANDUP.value, user_obj.access_token)
+        Team.set_up_google_meet_space(new_team_id, CeremonyType.PLANNING.value, user_obj.access_token)
+        Team.set_up_google_meet_space(new_team_id, CeremonyType.RETRO.value, user_obj.access_token)
 
     except Exception as e:
         print(e)
