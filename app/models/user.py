@@ -18,13 +18,13 @@ class User:
         self.refresh_token = refresh_token
 
     @staticmethod
-    def get_user_by(filter, get_access_token=False):
+    def get_user_by(filter, get_google_tokens=False):
         '''
         returns None if user is not found and dict if found
         '''
         projection={}
-        if not get_access_token:
-            projection={'access_token': False}
+        if not get_google_tokens:
+            projection={'access_token': False, 'refresh_token': False}
         return MongoHelper().get_document_by('users', filter, projection=projection)
 
     @staticmethod

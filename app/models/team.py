@@ -137,12 +137,12 @@ class Team:
         return MongoHelper().update_collection('teams', filter, update)
     
     @staticmethod
-    def set_up_google_meet_space(team_id, ceremony, access_token):
+    def set_up_google_meet_space(team_id, ceremony, access_token, refresh_token):
         '''
         Sets up a google meet space for the specified ceremony using
         google_meet service
         '''
-        space = create_space(access_token)
+        space = create_space(access_token, refresh_token)
         filter = {'_id':ObjectId(team_id)}
         update = {'$set': {f'team_settings.ceremonies.{ceremony.lower()}.google_meet_config': space}}
         return MongoHelper().update_collection('teams', filter, update)

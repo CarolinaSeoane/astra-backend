@@ -253,9 +253,9 @@ def create_team(args):
         Team.add_default_settings(new_team_id)
 
         # Add Google Meet space to each ceremony
-        Team.set_up_google_meet_space(new_team_id, CeremonyType.STANDUP.value, user_obj.access_token)
-        Team.set_up_google_meet_space(new_team_id, CeremonyType.PLANNING.value, user_obj.access_token)
-        Team.set_up_google_meet_space(new_team_id, CeremonyType.RETRO.value, user_obj.access_token)
+        Team.set_up_google_meet_space(new_team_id, CeremonyType.STANDUP.value, user_obj.access_token, user_obj.refresh_token)
+        Team.set_up_google_meet_space(new_team_id, CeremonyType.PLANNING.value, user_obj.access_token, user_obj.refresh_token)
+        Team.set_up_google_meet_space(new_team_id, CeremonyType.RETRO.value, user_obj.access_token, user_obj.refresh_token)
 
     except Exception as e:
         print(e)
