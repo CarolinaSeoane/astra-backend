@@ -3,6 +3,7 @@ from enum import Enum
 
 from app.services.mongoHelper import MongoHelper
 
+
 class Color(Enum):
     BLUE = "astra-logo-blue"
     LIME = "astra-lime"
@@ -11,6 +12,8 @@ class Color(Enum):
     RED = "astra-red"
     ORANGE = "astra-orange"
     YELLOW = "astra-yellow"
+
+
 class Epic:
 
     def __init__(self, title, description, team, organization, priority, epic_color, creator, acceptance_criteria, business_value, status):
@@ -64,3 +67,15 @@ class Epic:
         projection = { 'value' }
         docs = MongoHelper().get_documents_by('epic_fields', filter=filter, sort={'order': 1}, projection=projection)
         return [doc['value'] for doc in docs]
+    
+    @classmethod
+    def get_count_by_sprint(cls, sprint_name, team_id):
+        match = {
+            "sprint.name": sprint_name,
+            "team": team_id
+        }
+        group = {
+            "_id": "$epic.title",
+            "count": { "$sum": 1 }
+        }
+        return MongoHelper().aggregate('stories', match, group)

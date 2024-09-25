@@ -67,6 +67,16 @@ class Sprint:
         if not documents:
             return None
         return documents[1:] + [documents[0]] # Send first element (backlog) to the back
+
+    @staticmethod
+    def get_velocity(team_id):
+        filter = {
+            "team": { "$eq": team_id },
+            "name": { "$ne": "Backlog" }
+        }
+        sort = {'sprint_number': 1}
+        projection = {"name", "target", "completed"}
+        return MongoHelper().get_documents_by("sprints", filter=filter, sort=sort, projection=projection)
     
     @staticmethod
     def create_backlog_for_new_team(team_id):
