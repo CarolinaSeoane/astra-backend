@@ -3,24 +3,27 @@ from enum import Enum
 
 from app.services.mongoHelper import MongoHelper
 
+
 class SprintStatus(Enum):
     CURRENT = "Current"
     FINISHED = "Finished"
     FUTURE = "Future"
     ACTIVE = "Active" # Used for backlog
+
+
 class Sprint:
 
     def __init__(self, name, sprint_number, quarter, year, start_date, end_date, status, target, team, _id=ObjectId()):
         self._id = _id
         self.name = name
-        self.sprint_number: sprint_number
-        self.quarter: quarter
-        self.year: year
-        self.start_date: start_date
-        self.end_date: end_date
-        self.status: status
-        self.target: target
-        self.team: team
+        self.sprint_number = sprint_number
+        self.quarter = quarter
+        self.year = year
+        self.start_date = start_date
+        self.end_date = end_date
+        self.status = status
+        self.target = target
+        self.team = team
     
     @staticmethod
     def get_sprints(team_id, quarter, year, future):
@@ -86,3 +89,12 @@ class Sprint:
             "team": team_id
         }
         return MongoHelper().add_new_element_to_collection('sprints', new_backlog)
+    
+    @staticmethod
+    def get_target_points(sprint, team_id):
+        filter = {
+            "name": sprint,
+            "team": ObjectId(team_id)
+        }
+        projection = {"target"}
+        return MongoHelper().get_document_by("sprints", filter, projection=projection)["target"]

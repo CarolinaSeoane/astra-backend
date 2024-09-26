@@ -51,6 +51,13 @@ class MongoHelper:
     def create_document(self, collection_name, document):
         return self.astra.db[collection_name].insert_one(document)
     
-    def aggregate(self, collection_name, match, group):
+    def aggregate(self, collection_name, match, group, sort=None):
+        '''
+        Executes an aggregation pipeline sequentially, starting with the match stage, followed by the group stage,
+        and finally the sort stage. If sorting before grouping is required, the code will need to be refactored 
+        to accommodate that.
+        '''
         pipeline = [{"$match": match}, {"$group": group}]
+        if sort:
+            pipeline.append({"$sort": sort})
         return self.astra.db[collection_name].aggregate(pipeline)

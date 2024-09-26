@@ -15,8 +15,8 @@ class Populate:
     org2_id = ObjectId()
     org3_id = ObjectId()
 
-    user1_id = ObjectId()
-    user2_id = ObjectId()
+    user1_id = ObjectId("66f21cea9883e33c91269f76")
+    user2_id = ObjectId("66f37a50e315dc85955a329b")
     user3_id = ObjectId()
     user4_id = ObjectId()
     user5_id = ObjectId()
@@ -45,7 +45,7 @@ class Populate:
     pfp8 = "16"
     pfp9 = "1"
 
-    team1_id = ObjectId()
+    team1_id = ObjectId("66f37a50e315dc85955a32a3")
     team2_id = ObjectId()
 
     epic1_id = ObjectId()
@@ -553,11 +553,14 @@ class Populate:
                     "_id": self.sprint4_q3_team1,
                     "name": "S4-Q3-2024"
                 },
-                "estimation": "5",
+                "estimation": 5,
                 "tags": ["Buscador"],
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
+                "creation_date": datetime.datetime(2024, 7, 20),
+                "start_date": datetime.datetime(2024, 8, 5),
+                "end_date": datetime.datetime(2024, 8, 9),
                 "tasks": [
                     {
                         "title": "Revisar implementacion de libreria",
@@ -603,11 +606,14 @@ class Populate:
                     "_id": self.sprint4_q3_team1,
                     "name": "S4-Q3-2024"
                 },
-                "estimation": "1",
+                "estimation": 1,
                 "tags": ["UX", "Accesibilidad"],
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
+                "creation_date": datetime.datetime(2024, 7, 20),
+                "start_date": datetime.datetime(2024, 8, 7),
+                "end_date": datetime.datetime(2024, 8, 8),
                 "tasks": [
                     {
                         "title": "Modificar valor de font-color",
@@ -641,11 +647,14 @@ class Populate:
                     "_id": self.sprint1_q1_team1,
                     "name": "S1-Q1-2024"
                 },
-                "estimation": "3",
+                "estimation": 3,
                 "tags": ["QA", "Performance"],
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
+                "creation_date": datetime.datetime(2023, 12, 28),
+                "start_date": datetime.datetime(2024, 1, 2),
+                "end_date": datetime.datetime(2024, 1, 6),
                 "tasks": [
                     {
                         "title": "Solicitar pruebas de performance para GET /user/id",
@@ -658,6 +667,47 @@ class Populate:
             },
             {
                 "story_id": "ARGO-000004",
+                "title": "Preparar ASL demo",
+                "description": "Diseñar una demo de la aplicación para presentarla al cliente",
+                "acceptance_criteria": "El cliente ",
+                "creator": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2
+                },
+                "assigned_to": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1
+                },
+                "epic": {
+                    "_id": self.epic2_id,
+                    "title": self.epic2_title,
+                },
+                "sprint": {
+                    "_id": self.sprint1_q1_team1,
+                    "name": "S1-Q1-2024"
+                },
+                "estimation": 5,
+                "tags": ["Stakeholder"],
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.DISCOVERY.value,
+                "estimation_method": "Fibonacci",
+                "creation_date": datetime.datetime(2023, 12, 21),
+                "start_date": datetime.datetime(2023, 12, 27),
+                "end_date": datetime.datetime(2024, 1, 6),
+                "tasks": [
+                    {
+                        "title": "Preparar presentacion",
+                        "description": "La PPT debe incluir todas las features que se estuvieron desarrollando en el ultimo semestre",
+                        "app": "MS USER",
+                        "status": Status.DONE.value
+                    }
+                ],
+                "team": self.team1_id # change to _id?
+            },
+            {
+                "story_id": "ARGO-000005",
                 "title": "Arreglar click en botón Buscar",
                 "description": "Como usuario quiero que al hacer click en el botón buscar no aumente el tamaño del input field",
                 "acceptance_criteria": "El tamaño del input field permanece constante",
@@ -679,11 +729,14 @@ class Populate:
                     "_id": self.sprint5_q3_team1,
                     "name": "S5-Q3-2024"
                 },
-                "estimation": "1",
+                "estimation": 1,
                 "tags": ["Frontend"],
                 "priority": Priority.LOW.value,
                 "story_type": Type.BUGFIX.value,
                 "estimation_method": "Fibonacci",
+                "creation_date": datetime.datetime(2023, 8, 2),
+                "start_date": datetime.datetime(2024, 8, 19),
+                "end_date": datetime.datetime(2024, 8, 21),
                 "tasks": [
                     {
                         "title": "Modificar componente buscador",
@@ -692,6 +745,166 @@ class Populate:
                     }
                 ],
                 "team": self.team1_id # change to _id?
+            },
+            {
+                "story_id": "ARGO-000006",
+                "title": "Optimizar carga de imágenes en la galería",
+                "description": "Como usuario quiero que las imágenes en la galería se carguen más rápido para mejorar la experiencia de navegación",
+                "acceptance_criteria": "Las imágenes se cargan en menos de 2 segundos",
+                "creator": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2
+                },
+                "assigned_to": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1
+                },
+                "epic": {
+                    "_id": self.epic1_id,
+                    "title": self.epic1_title,
+                },
+                "sprint": {
+                    "_id": self.sprint1_q1_team1,
+                    "name": "S1-Q1-2024"
+                },
+                "estimation": 8,
+                "tags": ["Backend", "Performance"],
+                "priority": Priority.HIGH.value,
+                "story_type": Type.FEATURE.value,
+                "estimation_method": "Fibonacci",
+                "creation_date": datetime.datetime(2023, 12, 27),
+                "start_date": datetime.datetime(2024, 1, 3),
+                "end_date": datetime.datetime(2024, 1, 7),
+                "tasks": [
+                    {
+                        "title": "Optimizar función de carga de imágenes",
+                        "description": "Refactorizar el método de carga para implementar lazy loading",
+                        "status": Status.DOING.value
+                    }
+                ],
+                "team": self.team1_id
+            },
+            {
+                "story_id": "ARGO-000007",
+                "title": "Añadir validación de formulario en la página de registro",
+                "description": "Como usuario quiero recibir mensajes de error si los campos del formulario no son válidos para evitar errores en el registro",
+                "acceptance_criteria": "El formulario muestra mensajes de error si se dejan campos en blanco o si los formatos son incorrectos",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1
+                },
+                "assigned_to": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2
+                },
+                "epic": {
+                    "_id": self.epic1_id,
+                    "title": self.epic1_title,
+                },
+                "sprint": {
+                    "_id": self.sprint1_q1_team1,
+                    "name": "S1-Q1-2024"
+                },
+                "estimation": 2,
+                "tags": ["Frontend", "Validations"],
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.BUGFIX.value,
+                "estimation_method": "Fibonacci",
+                "creation_date": datetime.datetime(2023, 12, 27),
+                "start_date": datetime.datetime(2024, 1, 5),
+                "end_date": datetime.datetime(2024, 1, 7),
+                "tasks": [
+                    {
+                        "title": "Añadir validación de campos vacíos",
+                        "description": "Verificar que todos los campos requeridos estén completados",
+                        "status": Status.DOING.value
+                    }
+                ],
+                "team": self.team1_id
+            },
+            {
+                "story_id": "ARGO-000008",
+                "title": "Actualizar estilos de la página de perfil",
+                "description": "Como usuario quiero que el diseño de la página de perfil sea más moderno para mejorar la experiencia visual",
+                "acceptance_criteria": "La página de perfil utiliza un nuevo tema con colores y fuentes actualizados",
+                "creator": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2
+                },
+                "assigned_to": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2
+                },
+                "epic": {
+                    "_id": self.epic2_id,
+                    "title": self.epic2_title,
+                },
+                "sprint": {
+                    "_id": self.sprint1_q1_team1,
+                    "name": "S1-Q1-2024"
+                },
+                "estimation": 13,
+                "tags": ["Frontend", "UI/UX"],
+                "priority": Priority.LOW.value,
+                "story_type": Type.FEATURE.value,
+                "estimation_method": "Fibonacci",
+                "creation_date": datetime.datetime(2023, 12, 15),
+                "start_date": datetime.datetime(2023, 12, 20),
+                "end_date": datetime.datetime(2024, 1, 7),
+                "tasks": [
+                    {
+                        "title": "Cambiar esquema de colores",
+                        "description": "Actualizar los colores y las fuentes en el CSS del perfil",
+                        "status": Status.DOING.value
+                    }
+                ],
+                "team": self.team1_id
+            },
+            {
+                "story_id": "ARGO-000009",
+                "title": "Corregir bug en el scroll infinito de la página principal",
+                "description": "Como usuario quiero que la página principal cargue correctamente más contenido cuando hago scroll hacia abajo",
+                "acceptance_criteria": "El scroll infinito carga contenido adicional sin errores",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1
+                },
+                "assigned_to": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1
+                },
+                "epic": {
+                    "_id": self.epic1_id,
+                    "title": self.epic1_title,
+                },
+                "sprint": {
+                    "_id": self.sprint1_q1_team1,
+                    "name": "S1-Q1-2024"
+                },
+                "estimation": 4,
+                "tags": ["Frontend", "Bugfix"],
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.BUGFIX.value,
+                "estimation_method": "Fibonacci",
+                "creation_date": datetime.datetime(2023, 12, 29),
+                "start_date": datetime.datetime(2024, 1, 4),
+                "end_date": datetime.datetime(2024, 1, 8),
+                "tasks": [
+                    {
+                        "title": "Revisar lógica de paginación",
+                        "description": "Verificar la implementación de scroll infinito para corregir errores de paginación",
+                        "status": Status.DOING.value
+                    }
+                ],
+                "team": self.team1_id
             }
         ]
         self.helper.post_to_collection("stories", stories)
@@ -979,8 +1192,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 1, 1),
                 "end_date": datetime.datetime(2024, 1, 14),
                 "status": SprintStatus.FINISHED.value,
-                "target": '97',
-                "completed": "105",
+                "target": 97,
+                "completed": 105,
                 "team": self.team1_id
             },
             {
@@ -992,8 +1205,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 1, 15),
                 "end_date": datetime.datetime(2024, 1, 28),
                 "status": SprintStatus.FINISHED.value,
-                "target": '103',
-                "completed": "88",
+                "target": 103,
+                "completed": 88,
                 "team": self.team1_id
             },
             {
@@ -1005,8 +1218,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 1, 29),
                 "end_date": datetime.datetime(2024, 2, 11),
                 "status": SprintStatus.FINISHED.value,
-                "target": '102',
-                "completed": "102",
+                "target": 102,
+                "completed": 102,
                 "team": self.team1_id
             },
             {
@@ -1018,8 +1231,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 2, 12),
                 "end_date": datetime.datetime(2024, 2, 25),
                 "status": SprintStatus.FINISHED.value,
-                "target": '95',
-                "completed": "100",
+                "target": 95,
+                "completed": 100,
                 "team": self.team1_id
             },
             {
@@ -1031,8 +1244,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 2, 26),
                 "end_date": datetime.datetime(2024, 3, 10),
                 "status": SprintStatus.FINISHED.value,
-                "target": '90',
-                "completed": "94",
+                "target": 90,
+                "completed": 94,
                 "team": self.team1_id
             },
             {
@@ -1044,8 +1257,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 3, 11),
                 "end_date": datetime.datetime(2024, 3, 24),
                 "status": SprintStatus.FINISHED.value,
-                "target": '110',
-                "completed": "100",
+                "target": 110,
+                "completed": 100,
                 "team": self.team1_id
             },
             {
@@ -1057,8 +1270,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 3, 25),
                 "end_date": datetime.datetime(2024, 4, 7),
                 "status": SprintStatus.FINISHED.value,
-                "target": '97',
-                "completed": "105",
+                "target": 97,
+                "completed": 105,
                 "team": self.team1_id
             },
             {
@@ -1070,8 +1283,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 4, 15),
                 "end_date": datetime.datetime(2024, 4, 28),
                 "status": SprintStatus.FINISHED.value,
-                "target": '107',
-                "completed": "89",
+                "target": 107,
+                "completed": 89,
                 "team": self.team1_id
             },
             {
@@ -1083,8 +1296,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 4, 29),
                 "end_date": datetime.datetime(2024, 5, 12),
                 "status": SprintStatus.FINISHED.value,
-                "target": '98',
-                "completed": "98",
+                "target": 98,
+                "completed": 98,
                 "team": self.team1_id
             },
             {
@@ -1096,8 +1309,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 5, 13),
                 "end_date": datetime.datetime(2024, 5, 26),
                 "status": SprintStatus.FINISHED.value,
-                "target": '93',
-                "completed": "100",
+                "target": 93,
+                "completed": 100,
                 "team": self.team1_id
             },
             {
@@ -1109,8 +1322,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 5, 27),
                 "end_date": datetime.datetime(2024, 6, 9),
                 "status": SprintStatus.FINISHED.value,
-                "target": '95',
-                "completed": "99",
+                "target": 95,
+                "completed": 99,
                 "team": self.team1_id
             },
             {
@@ -1122,8 +1335,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 6, 10),
                 "end_date": datetime.datetime(2024, 6, 23),
                 "status": SprintStatus.FINISHED.value,
-                "target": '103',
-                "completed": "100",
+                "target": 103,
+                "completed": 100,
                 "team": self.team1_id
             },
             {
@@ -1135,8 +1348,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 6, 24),
                 "end_date": datetime.datetime(2024, 7, 7),
                 "status": SprintStatus.FINISHED.value,
-                "target": '97',
-                "completed": "97",
+                "target": 97,
+                "completed": 97,
                 "team": self.team1_id
             },
             {
@@ -1148,8 +1361,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 7, 8),
                 "end_date": datetime.datetime(2024, 7, 21),
                 "status": SprintStatus.FINISHED.value,
-                "target": '100',
-                "completed": "103",
+                "target": 100,
+                "completed": 103,
                 "team": self.team1_id
             },
             {
@@ -1161,8 +1374,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 7, 22),
                 "end_date": datetime.datetime(2024, 8, 4),
                 "status": SprintStatus.FINISHED.value,
-                "target": '94',
-                "completed": "103",
+                "target": 94,
+                "completed": 103,
                 "team": self.team1_id
             },
             {
@@ -1174,8 +1387,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 8, 5),
                 "end_date": datetime.datetime(2024, 8, 18),
                 "status": SprintStatus.CURRENT.value,
-                "target": '85',
-                "completed": "80",
+                "target": 85,
+                "completed": 80,
                 "team": self.team1_id
             },
             {
@@ -1187,8 +1400,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 8, 19),
                 "end_date": datetime.datetime(2024, 9, 1),
                 "status": SprintStatus.FUTURE.value,
-                "target": '97',
-                "completed": "109",
+                "target": 97,
+                "completed": 109,
                 "team": self.team1_id
             },
             {
@@ -1200,8 +1413,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 9, 2),
                 "end_date": datetime.datetime(2024, 9, 15),
                 "status": SprintStatus.FUTURE.value,
-                "target": '115',
-                "completed": "109",
+                "target": 115,
+                "completed": 109,
                 "team": self.team1_id
             },
             {

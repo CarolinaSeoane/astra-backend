@@ -103,3 +103,17 @@ class Story:
     @staticmethod
     def create_story(story_document):
         return MongoHelper().create_document('stories', story_document)
+    
+    @staticmethod
+    def get_done_story_points_count_by_day(story_id, team_id):
+        match = {
+            "sprint.name": story_id,
+            "team": ObjectId(team_id)
+        }
+        group = {
+            "_id": "$end_date",
+            "completed_points": { "$sum": "$estimation" }
+        }
+        sort = {"_id": 1}   # because the sorting occurs after the group by, we no longer have the end_date field. that data
+                            # is now at _id. renaming of the resulting group by fields is possible is really needed.
+        return MongoHelper().aggregate("stories", match, group, sort)

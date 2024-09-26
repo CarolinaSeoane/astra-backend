@@ -164,7 +164,6 @@ def filters(args):
 
 @stories.route('/generate_id', methods=['GET'])
 def generate_story_id():
-
     def generate_new_id():
         number = random.randint(1, 999999)
         complete_number = str(number).rjust(6, '0')
