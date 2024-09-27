@@ -91,7 +91,7 @@ class Team:
     @staticmethod
     def update_mandatory_fields(team_id, settings):
         filter = {'_id': team_id}
-        update = {'$set': {'team_settings.story_fields': settings}}
+        update = {'$set': {'team_settings.mandatory_story_fields': settings}}
         MongoHelper().update_collection('teams', filter, update)
 
     @staticmethod

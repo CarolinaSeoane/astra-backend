@@ -13,11 +13,11 @@ class Estimation(Enum):
 class Settings:
 
     def __init__(self, sprint_duration, sprint_begins_on, estimation_method,
-                 mandatory_fields, permits):
+                 mandatory_story_fields, permits):
         self.sprint_duration = sprint_duration
         self.sprint_begins_on = sprint_begins_on
         self.estimation_method = estimation_method
-        self.mandatory_fields = mandatory_fields
+        self.mandatory_story_fields = mandatory_story_fields
         self.permits = permits
 
     @staticmethod

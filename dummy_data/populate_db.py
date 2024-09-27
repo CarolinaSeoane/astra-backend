@@ -300,13 +300,26 @@ class Populate:
                             "when": "beginning", # "beginning" or "end"
                             "time": "10:00", # "HH:MM,
                             "google_meet_config": {
+                                "name": "spaces/G3IVgQf5g1cB",
+                                "meetingUri": "https://meet.google.com/dox-iazn-miy",
+                                "meetingCode": "dox-iazn-miy",
+                                "config": {
+                                    "accessType": "TRUSTED",
+                                    "entryPointAccess": "ALL"
+                                }
                             },
                         },
                         "standup": {
                             "days": ["mon", "wed", "thu"],
-                            "when": "every",
                             "time": "09:30", # "HH:MM
                             "google_meet_config": {
+                                "name": "spaces/ATCX4-zHdhYB",
+                                "meetingUri": "https://meet.google.com/dsr-aegc-hzc",
+                                "meetingCode": "dsr-aegc-hzc",
+                                "config": {
+                                    "accessType": "TRUSTED",
+                                    "entryPointAccess": "ALL"
+                                }
                             },
                         },
                         "retrospective": {
@@ -314,6 +327,13 @@ class Populate:
                             "when": "end", # "beginning" or "end"
                             "time": "10:00", # "HH:MM
                             "google_meet_config": {
+                                "name": "spaces/wbnLUy_LK3QB",
+                                "meetingUri": "https://meet.google.com/uis-ygog-rnn",
+                                "meetingCode": "uis-ygog-rnn",
+                                "config": {
+                                    "accessType": "TRUSTED",
+                                    "entryPointAccess": "ALL"
+                                }
                             },
                         }
                     },
@@ -322,7 +342,7 @@ class Populate:
                         "sprint_duration": "2", # weeks
                         "sprint_begins_on": "mon"
                     },
-                    "story_fields": ['title', 'description', 'creator', 'assigned_to', 'epic', 'sprint', 'estimation', 'story_type', 'estimation_method', 'tasks'],
+                    "mandatory_story_fields": ['title', 'description', 'creator', 'assigned_to', 'epic', 'sprint', 'estimation', 'story_type', 'estimation_method', 'tasks'],
                     "permits": [
                         {
                             "role": Role.PRODUCT_OWNER.value,
@@ -340,7 +360,7 @@ class Populate:
                         "username": self.username1,
                         "email": "carolina.b.seoane@gmail.com",
                         "profile_picture": self.pfp1,
-                        "role": Role.DEV.value,
+                        "role": Role.SCRUM_MASTER.value,
                         "member_status": MemberStatus.ACTIVE.value
                         # "date": self.user1_id.generation_time
                     },
@@ -349,7 +369,7 @@ class Populate:
                         "username": self.username2,
                         "email": "seoane.m.b@gmail.com",
                         "profile_picture": self.pfp2,
-                        "role": Role.SCRUM_MASTER.value,
+                        "role": Role.DEV.value,
                         "member_status": MemberStatus.ACTIVE.value
                         # "date": self.user2_id.generation_time
                     },
@@ -403,7 +423,7 @@ class Populate:
                         "username": self.username8,
                         "email": "matmass03@gmail.com",
                         "profile_picture": self.pfp8,
-                        "role": "Developer",
+                        "role": Role.DEV.value,
                         "member_status": MemberStatus.ACTIVE.value
                     },
                     {
@@ -411,7 +431,7 @@ class Populate:
                         "username": self.username9,
                         "email": "guderianfront2000@gmail.com",
                         "profile_picture": self.pfp9,
-                        "role": "Developer",
+                        "role": Role.DEV.value,
                         "member_status": MemberStatus.ACTIVE.value,
                     }
                 ]
@@ -435,7 +455,6 @@ class Populate:
                         },
                         "standup": {
                             "days": ["mon", "wed", "thu"],
-                            "when": "every",
                             "time": "09:30", # "HH:MM
                             "google_meet_config": {
                             },
@@ -453,7 +472,7 @@ class Populate:
                         "sprint_duration": "3", # weeks
                         "sprint_begins_on": "mon",
                     },
-                    "story_fields": ['title', 'description', 'acceptance_criteria', 'creator', 'assigned_to', 'epic', 'sprint', 'estimation', 'tags', 'story_type', 'estimation_method', 'tasks'],
+                    "mandatory_story_fields": ['title', 'description', 'acceptance_criteria', 'creator', 'assigned_to', 'epic', 'sprint', 'estimation', 'tags', 'story_type', 'estimation_method', 'tasks'],
                     "permits": [
                         {
                             "role": Role.PRODUCT_OWNER.value,
@@ -1256,7 +1275,6 @@ class Populate:
                     },
                     "standup": {
                         "days": ["mon", "tue", "wed", "thu", "fri"],
-                        "when": "every",
                         "time": "12:00", # "HH:MM
                         "google_meet_config": {
                         },
@@ -1274,7 +1292,7 @@ class Populate:
                     "sprint_duration": "2", # weeks
                     "sprint_begins_on": "mon",
                 },
-                "story_fields": ['title', 'description', 'acceptance_criteria', 'creator', 'assigned_to', 'epic', 'sprint', 'estimation', 'tags', 'story_type', 'estimation_method', 'tasks'],
+                "mandatory_story_fields": ['title', 'description', 'acceptance_criteria', 'creator', 'assigned_to', 'epic', 'sprint', 'estimation', 'tags', 'story_type', 'estimation_method', 'tasks'],
                 "permits": [
                     {
                         "role": Role.PRODUCT_OWNER.value,
