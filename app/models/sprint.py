@@ -91,10 +91,10 @@ class Sprint:
         return MongoHelper().add_new_element_to_collection('sprints', new_backlog)
     
     @staticmethod
-    def get_target_points(sprint, team_id):
+    def get_target_points_and_end_date(sprint, team_id):
         filter = {
             "name": sprint,
             "team": ObjectId(team_id)
         }
-        projection = {"target"}
-        return MongoHelper().get_document_by("sprints", filter, projection=projection)["target"]
+        projection = {"target", "end_date"}
+        return MongoHelper().get_document_by("sprints", filter, projection=projection)

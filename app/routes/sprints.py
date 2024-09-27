@@ -23,14 +23,18 @@ def get_velocity():
 @sprints.route('/burn_down_chart', methods=['GET'])
 @use_args({"sprint_id": fields.Str(required=True)}, location="query")
 def calculate_burn_down(args):
-    target = Sprint.get_target_points(args["sprint_id"], g.team_id)
+    sprint_data = Sprint.get_target_points_and_end_date(args["sprint_id"], g.team_id)
     stories = Story.get_done_story_points_count_by_day(args["sprint_id"], g.team_id)
     burn_down_data = []
-    remainder = target
+    burn_down_chart = {
+        "data": burn_down_data,
+        "sprint_end": sprint_data["end_date"]
+    }
+    remainder = sprint_data["target"]
     for story in stories:
         remainder -= story["completed_points"]
         burn_down_data.append({
             "day": story["_id"].strftime("%a, %d"),
             "remaining": remainder
         }) # TODO completar gaps con el valor anterior y hacer que llegue hasta el ultimo dia actual
-    return send_response(burn_down_data, [], 200, **g.req_data)
+    return send_response(burn_down_chart, [], 200, **g.req_data)
