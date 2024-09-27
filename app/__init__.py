@@ -11,6 +11,8 @@ from app.routes.teams import teams
 from app.routes.epics import epics
 from app.routes.tasks import tasks
 from app.routes.ceremonies import ceremonies
+from app.routes.sprints import sprints
+
 # TODO create custom logger
 
 def create_app():
@@ -28,8 +30,13 @@ def create_app():
   
     # Setup db connection
     print('Setting up db connection...')
-    app.config['MONGO_URI'] = os.getenv('MONGO_URI')
-    mongo.init_app(app) 
+    # app.config['MONGO_URI'] = os.getenv('MONGO_URI')
+    # mongo.init_app(app)
+    # app.config['MONGO_URI'] = os.getenv('MONGO_URI')
+    # app.config['MONGO_URI'] = "mongodb+srv://matias:astra-utn@cluster0.kytik4p.mongodb.net/astra?retryWrites=true&w=majority&appName=Cluster0"
+    app.config['MONGO_URI'] = "mongodb+srv://carolina:astra-utn@cluster0.kytik4p.mongodb.net/astra?retryWrites=true&w=majority&appName=Cluster0"
+
+    mongo.init_app(app)
 
     # Register blueprints
     app.register_blueprint(stories, url_prefix='/stories')
@@ -39,6 +46,7 @@ def create_app():
     app.register_blueprint(epics, url_prefix='/epics')
     app.register_blueprint(tasks, url_prefix='/tasks')
     app.register_blueprint(ceremonies, url_prefix='/ceremonies')
+    app.register_blueprint(sprints, url_prefix='/sprints')
 
     return app
 
