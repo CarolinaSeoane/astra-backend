@@ -1,7 +1,10 @@
 from bson import ObjectId
 
 from app.services.mongoHelper import MongoHelper
+from app.models.configurations import CollectionNames
 
+
+ORGANIZATIONS_COL = CollectionNames.ORGANIZATIONS.value
 
 class Organization:
 
@@ -14,4 +17,4 @@ class Organization:
         '''
         returns None if organization is not found and dict if found
         '''
-        return MongoHelper().get_document_by('organizations', filter)
+        return MongoHelper().get_document_by(ORGANIZATIONS_COL, filter)

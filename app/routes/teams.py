@@ -7,10 +7,10 @@ from app.models.team import Team
 from app.models.user import User
 from app.utils import send_response
 from app.routes.utils import validate_user_is_active_member_of_team
-from app.models.member import MemberStatus, Role
+from app.models.configurations import MemberStatus, Role, CeremonyType
 from app.models.organization import Organization
 from app.models.sprint import Sprint
-from app.services.google_meet import create_space
+
 
 teams = Blueprint('teams', __name__)
 
@@ -119,9 +119,16 @@ def team_ceremonies():
     
     return send_response(ceremonies, [], 200, **g.req_data)
 
+# Validate query param
+def validate_section(value):
+    VALID_SECTIONS = ['ceremonies', 'sprint_set_up', 'mandatory_story_fields', 'permits']
+    if value not in VALID_SECTIONS:
+        raise ValueError(f"Invalid section value. Must be one of: {', '.join(VALID_SECTIONS)}")
+
 @teams.route('/settings', methods=['GET'])
-def get_team_settings():    
-    team_settings = Team.get_team_settings(g.team_id)
+@use_args({'section': fields.Str(required=False, validate=validate_section)}, location='query')
+def get_team_settings(args):
+    team_settings = Team.get_team_settings(g.team_id, args.get('section'))
     return send_response(team_settings, [], 200, **g.req_data)
 
 @teams.route('/mandatory_fields', methods=['PUT'])
@@ -216,10 +223,6 @@ def create_team(args):
     new_team = {        
         "name": args['team_name'],
         "organization": org['_id'],
-        "google_meet_config": {
-            "meeting_code": "",
-            "meeting_space": ""
-        },
         "members": [
             {
                 "_id": ObjectId(g._id),
@@ -239,14 +242,19 @@ def create_team(args):
         
         # Add team to user collection
         new_team = Team.get_team(res.inserted_id)
+        new_team_id = new_team['_id']['$oid']
         user_obj.add_team(new_team, MemberStatus.ACTIVE.value)
 
         # Create backlog (every team starts with an active backlog)
         Sprint.create_backlog_for_new_team(res.inserted_id)
 
         # Create default team settings
-        Team.add_default_settings(new_team['_id']['$oid'])
-
+        Team.add_default_settings(new_team_id)
+        print('after team settings')
+        # Add Google Meet space to each ceremony
+        Team.set_up_google_meet_space(new_team_id, CeremonyType.STANDUP.value, user_obj.access_token, user_obj.refresh_token)
+        Team.set_up_google_meet_space(new_team_id, CeremonyType.PLANNING.value, user_obj.access_token, user_obj.refresh_token)
+        Team.set_up_google_meet_space(new_team_id, CeremonyType.RETRO.value, user_obj.access_token, user_obj.refresh_token)
     except Exception as e:
         print(e)
         #TODO: rollback

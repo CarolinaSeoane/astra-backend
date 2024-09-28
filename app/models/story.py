@@ -1,21 +1,12 @@
-from enum import Enum
 from bson import ObjectId
 
-from app.db_connection import mongo
 from app.utils import kanban_format, list_format
 from app.services.mongoHelper import MongoHelper
+from app.models.configurations import Configurations, CollectionNames
 
-class Type(Enum):
-    BUGFIX = "Bugfix"
-    FEATURE = "Feature"
-    DISCOVERY = "Discovery"
-    DEPLOYMENT = "Deployment"
 
-class Priority(Enum):
-    LOW = "Low"
-    MEDIUM = "Medium"
-    HIGH = "High"
-    CRITIC = "Critic"
+STORIES_COL = CollectionNames.STORIES.value
+
 
 class Story:
 
@@ -75,7 +66,7 @@ class Story:
         if 'story_id' in kwargs and kwargs['story_id']:
             filter["story_id"] = kwargs['story_id']
 
-        stories = MongoHelper().get_documents_by('stories', filter=filter, projection=projection)
+        stories = MongoHelper().get_documents_by(STORIES_COL, filter=filter, projection=projection)
       
         if view_type == 'kanban':
             return kanban_format(stories)
@@ -86,7 +77,7 @@ class Story:
 
     @staticmethod
     def get_story_fields(sections=False):
-        story_fields =  MongoHelper().get_documents_by('story_fields', sort={'order': 1})
+        story_fields = Configurations.get_all_possible_story_fields()['story_fields']
         if sections:
             story_sections = {}
             for story_field in story_fields:
@@ -98,11 +89,11 @@ class Story:
     @staticmethod
     def is_story_id_taken(story_id):
         filter = {'story_id': story_id}
-        return MongoHelper().document_exists("stories", filter)
+        return MongoHelper().document_exists(STORIES_COL, filter)
     
     @staticmethod
     def create_story(story_document):
-        return MongoHelper().create_document('stories', story_document)
+        return MongoHelper().create_document(STORIES_COL, story_document)
     
     @staticmethod
     def get_done_story_points_count_by_day(story_id, team_id):
@@ -116,4 +107,4 @@ class Story:
         }
         sort = {"_id": 1}   # because the sorting occurs after the group by, we no longer have the end_date field. that data
                             # is now at _id. renaming of the resulting group by fields is possible is really needed.
-        return MongoHelper().aggregate("stories", match, group, sort)
+        return MongoHelper().aggregate(STORIES_COL, match, group, sort)

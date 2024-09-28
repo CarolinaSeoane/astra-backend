@@ -2,12 +2,7 @@ from bson import ObjectId
 import datetime
 
 from dummy_data.db_helper import DBHelper
-from app.models.sprint import SprintStatus
-from app.models.story import Type, Priority
-from app.models.epic import Color
-from app.models.member import Role
-from app.models.task import Status
-from app.models.member import MemberStatus
+from app.models.configurations import Role, MemberStatus, Status, Type, Priority, SprintStatus, Color, CeremonyStartOptions, CollectionNames
 
 
 class Populate:
@@ -88,11 +83,8 @@ class Populate:
         self.populate_sprints()
         self.populate_epics()
         self.populate_stories()
-        self.populate_story_fields()
-        self.populate_epic_fields()
         self.populate_permissions()
-        self.populate_estimation_methods()
-        self.populate_default_settings()
+        self.populate_configurations()
 
     def populate_organizations(self):
         organizations = [
@@ -110,7 +102,7 @@ class Populate:
             },
 
         ]
-        self.helper.post_to_collection("organizations", organizations)
+        self.helper.post_to_collection(CollectionNames.ORGANIZATIONS.value, organizations)
         print("populated organizations")
 
     def populate_users(self):
@@ -122,7 +114,8 @@ class Populate:
                 "username": self.username1,
                 "email": "carolina.b.seoane@gmail.com",
                 "profile_picture": self.pfp1,
-                "access_token": "COMPLETAR",
+                "access_token": "ya29.a0AcM612yUpCKXBgIGJ3v-x9Y9Ld2u2E_7qbvZntH0GJJPqL8Cba3W0A-AcZHzehyQnjOLCyVjKT01lPI7WJWylZrzXyLywF8nlZQ6AnuvL2MzNDcJR45RrwTG0yfx9SePh_5x3DEeD0_KYEGEE-N38cyRVt6xgYW_gDsaCgYKASsSARASFQHGX2MiiGM7KNSCWXl35YdLXKVdUw0170",
+                "refresh_token": "1//0ho11G9eYlzhOCgYIARAAGBESNwF-L9IrVFc5SwzPSm01IoILdYjCpH1Lr6hYBAAWYS1y45NUYenHBvXuRi6EJltNXxNQqiYU7yA",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -144,6 +137,7 @@ class Populate:
                 "email": "seoane.m.b@gmail.com",
                 "profile_picture": self.pfp2,
                 "access_token": "COMPLETAR",
+                "refresh_token": "",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -160,6 +154,7 @@ class Populate:
                 "email": "msaenz@gmail.com",
                 "profile_picture": self.pfp3,
                 "access_token": "COMPLETAR",
+                "refresh_token": "",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -176,6 +171,7 @@ class Populate:
                 "email": "juan.pol@gmail.com",
                 "profile_picture": self.pfp4,
                 "access_token": "COMPLETAR",
+                "refresh_token": "",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -192,6 +188,7 @@ class Populate:
                 "email": "melisa_leon@gmail.com",
                 "profile_picture": self.pfp5,
                 "access_token": "COMPLETAR",
+                "refresh_token": "",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -208,6 +205,7 @@ class Populate:
                 "email": "pepilombardo@gmail.com",
                 "profile_picture": self.pfp6,
                 "access_token": "COMPLETAR",
+                "refresh_token": "",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -224,6 +222,7 @@ class Populate:
                 "email": "nic.justo@gmail.com",
                 "profile_picture": self.pfp7,
                 "access_token": "COMPLETAR",
+                "refresh_token": "",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -240,6 +239,7 @@ class Populate:
                 "email": "matmass03@gmail.com",
                 "profile_picture": self.pfp8,
                 "access_token": "COMPLETAR",
+                "refresh_token": "",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -261,6 +261,7 @@ class Populate:
                 "email": "guderianfront2000@gmail.com",
                 "profile_picture": self.pfp9,
                 "access_token": "COMPLETAR",
+                "refresh_token": "",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -275,7 +276,7 @@ class Populate:
                 ]
             },
         ]
-        self.helper.post_to_collection("users", users)
+        self.helper.post_to_collection(CollectionNames.USERS.value, users)
         print("populated users")
     
     def populate_teams(self):
@@ -284,54 +285,72 @@ class Populate:
                 "_id": self.team1_id,
                 "name": "Argo",
                 "organization": self.org3_id,
-                "team_settings": {
-                    "ceremonies": {
-                        "planning": {
-                            "days": ["tue"],
-                            "when": "beginning", # "beginning" or "end"
-                            "time": "10:00", # "HH:MM,
-                            "google_meet_config": {
-                            },
+                "ceremonies": {
+                    "planning": {
+                        "days": ["tue"],
+                        "when": CeremonyStartOptions.BEGINNING.value,
+                        "time": "10:00", # "HH:MM,
+                        "google_meet_config": {
+                            "name": "spaces/G3IVgQf5g1cB",
+                            "meetingUri": "https://meet.google.com/dox-iazn-miy",
+                            "meetingCode": "dox-iazn-miy",
+                            "config": {
+                                "accessType": "TRUSTED",
+                                "entryPointAccess": "ALL"
+                            }
                         },
-                        "standup": {
-                            "days": ["mon", "wed", "thu"],
-                            "when": "every",
-                            "time": "09:30", # "HH:MM
-                            "google_meet_config": {
-                            },
-                        },
-                        "retrospective": {
-                            "days": ["tue"],
-                            "when": "end", # "beginning" or "end"
-                            "time": "10:00", # "HH:MM
-                            "google_meet_config": {
-                            },
-                        }
                     },
-                    "sprint_set_up": {
-                        "estimation_method": ["fibonacci"],
-                        "sprint_duration": "2", # weeks
-                        "sprint_begins_on": "mon"
-                    },
-                    "story_fields": ['title', 'description', 'creator', 'assigned_to', 'epic', 'sprint', 'estimation', 'story_type', 'estimation_method', 'tasks'],
-                    "permits": [
-                        {
-                            "role": Role.PRODUCT_OWNER.value,
-                            "options": ["edit_story", "add_team_members", "join_standup", "all_time_metrics"]
+                    "standup": {
+                        "days": ["mon", "wed", "thu"],
+                        "time": "09:30", # "HH:MM
+                        "google_meet_config": {
+                            "name": "spaces/ATCX4-zHdhYB",
+                            "meetingUri": "https://meet.google.com/dsr-aegc-hzc",
+                            "meetingCode": "dsr-aegc-hzc",
+                            "config": {
+                                "accessType": "TRUSTED",
+                                "entryPointAccess": "ALL"
+                            }
                         },
-                        {
-                            "role": Role.DEV.value,
-                            "options": ["create_story", "edit_story"]
-                        }
-                    ]
+                    },
+                    "retrospective": {
+                        "days": ["tue"],
+                        "when": CeremonyStartOptions.END.value,
+                        "time": "10:00", # "HH:MM
+                        "google_meet_config": {
+                            "name": "spaces/wbnLUy_LK3QB",
+                            "meetingUri": "https://meet.google.com/uis-ygog-rnn",
+                            "meetingCode": "uis-ygog-rnn",
+                            "config": {
+                                "accessType": "TRUSTED",
+                                "entryPointAccess": "ALL"
+                            }
+                        },
+                    }
                 },
+                "sprint_set_up": {
+                    "estimation_method": ["fibonacci"],
+                    "sprint_duration": "2", # weeks
+                    "sprint_begins_on": "mon"
+                },
+                "mandatory_story_fields": ['title', 'description', 'creator', 'assigned_to', 'epic', 'sprint', 'estimation', 'story_type', 'estimation_method', 'tasks'],
+                "permits": [
+                    {
+                        "role": Role.PRODUCT_OWNER.value,
+                        "options": ["edit_story", "add_team_members", "join_standup", "all_time_metrics"]
+                    },
+                    {
+                        "role": Role.DEV.value,
+                        "options": ["create_story", "edit_story"]
+                    }
+                ],
                 "members": [
                     {
                         "_id": self.user1_id,
                         "username": self.username1,
                         "email": "carolina.b.seoane@gmail.com",
                         "profile_picture": self.pfp1,
-                        "role": Role.DEV.value,
+                        "role": Role.SCRUM_MASTER.value,
                         "member_status": MemberStatus.ACTIVE.value
                         # "date": self.user1_id.generation_time
                     },
@@ -340,7 +359,7 @@ class Populate:
                         "username": self.username2,
                         "email": "seoane.m.b@gmail.com",
                         "profile_picture": self.pfp2,
-                        "role": Role.SCRUM_MASTER.value,
+                        "role": Role.DEV.value,
                         "member_status": MemberStatus.ACTIVE.value
                         # "date": self.user2_id.generation_time
                     },
@@ -394,7 +413,7 @@ class Populate:
                         "username": self.username8,
                         "email": "matmass03@gmail.com",
                         "profile_picture": self.pfp8,
-                        "role": "Developer",
+                        "role": Role.DEV.value,
                         "member_status": MemberStatus.ACTIVE.value
                     },
                     {
@@ -402,7 +421,7 @@ class Populate:
                         "username": self.username9,
                         "email": "guderianfront2000@gmail.com",
                         "profile_picture": self.pfp9,
-                        "role": "Developer",
+                        "role": Role.DEV.value,
                         "member_status": MemberStatus.ACTIVE.value,
                     }
                 ]
@@ -415,47 +434,44 @@ class Populate:
                     "meeting_code": "",
                     "meeting_space": ""
                 },
-                "team_settings": {
-                    "ceremonies": {
-                        "planning": {
-                            "days": ["tu"],
-                            "when": "beginning", # "beginning" or "end"
-                            "time": "10:00", # "HH:MM
-                            "google_meet_config": {
-                            },
+                "ceremonies": {
+                    "planning": {
+                        "days": ["tu"],
+                        "when": CeremonyStartOptions.END.value,
+                        "time": "10:00", # "HH:MM
+                        "google_meet_config": {
                         },
-                        "standup": {
-                            "days": ["mon", "wed", "thu"],
-                            "when": "every",
-                            "time": "09:30", # "HH:MM
-                            "google_meet_config": {
-                            },
-                        },
-                        "retrospective": {
-                            "days": ["tue"],
-                            "when": "end", # "beginning" or "end"
-                            "time": "10:00", # "HH:MM
-                            "google_meet_config": {
-                            },
-                        }
                     },
-                    "sprint_set_up": {
-                        "estimation_method": ["fibonacci"],
-                        "sprint_duration": "3", # weeks
-                        "sprint_begins_on": "mon",
-                    },
-                    "story_fields": ['title', 'description', 'acceptance_criteria', 'creator', 'assigned_to', 'epic', 'sprint', 'estimation', 'tags', 'story_type', 'estimation_method', 'tasks'],
-                    "permits": [
-                        {
-                            "role": Role.PRODUCT_OWNER.value,
-                            "options": ["edit_story", "delete_story", "join_standup", "all_time_metrics"]
+                    "standup": {
+                        "days": ["mon", "wed", "thu"],
+                        "time": "09:30", # "HH:MM
+                        "google_meet_config": {
                         },
-                        {
-                            "role": Role.DEV.value,
-                            "options": ["create_story", "edit_story"]
-                        }
-                    ]
+                    },
+                    "retrospective": {
+                        "days": ["tue"],
+                        "when": CeremonyStartOptions.END.value,
+                        "time": "10:00", # "HH:MM
+                        "google_meet_config": {
+                        },
+                    }
                 },
+                "sprint_set_up": {
+                    "estimation_method": ["fibonacci"],
+                    "sprint_duration": "3", # weeks
+                    "sprint_begins_on": "mon",
+                },
+                "mandatory_story_fields": ['title', 'description', 'acceptance_criteria', 'creator', 'assigned_to', 'epic', 'sprint', 'estimation', 'tags', 'story_type', 'estimation_method', 'tasks'],
+                "permits": [
+                    {
+                        "role": Role.PRODUCT_OWNER.value,
+                        "options": ["edit_story", "delete_story", "join_standup", "all_time_metrics"]
+                    },
+                    {
+                        "role": Role.DEV.value,
+                        "options": ["create_story", "edit_story"]
+                    }
+                ],
                 "members": [
                     {
                         "_id": self.user1_id,
@@ -485,7 +501,7 @@ class Populate:
                 ]
             }
         ]
-        self.helper.post_to_collection("teams", teams)
+        self.helper.post_to_collection(CollectionNames.TEAMS.value, teams)
         print("populated teams")
     
     def populate_epics(self):
@@ -525,7 +541,7 @@ class Populate:
                 "status": Status.DOING.value,
             }
         ]
-        self.helper.post_to_collection("epics", epics)
+        self.helper.post_to_collection(CollectionNames.EPICS.value, epics)
         print("populated epics")
 
     def populate_stories(self):
@@ -916,221 +932,8 @@ class Populate:
                 "team": self.team1_id
             }
         ]
-        self.helper.post_to_collection("stories", stories)
+        self.helper.post_to_collection(CollectionNames.STORIES.value, stories)
         print("populated stories")
-
-    def populate_story_fields(self):
-        story_fields = [
-            {
-                "value": 'title',
-                "label": 'Title',
-                "modifiable": 0,
-                "description": 'The title of the story or task.',
-                "section": 'general',
-                "type": "input_field",
-                "order": 1
-            },
-            {
-                "value": 'description',
-                "label": 'Description',
-                "modifiable": 0,
-                "description": 'A detailed description of the story or task.',
-                "section": 'general',
-                "type": "text_area",
-                "order": 2
-            },
-            {
-                "value": 'acceptance_criteria',
-                "label": 'Acceptance criteria',
-                "modifiable": 1,
-                "description": 'The conditions that must be met for the story to be accepted.',
-                "section": 'additional_information',
-                "type": "text_area"
-            },
-            {
-                "value": 'creator',
-                "label": 'Creator',
-                "modifiable": 0,
-                "description": 'The person who created the story or task.',
-                "section": "users",
-                "type": "user"
-            },
-            {
-                "value": 'assigned_to',
-                "label": 'Assigned to',
-                "modifiable": 0,
-                "description": 'The person responsible for completing the story or task.',
-                "section": 'users',
-                "type": "dropdown"
-            },
-            {
-                "value": 'epic',
-                "label": 'Epic',
-                "modifiable": 1,
-                "description": 'The larger body of work that this story or task belongs to.',
-                "section": 'general',
-                "type": "dropdown",
-                "order": 4
-            },
-            {
-                "value": 'sprint',
-                "label": 'Sprint',
-                "modifiable": 0,
-                "description": 'The sprint in which the story or task is being worked on.',
-                "section": 'general',
-                "type": "dropdown",
-                "order": 5
-            },
-            {
-                "value": 'estimation',
-                "label": 'Estimation',
-                "modifiable": 0,
-                "description": 'The estimated effort required to complete the story or task.',
-                "section": 'estimation',
-                "type": "select",
-                "order": 1
-            },
-            {
-                "value": 'tags',
-                "label": 'Tags',
-                "modifiable": 1,
-                "description": 'Keywords associated with the story or task for categorization.',
-                "section": 'additional_information',
-                "type": "hidden"
-            },
-            {
-                "value": 'priority',
-                "label": 'Priority',
-                "modifiable": 1,
-                "description": 'The importance level of the story or task.',
-                "section": 'additional_information',
-                "type": "select"
-            },
-            {
-                "value": 'story_type',
-                "label": 'Story type',
-                "modifiable": 1,
-                "description": 'The classification of the story.',
-                "section": 'general',
-                "type": "select",
-                "order": 3
-            },
-            {
-                "value": 'tasks',
-                "label": 'Tasks',
-                "modifiable": 0,
-                "description": 'The sub-tasks that need to be completed to finish the story.',
-                "section": 'tasks',
-                "type": "task",
-                "components": [
-                    {
-                        "value": 'task_0_title',
-                        "label": 'Task title',
-                        "modifiable": 0,
-                        "description": 'The title of the task.',
-                        "section": 'task',
-                        "type": "input_field",
-                        "order": 1
-                    },
-                    {
-                        "value": 'task_0_description',
-                        "label": 'Task description',
-                        "modifiable": 0,
-                        "description": 'A detailed description of the task.',
-                        "section": 'task',
-                        "type": "text_area",
-                        "order": 2
-                    },
-                ]
-            },
-            {
-                "value": 'story_id',
-                "label": 'Story ID',
-                "modifiable": 0,
-                "description": 'The ID of the story.',
-                "section": 'general',
-                "type": "input_field",
-                "order": 0
-            },
-            {
-                "value": 'estimation_method',
-                "label": 'Estimation method',
-                "modifiable": 0,
-                "description": 'The method used to estimate the effort for the story or task.',
-                "section": 'estimation',
-                "type": "hidden"
-            },
-            # Add hidden values? team, status, etc?
-        ]
-        self.helper.post_to_collection("story_fields", story_fields)
-        print("populated story_fields")
-
-    def populate_epic_fields(self):
-        epic_fields = [
-            {
-                "value": 'title',
-                "label": 'Title',
-                "modifiable": 0,
-                "description": 'The title of the epic.',
-                "section": 'general',
-                "type": "input_field",
-                "order": 1
-            },
-            {
-                "value": 'description',
-                "label": 'Description',
-                "modifiable": 0,
-                "description": 'A detailed description of the epic.',
-                "section": 'general',
-                "type": "text_area",
-                "order": 2
-            },
-            {
-                "value": 'creator',
-                "label": 'Creator',
-                "modifiable": 0,
-                "description": 'The person who created the story or task.',
-                "section": "users",
-                "type": "user"
-            },
-            {
-                "value": 'priority',
-                "label": 'Priority',
-                "modifiable": 0,
-                "description": 'The importance level of the epic.',
-                "section": 'general',
-                "type": "select",
-                "order": 4
-            },
-            {
-                "value": 'epic_color',
-                "label": 'Color',
-                "modifiable": 0,
-                "description": 'The color associated to the epic.',
-                "section": 'general',
-                "type": "select",
-                "order": 3
-            },
-            {
-                "value": 'acceptance_criteria',
-                "label": 'Acceptance criteria',
-                "modifiable": 0,
-                "description": 'The conditions that must be met for the epic to be accepted.',
-                "section": 'additional_information',
-                "type": "text_area"
-            },
-            {
-                "value": 'business_value',
-                "label": 'Business value',
-                "modifiable": 0,
-                "description": 'Benefit that this epic brings to the business.',
-                "section": 'additional_information',
-                "type": "text_area"
-            },
-            # team, org, status
-        ]
-        self.helper.post_to_collection("epic_fields", epic_fields)
-        print("populated epic_fields")
 
     def populate_permissions(self):
         permissions = [{
@@ -1180,7 +983,7 @@ class Populate:
                 ]}
             ] 
         }]
-        self.helper.post_to_collection("permissions", permissions)
+        self.helper.post_to_collection(CollectionNames.PERMISSIONS.value, permissions)
         print("populated permissions")
     
     def populate_sprints(self):
@@ -1433,61 +1236,54 @@ class Populate:
                 "team": self.team2_id
             },
         ]
-        self.helper.post_to_collection("sprints", sprints)
+        self.helper.post_to_collection(CollectionNames.SPRINTS.value, sprints)
         print("populated sprints")
-    
-    def populate_estimation_methods(self):
-        estimation_methods = [
-            {
-                "label": "Fibonacci",
-                "key": "fibonacci",
-                "options": [1, 2, 3, 5, 8, 13, 21, 34]
-            },
-            {
-                "label": "Days",
-                "key": "days",
-            },
-            {
-                "label": "Sizes",
-                "key": "sizes",
-                "options": ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL']
-            },
-        ]
-        self.helper.post_to_collection("estimation_methods", estimation_methods)
-        print("populated estimation_methods")
 
-    def populate_default_settings(self):
-        default_settings = [
+    def populate_configurations(self):
+        configurations = [
             {
+                "key": "default_settings",
+                "value": "ceremonies",
                 "ceremonies": {
                     "planning": {
                         "days": ["mon"],
-                        "when": "beginning", # "beginning" or "end"
+                        "when": CeremonyStartOptions.BEGINNING.value,
                         "time": "10:00", # "HH:MM
                         "google_meet_config": {
                         },
                     },
                     "standup": {
                         "days": ["mon", "tue", "wed", "thu", "fri"],
-                        "when": "every",
                         "time": "12:00", # "HH:MM
                         "google_meet_config": {
                         },
                     },
                     "retrospective": {
                         "days": ["fri"],
-                        "when": "end", # "beginning" or "end"
+                        "when": CeremonyStartOptions.END.value,
                         "time": "16:00", # "HH:MM
                         "google_meet_config": {
                         },
                     }
-                },
+                }
+            },
+            {
+                "key": "default_settings",
+                "value": "sprint_set_up",
                 "sprint_set_up": {
                     "estimation_method": ["fibonacci"],
                     "sprint_duration": "2", # weeks
                     "sprint_begins_on": "mon",
-                },
-                "story_fields": ['title', 'description', 'acceptance_criteria', 'creator', 'assigned_to', 'epic', 'sprint', 'estimation', 'tags', 'story_type', 'estimation_method', 'tasks'],
+                }
+            },
+            {
+                "key": "default_settings",
+                "value": "mandatory_story_fields",
+                "mandatory_story_fields": ['title', 'description', 'acceptance_criteria', 'creator', 'assigned_to', 'epic', 'sprint', 'estimation', 'tags', 'story_type', 'estimation_method', 'tasks'],
+            },
+            {
+                "key": "default_settings",
+                "value": "permits",
                 "permits": [
                     {
                         "role": Role.PRODUCT_OWNER.value,
@@ -1497,11 +1293,247 @@ class Populate:
                         "role": Role.DEV.value,
                         "options": ["create_story", "edit_story"]
                     }
+                ],
+            },
+            {
+                "key": "estimation_methods",
+                "value": "fibonacci",
+                "fibonacci": {
+                    "label": "Fibonacci",
+                    "key": "fibonacci",
+                    "options": [1, 2, 3, 5, 8, 13, 21, 34]
+                }
+            },
+            {
+                "key": "estimation_methods",
+                "value": "days",
+                "days": {
+                    "label": "Days",
+                    "key": "days",
+                },
+            },
+            {
+                "key": "estimation_methods",
+                "value": "sizes",
+                "sizes": {
+                    "label": "Sizes",
+                    "key": "sizes",
+                    "options": ['XS', 'S', 'M', 'L', 'XL', 'XXL', 'XXXL']
+                },
+            },
+            {
+                "key": "all_possible_fields",
+                "value": "story_fields",
+                "story_fields": [
+                    {
+                        "value": 'story_id',
+                        "label": 'Story ID',
+                        "modifiable": 0,
+                        "description": 'The ID of the story.',
+                        "section": 'general',
+                        "type": "input_field",
+                        "order": 0
+                    },
+                    {
+                        "value": 'title',
+                        "label": 'Title',
+                        "modifiable": 0,
+                        "description": 'The title of the story or task.',
+                        "section": 'general',
+                        "type": "input_field",
+                        "order": 1
+                    },
+                    {
+                        "value": 'description',
+                        "label": 'Description',
+                        "modifiable": 0,
+                        "description": 'A detailed description of the story or task.',
+                        "section": 'general',
+                        "type": "text_area",
+                        "order": 2
+                    },
+                    {
+                        "value": 'acceptance_criteria',
+                        "label": 'Acceptance criteria',
+                        "modifiable": 1,
+                        "description": 'The conditions that must be met for the story to be accepted.',
+                        "section": 'additional_information',
+                        "type": "text_area"
+                    },
+                    {
+                        "value": 'creator',
+                        "label": 'Creator',
+                        "modifiable": 0,
+                        "description": 'The person who created the story or task.',
+                        "section": "users",
+                        "type": "user"
+                    },
+                    {
+                        "value": 'assigned_to',
+                        "label": 'Assigned to',
+                        "modifiable": 0,
+                        "description": 'The person responsible for completing the story or task.',
+                        "section": 'users',
+                        "type": "dropdown"
+                    },
+                    {
+                        "value": 'epic',
+                        "label": 'Epic',
+                        "modifiable": 1,
+                        "description": 'The larger body of work that this story or task belongs to.',
+                        "section": 'general',
+                        "type": "dropdown",
+                        "order": 4
+                    },
+                    {
+                        "value": 'sprint',
+                        "label": 'Sprint',
+                        "modifiable": 0,
+                        "description": 'The sprint in which the story or task is being worked on.',
+                        "section": 'general',
+                        "type": "dropdown",
+                        "order": 5
+                    },
+                    {
+                        "value": 'estimation',
+                        "label": 'Estimation',
+                        "modifiable": 0,
+                        "description": 'The estimated effort required to complete the story or task.',
+                        "section": 'estimation',
+                        "type": "select",
+                        "order": 1
+                    },
+                    {
+                        "value": 'tags',
+                        "label": 'Tags',
+                        "modifiable": 1,
+                        "description": 'Keywords associated with the story or task for categorization.',
+                        "section": 'additional_information',
+                        "type": "hidden"
+                    },
+                    {
+                        "value": 'priority',
+                        "label": 'Priority',
+                        "modifiable": 1,
+                        "description": 'The importance level of the story or task.',
+                        "section": 'additional_information',
+                        "type": "select"
+                    },
+                    {
+                        "value": 'story_type',
+                        "label": 'Story type',
+                        "modifiable": 1,
+                        "description": 'The classification of the story.',
+                        "section": 'general',
+                        "type": "select",
+                        "order": 3
+                    },
+                    {
+                        "value": 'tasks',
+                        "label": 'Tasks',
+                        "modifiable": 0,
+                        "description": 'The sub-tasks that need to be completed to finish the story.',
+                        "section": 'tasks',
+                        "type": "task",
+                        "components": [
+                            {
+                                "value": 'task_0_title',
+                                "label": 'Task title',
+                                "modifiable": 0,
+                                "description": 'The title of the task.',
+                                "section": 'task',
+                                "type": "input_field",
+                                "order": 1
+                            },
+                            {
+                                "value": 'task_0_description',
+                                "label": 'Task description',
+                                "modifiable": 0,
+                                "description": 'A detailed description of the task.',
+                                "section": 'task',
+                                "type": "text_area",
+                                "order": 2
+                            },
+                        ]
+                    },
+                    {
+                        "value": 'estimation_method',
+                        "label": 'Estimation method',
+                        "modifiable": 0,
+                        "description": 'The method used to estimate the effort for the story or task.',
+                        "section": 'estimation',
+                        "type": "hidden"
+                    },
+                    # Add hidden values? team, status, etc?
                 ]
-            }
+            },
+            {
+                "key": "all_possible_fields",
+                "value": "epic_fields",
+                "epic_fields": [
+                    {
+                        "value": 'title',
+                        "label": 'Title',
+                        "modifiable": 0,
+                        "description": 'The title of the epic.',
+                        "section": 'general',
+                        "type": "input_field",
+                        "order": 1
+                    },
+                    {
+                        "value": 'description',
+                        "label": 'Description',
+                        "modifiable": 0,
+                        "description": 'A detailed description of the epic.',
+                        "section": 'general',
+                        "type": "text_area",
+                        "order": 2
+                    },
+                    {
+                        "value": 'creator',
+                        "label": 'Creator',
+                        "modifiable": 0,
+                        "description": 'The person who created the story or task.',
+                        "section": "users",
+                        "type": "user"
+                    },
+                    {
+                        "value": 'priority',
+                        "label": 'Priority',
+                        "modifiable": 0,
+                        "description": 'The importance level of the epic.',
+                        "section": 'general',
+                        "type": "select",
+                        "order": 4
+                    },
+                    {
+                        "value": 'epic_color',
+                        "label": 'Color',
+                        "modifiable": 0,
+                        "description": 'The color associated to the epic.',
+                        "section": 'general',
+                        "type": "select",
+                        "order": 3
+                    },
+                    {
+                        "value": 'acceptance_criteria',
+                        "label": 'Acceptance criteria',
+                        "modifiable": 0,
+                        "description": 'The conditions that must be met for the epic to be accepted.',
+                        "section": 'additional_information',
+                        "type": "text_area"
+                    },
+                    {
+                        "value": 'business_value',
+                        "label": 'Business value',
+                        "modifiable": 0,
+                        "description": 'Benefit that this epic brings to the business.',
+                        "section": 'additional_information',
+                        "type": "text_area"
+                    },
+                    # team, org, status
+                ],
+            },
         ]
-        
-        self.helper.post_to_collection("default_settings", default_settings)
-        print("populated default_settings")
-
-
+        self.helper.post_to_collection(CollectionNames.CONFIGURATIONS.value, configurations)
+        print("populated configurations")

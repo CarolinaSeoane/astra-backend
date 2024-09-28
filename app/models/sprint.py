@@ -1,14 +1,10 @@
 from bson import ObjectId
-from enum import Enum
 
 from app.services.mongoHelper import MongoHelper
+from app.models.configurations import SprintStatus, CollectionNames
 
 
-class SprintStatus(Enum):
-    CURRENT = "Current"
-    FINISHED = "Finished"
-    FUTURE = "Future"
-    ACTIVE = "Active" # Used for backlog
+SPRINTS_COL = CollectionNames.SPRINTS.value
 
 
 class Sprint:
@@ -65,7 +61,7 @@ class Sprint:
             }
         
         sort = {'start_date': 1}
-        documents = MongoHelper().get_documents_by('sprints', filter, sort)
+        documents = MongoHelper().get_documents_by(SPRINTS_COL, filter, sort)
 
         if not documents:
             return None
@@ -79,7 +75,7 @@ class Sprint:
         }
         sort = {'sprint_number': 1}
         projection = {"name", "target", "completed"}
-        return MongoHelper().get_documents_by("sprints", filter=filter, sort=sort, projection=projection)
+        return MongoHelper().get_documents_by(SPRINTS_COL, filter=filter, sort=sort, projection=projection)
     
     @staticmethod
     def create_backlog_for_new_team(team_id):
@@ -88,7 +84,7 @@ class Sprint:
             "status": SprintStatus.ACTIVE.value,
             "team": team_id
         }
-        return MongoHelper().add_new_element_to_collection('sprints', new_backlog)
+        return MongoHelper().add_new_element_to_collection(SPRINTS_COL, new_backlog)
     
     @staticmethod
     def get_target_points(sprint, team_id):
@@ -97,7 +93,7 @@ class Sprint:
             "team": ObjectId(team_id)
         }
         projection = {"target": 1, "_id": 0}
-        return MongoHelper().get_document_by("sprints", filter, projection=projection)["target"]
+        return MongoHelper().get_document_by(SPRINTS_COL, filter, projection=projection)["target"]
 
     @staticmethod
     def get_start_and_end_dates(sprint, team_id):
@@ -106,7 +102,7 @@ class Sprint:
             "team": ObjectId(team_id)
         }
         projection = {"start_date", "end_date"}
-        return MongoHelper().get_document_by("sprints", filter, projection=projection)
+        return MongoHelper().get_document_by(SPRINTS_COL, filter, projection=projection)
     
     @staticmethod
     def get_completed_points_up_to(sprint, team_id, date):
@@ -122,7 +118,7 @@ class Sprint:
         # sort = {"_id": 1}  # Sort by _id (which is end_date after grouping)
         projection = {"_id": 0}
         
-        return list(MongoHelper().aggregate("stories", match, group, project=projection))
+        return list(MongoHelper().aggregate(SPRINTS_COL, match, group, project=projection))
 
     @staticmethod
     def get_commited_points_up_to(sprint, team_id, date):
@@ -138,4 +134,4 @@ class Sprint:
         # sort = {"_id": 1}  # Sort by _id (which is end_date after grouping)
         projection = {"_id": 0}
         
-        return list(MongoHelper().aggregate("stories", match, group, project=projection))[0]["target"]
+        return list(MongoHelper().aggregate(SPRINTS_COL, match, group, project=projection))[0]["target"]

@@ -4,7 +4,7 @@ from webargs.flaskparser import use_args
 from bson import json_util, ObjectId
 import json
 
-from app.services.google_auth import validate_credentials
+from app.services.google_auth import validate_credentials, exchange_code_for_tokens
 from app.services.token import generate_jwt
 from app.models.user import User
 from app.utils import send_response
@@ -13,23 +13,16 @@ from app.utils import send_response
 users = Blueprint('users', __name__)
 
 @users.route('/login', methods=['POST'])
-@use_args({'access_token': fields.Str(required=True),
-           'authuser': fields.Str(required=True),
-           'expires_in': fields.Integer(required=True),
-           'prompt': fields.Str(required=True),
-           'scope': fields.Str(required=True),
-           'hd': fields.Str(required=False), # used for Google Workspace accounts
-           'token_type': fields.Str(required=True)}, location='json')
+@use_args({'auth_code': fields.Str(required=True)}, location='json')
 def handle_login(args):
-    # TODO: handle already existing jwt?
-
     req_data = {
         'method': request.method,
         'endpoint': request.path,
     }
     
     try:
-        id_info = validate_credentials(args['access_token'])
+        tokens = exchange_code_for_tokens(args['auth_code'])
+        id_info = validate_credentials(tokens['access_token'])
     except ValueError as err:
         # Invalid token 
         print(err)
@@ -48,7 +41,9 @@ def handle_login(args):
         data = {
                 "email": email,
                 "name": name,
-                "surname": family_name
+                "surname": family_name,
+                "access_token": tokens['access_token'],
+                "refresh_token": tokens['refresh_token'],
             }
         return send_response(data, ["User not found. Please complete the sign-up process."], 404, **req_data)
     else:
@@ -67,7 +62,8 @@ def handle_login(args):
            'email': fields.Str(required=True),
            'username': fields.Str(required=True),
            'profile_picture': fields.Str(required=True),
-           'access_token': fields.Str(required=True)}, location='json')
+           'access_token': fields.Str(required=True),
+           'refresh_token': fields.Str(required=True)}, location='json')
 def sign_up(args):
     req_data = {
         'method': request.method,
@@ -81,6 +77,7 @@ def sign_up(args):
     
     # Email doesn't exist. Save user to mongo
     new_user = User(**args)
+    
     new_user.save_user()
     session_token = generate_jwt(args['email'], str(new_user._id))
 

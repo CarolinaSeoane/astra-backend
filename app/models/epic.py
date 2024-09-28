@@ -1,18 +1,10 @@
 from bson import ObjectId
-from enum import Enum
 
 from app.services.mongoHelper import MongoHelper
+from app.models.configurations import Configurations, CollectionNames
 
 
-class Color(Enum):
-    BLUE = "astra-logo-blue"
-    LIME = "astra-lime"
-    GREEN = "astra-dark-green"
-    PURPLE = "astra-dark-purple"
-    RED = "astra-red"
-    ORANGE = "astra-orange"
-    YELLOW = "astra-yellow"
-
+EPICS_COL = CollectionNames.EPICS.value
 
 class Epic:
 
@@ -35,7 +27,7 @@ class Epic:
         '''
         filter = {'organization': ObjectId(org_id)}
 
-        return MongoHelper().get_documents_by("epics", filter)
+        return MongoHelper().get_documents_by(EPICS_COL, filter)
     
     @staticmethod
     def get_epics_from_team(org_id):
@@ -44,15 +36,15 @@ class Epic:
         '''
         filter = {'team': ObjectId(org_id)}
 
-        return MongoHelper().get_documents_by("epics", filter)
+        return MongoHelper().get_documents_by(EPICS_COL, filter)
     
     @staticmethod
     def create_epic(epic_document):
-        return MongoHelper().create_document('epics', epic_document)
+        return MongoHelper().create_document(EPICS_COL, epic_document)
     
     @staticmethod
     def get_epic_fields(sections=False):
-        epic_fields =  MongoHelper().get_documents_by('epic_fields', sort={'order': 1})
+        epic_fields =  Configurations.get_all_possible_epic_fields()['epic_fields']
         if sections:
             epic_sections = {}
             for epic_field in epic_fields:
@@ -63,9 +55,7 @@ class Epic:
     
     @staticmethod
     def get_names_of_mandatory_fields():
-        filter = { 'modifiable': 0 }
-        projection = { 'value' }
-        docs = MongoHelper().get_documents_by('epic_fields', filter=filter, sort={'order': 1}, projection=projection)
+        docs =  Configurations.get_all_possible_epic_fields(True)['epic_fields']
         return [doc['value'] for doc in docs]
     
     @classmethod
@@ -78,4 +68,4 @@ class Epic:
             "_id": "$epic.title",
             "count": { "$sum": 1 }
         }
-        return MongoHelper().aggregate('stories', match, group)
+        return MongoHelper().aggregate(EPICS_COL, match, group)
