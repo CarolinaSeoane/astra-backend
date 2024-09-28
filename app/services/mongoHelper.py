@@ -51,13 +51,17 @@ class MongoHelper:
     def create_document(self, collection_name, document):
         return self.astra.db[collection_name].insert_one(document)
     
-    def aggregate(self, collection_name, match, group, sort=None):
+    def aggregate(self, collection_name, match, group, **kwargs):
         '''
         Executes an aggregation pipeline sequentially, starting with the match stage, followed by the group stage,
         and finally the sort stage. If sorting before grouping is required, the code will need to be refactored 
         to accommodate that.
+        Only use the following values for kwargs:
+            - sort
+            - project
         '''
         pipeline = [{"$match": match}, {"$group": group}]
-        if sort:
-            pipeline.append({"$sort": sort})
+        for key, value in kwargs.items():
+            name = f"${key}"
+            pipeline.append({name: value})
         return self.astra.db[collection_name].aggregate(pipeline)

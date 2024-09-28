@@ -559,6 +559,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "creation_date": datetime.datetime(2024, 7, 20),
+                "added_to_sprint": datetime.datetime(2024, 8, 4),
                 "start_date": datetime.datetime(2024, 8, 5),
                 "end_date": datetime.datetime(2024, 8, 9),
                 "tasks": [
@@ -612,6 +613,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "creation_date": datetime.datetime(2024, 7, 20),
+                "added_to_sprint": datetime.datetime(2024, 8, 6),
                 "start_date": datetime.datetime(2024, 8, 7),
                 "end_date": datetime.datetime(2024, 8, 8),
                 "tasks": [
@@ -653,6 +655,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "creation_date": datetime.datetime(2023, 12, 28),
+                "added_to_sprint": datetime.datetime(2024, 1, 2),
                 "start_date": datetime.datetime(2024, 1, 2),
                 "end_date": datetime.datetime(2024, 1, 6),
                 "tasks": [
@@ -694,7 +697,8 @@ class Populate:
                 "story_type": Type.DISCOVERY.value,
                 "estimation_method": "Fibonacci",
                 "creation_date": datetime.datetime(2023, 12, 21),
-                "start_date": datetime.datetime(2023, 12, 27),
+                "added_to_sprint": datetime.datetime(2024, 1, 2),
+                "start_date": datetime.datetime(2024, 1, 3),
                 "end_date": datetime.datetime(2024, 1, 6),
                 "tasks": [
                     {
@@ -735,6 +739,7 @@ class Populate:
                 "story_type": Type.BUGFIX.value,
                 "estimation_method": "Fibonacci",
                 "creation_date": datetime.datetime(2023, 8, 2),
+                "added_to_sprint": datetime.datetime(2024, 8, 12),
                 "start_date": datetime.datetime(2024, 8, 19),
                 "end_date": datetime.datetime(2024, 8, 21),
                 "tasks": [
@@ -775,6 +780,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "creation_date": datetime.datetime(2023, 12, 27),
+                "added_to_sprint": datetime.datetime(2023, 12, 30),
                 "start_date": datetime.datetime(2024, 1, 3),
                 "end_date": datetime.datetime(2024, 1, 7),
                 "tasks": [
@@ -815,6 +821,7 @@ class Populate:
                 "story_type": Type.BUGFIX.value,
                 "estimation_method": "Fibonacci",
                 "creation_date": datetime.datetime(2023, 12, 27),
+                "added_to_sprint": datetime.datetime(2024, 1, 4),
                 "start_date": datetime.datetime(2024, 1, 5),
                 "end_date": datetime.datetime(2024, 1, 7),
                 "tasks": [
@@ -849,13 +856,14 @@ class Populate:
                     "_id": self.sprint1_q1_team1,
                     "name": "S1-Q1-2024"
                 },
-                "estimation": 13,
+                "estimation": 5,
                 "tags": ["Frontend", "UI/UX"],
                 "priority": Priority.LOW.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "creation_date": datetime.datetime(2023, 12, 15),
-                "start_date": datetime.datetime(2023, 12, 20),
+                "added_to_sprint": datetime.datetime(2024, 1, 2),
+                "start_date": datetime.datetime(2024, 1, 2),
                 "end_date": datetime.datetime(2024, 1, 7),
                 "tasks": [
                     {
@@ -895,6 +903,7 @@ class Populate:
                 "story_type": Type.BUGFIX.value,
                 "estimation_method": "Fibonacci",
                 "creation_date": datetime.datetime(2023, 12, 29),
+                "added_to_sprint": datetime.datetime(2023, 12, 29),
                 "start_date": datetime.datetime(2024, 1, 4),
                 "end_date": datetime.datetime(2024, 1, 8),
                 "tasks": [
@@ -1192,7 +1201,7 @@ class Populate:
                 "start_date": datetime.datetime(2024, 1, 1),
                 "end_date": datetime.datetime(2024, 1, 14),
                 "status": SprintStatus.FINISHED.value,
-                "target": 97,
+                "target": 12,
                 "completed": 105,
                 "team": self.team1_id
             },

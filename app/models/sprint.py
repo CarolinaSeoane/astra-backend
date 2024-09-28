@@ -91,10 +91,51 @@ class Sprint:
         return MongoHelper().add_new_element_to_collection('sprints', new_backlog)
     
     @staticmethod
-    def get_target_points_and_end_date(sprint, team_id):
+    def get_target_points(sprint, team_id):
         filter = {
             "name": sprint,
             "team": ObjectId(team_id)
         }
-        projection = {"target", "end_date"}
+        projection = {"target": 1, "_id": 0}
+        return MongoHelper().get_document_by("sprints", filter, projection=projection)["target"]
+
+    @staticmethod
+    def get_start_and_end_dates(sprint, team_id):
+        filter = {
+            "name": sprint,
+            "team": ObjectId(team_id)
+        }
+        projection = {"start_date", "end_date"}
         return MongoHelper().get_document_by("sprints", filter, projection=projection)
+    
+    @staticmethod
+    def get_completed_points_up_to(sprint, team_id, date):
+        match = {
+            "sprint.name": sprint,
+            "team": ObjectId(team_id),
+            "end_date": { "$lte": date }
+        }
+        group = {
+            "_id": "$name",
+            "completed_points": { "$sum": "$estimation" }
+        }
+        # sort = {"_id": 1}  # Sort by _id (which is end_date after grouping)
+        projection = {"_id": 0}
+        
+        return list(MongoHelper().aggregate("stories", match, group, project=projection))
+
+    @staticmethod
+    def get_commited_points_up_to(sprint, team_id, date):
+        match = {
+            "sprint.name": sprint,
+            "team": ObjectId(team_id),
+            "added_to_sprint": { "$lte": date }
+        }
+        group = {
+            "_id": "$sprint.name",
+            "target": { "$sum": "$estimation" }
+        }
+        # sort = {"_id": 1}  # Sort by _id (which is end_date after grouping)
+        projection = {"_id": 0}
+        
+        return list(MongoHelper().aggregate("stories", match, group, project=projection))[0]["target"]
