@@ -2,7 +2,7 @@ from bson import ObjectId
 import datetime
 
 from dummy_data.db_helper import DBHelper
-from app.models.configurations import Role, MemberStatus, Status, Type, Priority, SprintStatus, Color, CeremonyStartOptions
+from app.models.configurations import Role, MemberStatus, Status, Type, Priority, SprintStatus, Color, CeremonyStartOptions, CollectionNames
 
 
 class Populate:
@@ -102,7 +102,7 @@ class Populate:
             },
 
         ]
-        self.helper.post_to_collection("organizations", organizations)
+        self.helper.post_to_collection(CollectionNames.ORGANIZATIONS.value, organizations)
         print("populated organizations")
 
     def populate_users(self):
@@ -276,7 +276,7 @@ class Populate:
                 ]
             },
         ]
-        self.helper.post_to_collection("users", users)
+        self.helper.post_to_collection(CollectionNames.USERS.value, users)
         print("populated users")
     
     def populate_teams(self):
@@ -501,7 +501,7 @@ class Populate:
                 ]
             }
         ]
-        self.helper.post_to_collection("teams", teams)
+        self.helper.post_to_collection(CollectionNames.TEAMS.value, teams)
         print("populated teams")
     
     def populate_epics(self):
@@ -541,7 +541,7 @@ class Populate:
                 "status": Status.DOING.value,
             }
         ]
-        self.helper.post_to_collection("epics", epics)
+        self.helper.post_to_collection(CollectionNames.EPICS.value, epics)
         print("populated epics")
 
     def populate_stories(self):
@@ -710,7 +710,7 @@ class Populate:
                 "team": self.team1_id # change to _id?
             }
         ]
-        self.helper.post_to_collection("stories", stories)
+        self.helper.post_to_collection(CollectionNames.STORIES.value, stories)
         print("populated stories")
 
     def populate_permissions(self):
@@ -761,7 +761,7 @@ class Populate:
                 ]}
             ] 
         }]
-        self.helper.post_to_collection("permissions", permissions)
+        self.helper.post_to_collection(CollectionNames.PERMISSIONS.value, permissions)
         print("populated permissions")
     
     def populate_sprints(self):
@@ -1014,7 +1014,7 @@ class Populate:
                 "team": self.team2_id
             },
         ]
-        self.helper.post_to_collection("sprints", sprints)
+        self.helper.post_to_collection(CollectionNames.SPRINTS.value, sprints)
         print("populated sprints")
 
     def populate_configurations(self):
@@ -1313,5 +1313,5 @@ class Populate:
                 ],
             },
         ]
-        self.helper.post_to_collection("configurations", configurations)
+        self.helper.post_to_collection(CollectionNames.CONFIGURATIONS.value, configurations)
         print("populated configurations")

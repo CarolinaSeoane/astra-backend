@@ -2,7 +2,10 @@ from bson import ObjectId
 
 from app.utils import kanban_format, list_format
 from app.services.mongoHelper import MongoHelper
-from app.models.configurations import Configurations
+from app.models.configurations import Configurations, CollectionNames
+
+
+STORIES_COL = CollectionNames.STORIES.value
 
 class Story:
 
@@ -62,7 +65,7 @@ class Story:
         if 'story_id' in kwargs and kwargs['story_id']:
             filter["story_id"] = kwargs['story_id']
 
-        stories = MongoHelper().get_documents_by('stories', filter=filter, projection=projection)
+        stories = MongoHelper().get_documents_by(STORIES_COL, filter=filter, projection=projection)
       
         if view_type == 'kanban':
             return kanban_format(stories)
@@ -85,8 +88,8 @@ class Story:
     @staticmethod
     def is_story_id_taken(story_id):
         filter = {'story_id': story_id}
-        return MongoHelper().document_exists("stories", filter)
+        return MongoHelper().document_exists(STORIES_COL, filter)
     
     @staticmethod
     def create_story(story_document):
-        return MongoHelper().create_document('stories', story_document)
+        return MongoHelper().create_document(STORIES_COL, story_document)

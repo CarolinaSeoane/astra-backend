@@ -1,7 +1,10 @@
 from bson import ObjectId
 
 from app.services.mongoHelper import MongoHelper
-from app.models.configurations import SprintStatus
+from app.models.configurations import SprintStatus, CollectionNames
+
+
+SPRINTS_COL = CollectionNames.SPRINTS.value
 
 class Sprint:
 
@@ -57,7 +60,7 @@ class Sprint:
             }
         
         sort = {'start_date': 1}
-        documents = MongoHelper().get_documents_by('sprints', filter, sort)
+        documents = MongoHelper().get_documents_by(SPRINTS_COL, filter, sort)
 
         if not documents:
             return None
@@ -71,7 +74,7 @@ class Sprint:
         }
         sort = {'sprint_number': 1}
         projection = {"name", "target", "completed"}
-        return MongoHelper().get_documents_by("sprints", filter=filter, sort=sort, projection=projection)
+        return MongoHelper().get_documents_by(SPRINTS_COL, filter=filter, sort=sort, projection=projection)
     
     @staticmethod
     def create_backlog_for_new_team(team_id):
@@ -80,4 +83,4 @@ class Sprint:
             "status": SprintStatus.ACTIVE.value,
             "team": team_id
         }
-        return MongoHelper().add_new_element_to_collection('sprints', new_backlog)
+        return MongoHelper().add_new_element_to_collection(SPRINTS_COL, new_backlog)

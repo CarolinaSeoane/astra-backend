@@ -2,7 +2,10 @@ from bson import ObjectId
 
 from app.db_connection import mongo
 from app.services.mongoHelper import MongoHelper
-from app.models.configurations import MemberStatus
+from app.models.configurations import MemberStatus, CollectionNames
+
+
+USERS_COL = CollectionNames.USERS.value
 
 class User:
 
@@ -25,7 +28,7 @@ class User:
         projection={}
         if not get_google_tokens:
             projection={'access_token': False, 'refresh_token': False}
-        return MongoHelper().get_document_by('users', filter, projection=projection)
+        return MongoHelper().get_document_by(USERS_COL, filter, projection=projection)
 
     @staticmethod
     def is_user_in_team(_id, team_id, status=MemberStatus.ACTIVE.value):
@@ -43,7 +46,7 @@ class User:
         #     "teams": { "$elemMatch": {"_id": { "$eq": team_id }}}, 
         #     "member_status": status
         # }
-        return MongoHelper().document_exists('users', filter)
+        return MongoHelper().document_exists(USERS_COL, filter)
     
     def save_user(self):
         mongo.db.users.insert_one(self.__dict__) # TODO use mongoHelper
@@ -62,7 +65,7 @@ class User:
         }
         filter = {'_id': ObjectId(self._id['$oid'])}
         update = {'$push': {'teams': new_team}}
-        return MongoHelper().update_collection('users', filter, update)
+        return MongoHelper().update_collection(USERS_COL, filter, update)
 
     @staticmethod
     def remove_from_team(user_id, team_id):
@@ -71,4 +74,4 @@ class User:
         '''
         filter = {'_id': ObjectId(user_id)}
         update = {'$pull': {'teams': {'_id': ObjectId(team_id)}}}
-        MongoHelper().update_collection('users', filter, update)
+        MongoHelper().update_collection(USERS_COL, filter, update)

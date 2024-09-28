@@ -1,7 +1,10 @@
 from bson import ObjectId
 
 from app.services.mongoHelper import MongoHelper
-from app.models.configurations import Configurations
+from app.models.configurations import Configurations, CollectionNames
+
+
+EPICS_COL = CollectionNames.EPICS.value
 
 class Epic:
 
@@ -24,7 +27,7 @@ class Epic:
         '''
         filter = {'organization': ObjectId(org_id)}
 
-        return MongoHelper().get_documents_by("epics", filter)
+        return MongoHelper().get_documents_by(EPICS_COL, filter)
     
     @staticmethod
     def get_epics_from_team(org_id):
@@ -33,11 +36,11 @@ class Epic:
         '''
         filter = {'team': ObjectId(org_id)}
 
-        return MongoHelper().get_documents_by("epics", filter)
+        return MongoHelper().get_documents_by(EPICS_COL, filter)
     
     @staticmethod
     def create_epic(epic_document):
-        return MongoHelper().create_document('epics', epic_document)
+        return MongoHelper().create_document(EPICS_COL, epic_document)
     
     @staticmethod
     def get_epic_fields(sections=False):
@@ -65,4 +68,4 @@ class Epic:
             "_id": "$epic.title",
             "count": { "$sum": 1 }
         }
-        return MongoHelper().aggregate('stories', match, group)
+        return MongoHelper().aggregate(EPICS_COL, match, group)
