@@ -287,7 +287,6 @@ class Populate:
                 "organization": self.org3_id,
                 "ceremonies": {
                     "planning": {
-                        "days": ["tue"],
                         "when": CeremonyStartOptions.BEGINNING.value,
                         "time": "10:00", # "HH:MM,
                         "google_meet_config": {
@@ -314,7 +313,6 @@ class Populate:
                         },
                     },
                     "retrospective": {
-                        "days": ["tue"],
                         "when": CeremonyStartOptions.END.value,
                         "time": "10:00", # "HH:MM
                         "google_meet_config": {
@@ -436,7 +434,6 @@ class Populate:
                 },
                 "ceremonies": {
                     "planning": {
-                        "days": ["tu"],
                         "when": CeremonyStartOptions.END.value,
                         "time": "10:00", # "HH:MM
                         "google_meet_config": {
@@ -449,7 +446,6 @@ class Populate:
                         },
                     },
                     "retrospective": {
-                        "days": ["tue"],
                         "when": CeremonyStartOptions.END.value,
                         "time": "10:00", # "HH:MM
                         "google_meet_config": {
@@ -1024,7 +1020,6 @@ class Populate:
                 "value": "ceremonies",
                 "ceremonies": {
                     "planning": {
-                        "days": ["mon"],
                         "when": CeremonyStartOptions.BEGINNING.value,
                         "time": "10:00", # "HH:MM
                         "google_meet_config": {
@@ -1037,7 +1032,6 @@ class Populate:
                         },
                     },
                     "retrospective": {
-                        "days": ["fri"],
                         "when": CeremonyStartOptions.END.value,
                         "time": "16:00", # "HH:MM
                         "google_meet_config": {
