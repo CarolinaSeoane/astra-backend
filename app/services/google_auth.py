@@ -5,6 +5,7 @@ import requests
 CLIENT_ID = os.getenv('CLIENT_ID')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
+
 def exchange_code_for_tokens(auth_code):
     url = 'https://oauth2.googleapis.com/token'
 
@@ -32,9 +33,8 @@ def validate_credentials(google_access_token):
     }
 
     response = requests.get(url, headers=headers)
-    
+
     if response.status_code == 200:
         return response.json()
     else:
         raise RuntimeError
-

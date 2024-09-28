@@ -5,6 +5,7 @@ from app.models.configurations import SprintStatus, CollectionNames
 
 
 SPRINTS_COL = CollectionNames.SPRINTS.value
+STORIES_COL = CollectionNames.STORIES.value
 
 
 class Sprint:
@@ -20,14 +21,14 @@ class Sprint:
         self.status = status
         self.target = target
         self.team = team
-    
+
     @staticmethod
     def get_sprints(team_id, quarter, year, future):
         '''
         returns None if the team has no sprints
         '''
         filter = {}
-        
+
         if future:
             filter = {
                 '$or': [
@@ -59,7 +60,7 @@ class Sprint:
                     },
                 ]
             }
-        
+
         sort = {'start_date': 1}
         documents = MongoHelper().get_documents_by(SPRINTS_COL, filter, sort)
 
@@ -76,7 +77,7 @@ class Sprint:
         sort = {'sprint_number': 1}
         projection = {"name", "target", "completed"}
         return MongoHelper().get_documents_by(SPRINTS_COL, filter=filter, sort=sort, projection=projection)
-    
+
     @staticmethod
     def create_backlog_for_new_team(team_id):
         new_backlog = {
@@ -85,7 +86,7 @@ class Sprint:
             "team": team_id
         }
         return MongoHelper().add_new_element_to_collection(SPRINTS_COL, new_backlog)
-    
+
     @staticmethod
     def get_target_points(sprint, team_id):
         filter = {
@@ -103,7 +104,7 @@ class Sprint:
         }
         projection = {"start_date", "end_date"}
         return MongoHelper().get_document_by(SPRINTS_COL, filter, projection=projection)
-    
+
     @staticmethod
     def get_completed_points_up_to(sprint, team_id, date):
         match = {
@@ -117,8 +118,8 @@ class Sprint:
         }
         # sort = {"_id": 1}  # Sort by _id (which is end_date after grouping)
         projection = {"_id": 0}
-        
-        return list(MongoHelper().aggregate(SPRINTS_COL, match, group, project=projection))
+
+        return list(MongoHelper().aggregate(STORIES_COL, match, group, project=projection))
 
     @staticmethod
     def get_commited_points_up_to(sprint, team_id, date):
@@ -133,5 +134,7 @@ class Sprint:
         }
         # sort = {"_id": 1}  # Sort by _id (which is end_date after grouping)
         projection = {"_id": 0}
-        
-        return list(MongoHelper().aggregate(SPRINTS_COL, match, group, project=projection))[0]["target"]
+
+        return list(MongoHelper().aggregate(
+            STORIES_COL, match, group, project=projection
+            ))[0]["target"]

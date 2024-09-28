@@ -22,10 +22,6 @@ def get_velocity():
 @sprints.route('/burn_down_chart', methods=['GET'])
 @use_args({"sprint_id": fields.Str(required=True)}, location="query")
 def calculate_burn_down(args):
-    # get the sum of the story points that were closed (done) up to a certain date
-    # we'll run a for loop starting on sprint start and finishing on sprint end
-
-    # fetch sprint start and end date
     sprint_name = args["sprint_id"]
     sprint_data = Sprint.get_start_and_end_dates(sprint_name, g.team_id)
     start_date = datetime.fromisoformat(sprint_data["start_date"]["$date"][:-1])
@@ -58,42 +54,3 @@ def calculate_burn_down(args):
         print("end of one loop")
 
     return send_response(burn_down_data, [], 200, **g.req_data)
-
-    # for loop from start date to end date
-    # mongo query for stories that are closed and whose closed date is less than or 
-    # equal to current date of foor loop (from sprint)
-    # check if value is none, complete with previous value (actually, this woudnt happen)
-    # append result to data
-
-
-
-
-
-    # sprint_data = Sprint.get_target_points_and_dates(args["sprint_id"], g.team_id)
-    # stories = Story.get_done_story_points_count_by_day(args["sprint_id"], g.team_id)
-    # burn_down_data = []
-    # burn_down_chart = {
-    #     "data": burn_down_data,
-    #     "sprint_end": sprint_data["end_date"]
-    # }
-    # remainder = sprint_data["target"]
-    # previous_day = datetime.strptime(sprint_data["start_date"]['$date'], '%Y-%m-%d')
-    # print(previous_day)
-    # date_now = datetime.now().strftime("%Y-%m-%d")
-    # cumulative_difference = 0
-    # for index, story in enumerate(stories):
-    #     cumulative_difference += story["completed_points"]
-        
-    #     remainder -= story["completed_points"]
-    #     day = story["_id"]
-    #     if previous_day + timedelta(days=1) != day:
-    #         burn_down_data.append({
-    #             "day": previous_day + timedelta(days=1).strftime("%a, %d"),
-    #             "remaining": stories[index - 1]["completed_points"]
-    #         })
-    #     previous_day = day
-    #     burn_down_data.append({
-    #         "day": day.strftime("%a, %d"),
-    #         "remaining": remainder
-    #     }) # TODO completar gaps con el valor anterior y hacer que llegue hasta el dia actual
-    # return send_response(burn_down_chart, [], 200, **g.req_data)

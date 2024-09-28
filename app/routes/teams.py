@@ -44,7 +44,7 @@ def get_team_members():
 
 def user_is_scrum_master_of_team(team_members, user_id):
     for member in team_members:
-        if member['role'] == 'Scrum Master' and member['_id']['$oid'] == user_id: # TODO cahnge id to _id
+        if member['role'] == 'Scrum Master' and member['_id']['$oid'] == user_id:
             return True
     return False
 
@@ -60,7 +60,7 @@ def add_team_member(args):
     Adds a member to the team with MemberStatus = ACTIVE.
     Also adds the team to the user's document with MemberStatus = ACTIVE
     '''
-            
+
     members = Team.get_team_members(g.team_id)
     if user_is_scrum_master_of_team(members, g._id):
         new_member_email = args['new_member_email']
@@ -70,7 +70,7 @@ def add_team_member(args):
             return send_response([], [f"No user found with email {new_member_email}"], 404, **g.req_data)
         if Team.is_user_part_of_team(user['_id']['$oid'], members):
             return send_response([], [f"User {new_member_email} is already a member of the team"], 400, **g.req_data)
-        
+
         # users in team have: user_id, username, email, profile_picture, role, date
         user_obj = User(**user)
         # print(f"the user object: {user_obj.__dict__}")
@@ -89,7 +89,7 @@ def remove_team_member(member_id):
         members = Team.get_team_members(g.team_id)
         print(f"team members after deletion: {members}")
         return send_response([], [], 200, **g.req_data)
-    
+
     return send_response([], ["User not authorized to complete operation"], 400, **g.req_data)
 
 @teams.route('/ceremonies', methods=['GET'])
@@ -116,14 +116,14 @@ def team_ceremonies():
             'in_progress': True
         },
     ]
-    
+
     return send_response(ceremonies, [], 200, **g.req_data)
 
 # Validate query param
 def validate_section(value):
-    VALID_SECTIONS = ['ceremonies', 'sprint_set_up', 'mandatory_story_fields', 'permits']
-    if value not in VALID_SECTIONS:
-        raise ValueError(f"Invalid section value. Must be one of: {', '.join(VALID_SECTIONS)}")
+    validate_sections = ['ceremonies', 'sprint_set_up', 'mandatory_story_fields', 'permits']
+    if value not in validate_sections:
+        raise ValueError(f"Invalid section value. Must be one of: {', '.join(validate_sections)}")
 
 @teams.route('/settings', methods=['GET'])
 @use_args({'section': fields.Str(required=False, validate=validate_section)}, location='query')
@@ -187,14 +187,14 @@ def permissions():
 def join_team_by_id(team_id):
     try:
         ObjectId(team_id)
-    except:
+    except Exception:
         return send_response([], ['Invalid ID format'], 400, **g.req_data)
 
     team_to_join = Team.get_team(team_id)
-    
+
     if not team_to_join:
         return send_response([], [f"Couldn't find a team with ID {team_id}"], 404, **g.req_data)
-    
+
     team_members = Team.get_team_members(team_id)
 
     # if Team.is_user_part_of_team(g._id, team_members):
@@ -206,10 +206,10 @@ def join_team_by_id(team_id):
     user = User.get_user_by({'email': g.email})
     user_obj = User(**user)
     success = Team.add_member(team_id, user_obj, None)
-    
+
     if success:
         return send_response([f"Your request to join {team_id} was sent successfully"], [], 202, **g.req_data)
-    
+
     return send_response([], [f"Error adding user {g.email} to team"], 500, **g.req_data)
 
 @teams.route('/create', methods=['POST'])
@@ -217,7 +217,7 @@ def join_team_by_id(team_id):
 def create_team(args):
     user_doc = User.get_user_by({'email': g.email}, True)
     user_obj = User(**user_doc)
-    
+
     # Create team entity and add the user as Scrum Master
     org = Organization.get_organization_by({'name': 'UTN'})
     new_team = {        
@@ -239,7 +239,7 @@ def create_team(args):
     try:
         # Add new team
         res = Team.add_team(new_team)
-        
+
         # Add team to user collection
         new_team = Team.get_team(res.inserted_id)
         new_team_id = new_team['_id']['$oid']
@@ -259,5 +259,5 @@ def create_team(args):
         print(e)
         #TODO: rollback
         return send_response([], ["Couldn't create team"], 500, **g.req_data)
-  
+
     return send_response([f"Team {args['team_name']} created successfully"], [], 200, **g.req_data)

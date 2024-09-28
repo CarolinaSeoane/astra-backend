@@ -1,8 +1,8 @@
+import json
 from flask import Blueprint, request, g
 from webargs import fields
 from webargs.flaskparser import use_args
 from bson import json_util, ObjectId
-import json
 
 from app.services.google_auth import validate_credentials, exchange_code_for_tokens
 from app.services.token import generate_jwt
@@ -19,7 +19,7 @@ def handle_login(args):
         'method': request.method,
         'endpoint': request.path,
     }
-    
+
     try:
         tokens = exchange_code_for_tokens(args['auth_code'])
         id_info = validate_credentials(tokens['access_token'])
@@ -27,12 +27,12 @@ def handle_login(args):
         # Invalid token 
         print(err)
         return send_response([], ["Unauthorized. Access is denied due to invalid credentials."], 401, **req_data)
-    
+
     # ID token is valid
     email = id_info['email']
     family_name = id_info['family_name']
     name = id_info['name'].replace(family_name, '').strip()
-    
+
     # Get user from db
     user = User.get_user_by({'email': email})
 
@@ -74,10 +74,10 @@ def sign_up(args):
     user = User.get_user_by({'email': args['email']})
     if user is not None:
         return send_response([], [f"Conflict. A user with the email {args['email']} already exists."], 409, **req_data)
-    
+
     # Email doesn't exist. Save user to mongo
     new_user = User(**args)
-    
+
     new_user.save_user()
     session_token = generate_jwt(args['email'], str(new_user._id))
 
@@ -99,4 +99,3 @@ def refresh_context(user_id):
     user['token'] = session_token
 
     return send_response(user, [], 200, **g.req_data)
-

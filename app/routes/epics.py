@@ -1,8 +1,8 @@
+from math import ceil
 from flask import Blueprint, request, g
 from webargs.flaskparser import use_args
 from webargs import fields
 from bson import ObjectId
-from math import ceil
 
 from app.utils import send_response
 from app.routes.utils import validate_user_is_active_member_of_team
@@ -62,7 +62,7 @@ def filters(args):
     color = []
     priority = []
     filters = {}
-    
+
     if args['colors']:
         color = [{'key': col.name, 'label': col.value} for col in Color]
         filters['epic_color'] = {
@@ -70,7 +70,7 @@ def filters(args):
             'value': 'epic_color',
             'options': color
         }
-    
+
     if args['priority']:
         priority = [{'key': priority.value, 'label': priority.value} for priority in Priority]
         filters['priority'] = {
@@ -90,7 +90,7 @@ def get_epic_count_by_sprint(args):
     total = 0
     for doc in cursor_list:
         total += doc['count']
-    
+
     for doc in cursor_list:
         per = ceil(doc['count'] * 100 / total)
         epic_info = {
@@ -117,7 +117,7 @@ def get_epic_count_by_sprint(args):
 
 #     try:
 #         args = request.get_json()
-        
+
 #         epic = mongo.db.epics.find_one({"title": title})
 #         if not epic:
 #             return jsonify({"message": "Epic not found."}), 404
@@ -141,7 +141,7 @@ def get_epic_count_by_sprint(args):
 #             return jsonify({"message": "Epic update failed."}), 500
 
 #     except Exception as e:
-#         print(f"Exception: {e}") 
+#         print(f"Exception: {e}")
 #         return jsonify({"error": str(e)}), 500
 
 # @epics.route('/', methods=['GET'])
@@ -149,11 +149,11 @@ def get_epic_count_by_sprint(args):
 #     current_user = get_current_user(request)
 #     if current_user is None:
 #         return jsonify({"message": "Unauthorized"}), 401
-    
+
 #     try:
 #         epics_list = mongo.db.epics.find({"creator._id": current_user['sub']})
 #         epics_data = [convert_objectid_to_str(epic) for epic in epics_list]
 #         return jsonify(epics_data), 200
 #     except Exception as e:
-#         print(f"Exception: {e}")  
+#         print(f"Exception: {e}")
 #         return jsonify({"error": str(e)}), 500
