@@ -2,7 +2,7 @@ from bson import ObjectId
 
 from app.db_connection import mongo
 from app.services.mongoHelper import MongoHelper
-from app.models.member import MemberStatus
+from app.models.configurations import MemberStatus
 
 class User:
 

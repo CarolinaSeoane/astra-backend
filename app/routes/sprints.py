@@ -1,12 +1,11 @@
-from flask import Blueprint, request, g
-from webargs.flaskparser import use_args
+from flask import Blueprint, g
 
 from app.utils import send_response
 from app.routes.utils import validate_user_is_active_member_of_team
 from app.models.sprint import Sprint
 
-sprints = Blueprint('sprints', __name__)
 
+sprints = Blueprint('sprints', __name__)
 
 @sprints.before_request
 def apply_validate_user_is_active_member_of_team():

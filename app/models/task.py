@@ -1,11 +1,4 @@
-from enum import Enum
-
-
-class Status(Enum):
-    DOING = "Doing"
-    NOT_STARTED = "Not Started"
-    BLOCKED = "Blocked"
-    DONE = "Done"
+from app.models.configurations import Status
 
 
 class Task:

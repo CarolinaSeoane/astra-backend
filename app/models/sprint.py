@@ -1,13 +1,8 @@
 from bson import ObjectId
-from enum import Enum
 
 from app.services.mongoHelper import MongoHelper
+from app.models.configurations import SprintStatus
 
-class SprintStatus(Enum):
-    CURRENT = "Current"
-    FINISHED = "Finished"
-    FUTURE = "Future"
-    ACTIVE = "Active" # Used for backlog
 class Sprint:
 
     def __init__(self, name, sprint_number, quarter, year, start_date, end_date, status, target, team, _id=ObjectId()):

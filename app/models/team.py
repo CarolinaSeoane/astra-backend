@@ -1,24 +1,25 @@
 from bson import ObjectId
 from datetime import datetime
-
 import pytz
 
 from app.models.user import User
 from app.services.mongoHelper import MongoHelper
-from app.models.member import MemberStatus
-from app.models.settings import Settings
+from app.models.configurations import MemberStatus
 from app.services.google_meet import create_space
+from app.models.configurations import Configurations
 
 
 class Team:
 
-    def __init__(self, _id, name, organization, team_settings, member_status, members):
+    def __init__(self, _id, name, organization, ceremonies, sprint_set_up, mandatory_story_fields, permits, members):
         self._id = _id
         self.name = name
         self.organization = organization
-        self.team_settings = team_settings
+        self.ceremonies = ceremonies
+        self.sprint_set_up = sprint_set_up
+        self.mandatory_story_fields = mandatory_story_fields
+        self.permits = permits
         self.members = members
-        self.member_status = member_status
 
     @staticmethod
     def get_team(team_id):
@@ -77,39 +78,40 @@ class Team:
         MongoHelper().update_collection('teams', filter, update)
         resp = User.remove_from_team(member_id, team_id)
 
-    @classmethod
-    def get_team_settings(cls, team_id, section):
-        settings = cls.get_team(team_id)['team_settings']
+    @staticmethod
+    def get_team_settings(team_id, section):
+        projection = {'ceremonies', 'sprint_set_up', 'mandatory_story_fields', 'permits', 'members'}
         if section:
-            settings = settings[section]
+            projection = {section}
+        settings = MongoHelper().get_document_by('teams', {'_id': ObjectId(team_id)}, projection=projection)
         return settings
     
-    @staticmethod
+    @staticmethod #Move to Configurations
     def get_base_permissions():
         return MongoHelper().get_collection('permissions')
 
     @staticmethod
     def update_mandatory_fields(team_id, settings):
         filter = {'_id': team_id}
-        update = {'$set': {'team_settings.mandatory_story_fields': settings}}
+        update = {'$set': {'mandatory_story_fields': settings}}
         MongoHelper().update_collection('teams', filter, update)
 
     @staticmethod
     def update_sprint_set_up(team_id, set_up):
         filter = {'_id': team_id}
-        update = {'$set': {'team_settings.sprint_set_up': set_up}}
+        update = {'$set': {'sprint_set_up': set_up}}
         MongoHelper().update_collection('teams', filter, update)
 
     @staticmethod
     def update_ceremonies_settings(team_id, ceremonies_settings):
         filter = {'_id': team_id}
-        update = {'$set': {'team_settings.ceremonies': ceremonies_settings}}
+        update = {'$set': {'ceremonies': ceremonies_settings}}
         MongoHelper().update_collection('teams', filter, update)
 
     @staticmethod
     def update_permissions(team_id, permits):
         filter = {'_id': team_id}
-        update = {'$set': {'team_settings.permits': permits}}
+        update = {'$set': {'permits': permits}}
         MongoHelper().update_collection('teams', filter, update)
     
     @staticmethod
@@ -131,9 +133,13 @@ class Team:
         "default_settings" collection. Default settings do not include
         google Meet info and should be added separately
         '''
-        default_settings = Settings.get_default_settings()
-        filter = {'_id':ObjectId(team_id)}
-        update = {'$set': {'team_settings': default_settings}}
+        # default_settings = MongoHelper().get_document_by('default_settings', {})
+        default_settings = Configurations.get_default_settings()
+
+        # ARREGLAR!!!!! cargar en 1 doc todo el cursor
+
+        filter = {'_id': ObjectId(team_id)}
+        update = {'$set': {default_settings}}
         return MongoHelper().update_collection('teams', filter, update)
     
     @staticmethod
@@ -144,5 +150,6 @@ class Team:
         '''
         space = create_space(access_token, refresh_token)
         filter = {'_id':ObjectId(team_id)}
-        update = {'$set': {f'team_settings.ceremonies.{ceremony.lower()}.google_meet_config': space}}
+        update = {'$set': {f'ceremonies.{ceremony.lower()}.google_meet_config': space}}
         return MongoHelper().update_collection('teams', filter, update)
+    

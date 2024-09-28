@@ -1,21 +1,8 @@
-from enum import Enum
 from bson import ObjectId
 
-from app.db_connection import mongo
 from app.utils import kanban_format, list_format
 from app.services.mongoHelper import MongoHelper
-
-class Type(Enum):
-    BUGFIX = "Bugfix"
-    FEATURE = "Feature"
-    DISCOVERY = "Discovery"
-    DEPLOYMENT = "Deployment"
-
-class Priority(Enum):
-    LOW = "Low"
-    MEDIUM = "Medium"
-    HIGH = "High"
-    CRITIC = "Critic"
+from app.models.configurations import Configurations
 
 class Story:
 
@@ -86,7 +73,7 @@ class Story:
 
     @staticmethod
     def get_story_fields(sections=False):
-        story_fields =  MongoHelper().get_documents_by('story_fields', sort={'order': 1})
+        story_fields = Configurations.get_all_possible_story_fields()['story_fields']
         if sections:
             story_sections = {}
             for story_field in story_fields:

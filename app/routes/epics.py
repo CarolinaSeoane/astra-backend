@@ -5,11 +5,11 @@ from bson import ObjectId
 from math import ceil
 
 from app.utils import send_response
-from app.models.epic import Epic, Color
 from app.routes.utils import validate_user_is_active_member_of_team
-from app.models.story import Priority
-from app.models.task import Status
 from app.models.team import Team
+from app.models.configurations import Status, Priority, Color
+from app.models.epic import Epic
+
 
 epics = Blueprint('epics', __name__)
 

@@ -7,10 +7,9 @@ from app.models.team import Team
 from app.models.user import User
 from app.utils import send_response
 from app.routes.utils import validate_user_is_active_member_of_team
-from app.models.member import MemberStatus, Role
+from app.models.configurations import MemberStatus, Role, CeremonyType
 from app.models.organization import Organization
 from app.models.sprint import Sprint
-from app.models.ceremony import CeremonyType
 
 
 teams = Blueprint('teams', __name__)
@@ -251,12 +250,11 @@ def create_team(args):
 
         # Create default team settings
         Team.add_default_settings(new_team_id)
-
+        print('after team settings')
         # Add Google Meet space to each ceremony
         Team.set_up_google_meet_space(new_team_id, CeremonyType.STANDUP.value, user_obj.access_token, user_obj.refresh_token)
         Team.set_up_google_meet_space(new_team_id, CeremonyType.PLANNING.value, user_obj.access_token, user_obj.refresh_token)
         Team.set_up_google_meet_space(new_team_id, CeremonyType.RETRO.value, user_obj.access_token, user_obj.refresh_token)
-
     except Exception as e:
         print(e)
         #TODO: rollback
