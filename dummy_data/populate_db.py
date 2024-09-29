@@ -328,8 +328,8 @@ class Populate:
                         },
                     },
                 },
+                "estimation_method": ["fibonacci"],
                 "sprint_set_up": {
-                    "estimation_method": ["fibonacci"],
                     "sprint_duration": "2",  # weeks
                     "sprint_begins_on": "mon",
                 },
@@ -461,8 +461,8 @@ class Populate:
                         "google_meet_config": {},
                     },
                 },
+                "estimation_method": ["fibonacci"],
                 "sprint_set_up": {
-                    "estimation_method": ["fibonacci"],
                     "sprint_duration": "3",  # weeks
                     "sprint_begins_on": "mon",
                 },
@@ -1240,9 +1240,15 @@ class Populate:
             },
             {
                 "key": "default_settings",
+                "value": "estimation_method",
+                "estimation_method": {
+                    "estimation_method": ["fibonacci"]
+                },
+            },
+            {
+                "key": "default_settings",
                 "value": "sprint_set_up",
                 "sprint_set_up": {
-                    "estimation_method": ["fibonacci"],
                     "sprint_duration": "2",  # weeks
                     "sprint_begins_on": "mon",
                 },
