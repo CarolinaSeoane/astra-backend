@@ -121,7 +121,7 @@ def team_ceremonies():
 
 # Validate query param
 def validate_section(value):
-    validate_sections = ['ceremonies', 'sprint_set_up', 'mandatory_story_fields', 'permits']
+    validate_sections = ['ceremonies', 'sprint_set_up', 'mandatory_story_fields', 'permits', 'estimation_method']
     if value not in validate_sections:
         raise ValueError(f"Invalid section value. Must be one of: {', '.join(validate_sections)}")
 

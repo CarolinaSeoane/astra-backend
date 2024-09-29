@@ -148,7 +148,7 @@ def filters(args):
         }
 
     if args['estimation']:
-        estimation_methods = team['sprint_set_up']['estimation_method']
+        estimation_methods = team['estimation_method']
         try:
             estimation_methods.remove('planning_poker')
         except Exception:

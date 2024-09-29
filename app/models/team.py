@@ -14,7 +14,7 @@ TEAMS_COL = CollectionNames.TEAMS.value
 
 class Team:
 
-    def __init__(self, _id, name, organization, ceremonies, sprint_set_up, mandatory_story_fields, permits, members):
+    def __init__(self, _id, name, organization, ceremonies, sprint_set_up, mandatory_story_fields, permits, members, estimation_method):
         self._id = _id
         self.name = name
         self.organization = organization
@@ -23,6 +23,7 @@ class Team:
         self.mandatory_story_fields = mandatory_story_fields
         self.permits = permits
         self.members = members
+        self.estimation_method = estimation_method
 
     @staticmethod
     def get_team(team_id):
@@ -83,7 +84,7 @@ class Team:
 
     @staticmethod
     def get_team_settings(team_id, section):
-        projection = {'ceremonies', 'sprint_set_up', 'mandatory_story_fields', 'permits', 'members'}
+        projection = {'ceremonies', 'sprint_set_up', 'mandatory_story_fields', 'permits', 'members', 'estimation_method'}
         if section:
             projection = {section}
         settings = MongoHelper().get_document_by(
