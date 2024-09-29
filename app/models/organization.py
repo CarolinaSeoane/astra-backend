@@ -6,6 +6,7 @@ from app.models.configurations import CollectionNames
 
 ORGANIZATIONS_COL = CollectionNames.ORGANIZATIONS.value
 
+
 class Organization:
 
     def __init__(self, name, _id=ObjectId()):

@@ -43,11 +43,11 @@ class User:
         }
         # filter = {
         #     "_id": { "$eq": ObjectId(_id) },
-        #     "teams": { "$elemMatch": {"_id": { "$eq": team_id }}}, 
+        #     "teams": { "$elemMatch": {"_id": { "$eq": team_id }}},
         #     "member_status": status
         # }
         return MongoHelper().document_exists(USERS_COL, filter)
-    
+
     def save_user(self):
         mongo.db.users.insert_one(self.__dict__) # TODO use mongoHelper
 

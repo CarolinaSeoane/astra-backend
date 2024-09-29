@@ -5,6 +5,8 @@ from app.models.configurations import Configurations, CollectionNames
 
 
 EPICS_COL = CollectionNames.EPICS.value
+STORIES_COL = CollectionNames.STORIES.value
+
 
 class Epic:
 
@@ -28,7 +30,7 @@ class Epic:
         filter = {'organization': ObjectId(org_id)}
 
         return MongoHelper().get_documents_by(EPICS_COL, filter)
-    
+
     @staticmethod
     def get_epics_from_team(org_id):
         '''
@@ -37,11 +39,11 @@ class Epic:
         filter = {'team': ObjectId(org_id)}
 
         return MongoHelper().get_documents_by(EPICS_COL, filter)
-    
+
     @staticmethod
     def create_epic(epic_document):
         return MongoHelper().create_document(EPICS_COL, epic_document)
-    
+
     @staticmethod
     def get_epic_fields(sections=False):
         epic_fields =  Configurations.get_all_possible_epic_fields()['epic_fields']
@@ -52,12 +54,12 @@ class Epic:
                 sec.append(epic_field)
             return epic_sections
         return epic_fields
-    
+
     @staticmethod
     def get_names_of_mandatory_fields():
         docs =  Configurations.get_all_possible_epic_fields(True)['epic_fields']
         return [doc['value'] for doc in docs]
-    
+
     @classmethod
     def get_count_by_sprint(cls, sprint_name, team_id):
         match = {
@@ -68,4 +70,4 @@ class Epic:
             "_id": "$epic.title",
             "count": { "$sum": 1 }
         }
-        return MongoHelper().aggregate(EPICS_COL, match, group)
+        return MongoHelper().aggregate(STORIES_COL, match, group)

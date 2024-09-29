@@ -37,6 +37,7 @@ def create_app():
     app.register_blueprint(teams, url_prefix='/teams')
     app.register_blueprint(epics, url_prefix='/epics')
     app.register_blueprint(ceremonies, url_prefix='/ceremonies')
+    app.register_blueprint(sprints, url_prefix='/sprints')
 
     return app
 

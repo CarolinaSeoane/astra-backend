@@ -84,12 +84,19 @@ class Configurations:
         '''
         returns None if estimation_method is not found and dict if found
         '''
-        return MongoHelper().get_document_by(CONFIGURATIONS_COL, {'key': 'estimation_methods', 'value': estimation_method})
-    
+        return MongoHelper().get_document_by(
+            CONFIGURATIONS_COL,
+            {'key': 'estimation_methods', 'value': estimation_method}
+        )
+
     @staticmethod
     def get_all_possible_story_fields():
-        return MongoHelper().get_document_by(CONFIGURATIONS_COL, {'key': 'all_possible_fields', 'value': 'story_fields'}, sort={'story_fields.order': 1}) # creo que el sort no esta funcionando
-    
+        return MongoHelper().get_document_by(
+            CONFIGURATIONS_COL,
+            {'key': 'all_possible_fields', 'value': 'story_fields'},
+            sort={'story_fields.order': 1}
+        ) # creo que el sort no esta funcionando
+
     @staticmethod
     def get_all_possible_epic_fields(only_the_names=False):
         filter = {'key': 'all_possible_fields', 'value': 'epic_fields'}
@@ -97,9 +104,15 @@ class Configurations:
         if only_the_names:
             filter['epic_fields.modifiable'] = 0
             projection = { 'epic_fields.value' }
-        return MongoHelper().get_document_by(CONFIGURATIONS_COL, filter, sort={'epic_fields.order': 1}, projection=projection) # creo que el sort no esta funcionando
-    
+        return MongoHelper().get_document_by(
+            CONFIGURATIONS_COL,
+            filter, sort={'epic_fields.order': 1},
+            projection=projection
+        ) # creo que el sort no esta funcionando
+
     @staticmethod
     def get_default_settings():
-        return MongoHelper().get_documents_by(CONFIGURATIONS_COL, {'key': 'default_settings'})
-    
+        return MongoHelper().get_documents_by(
+            CONFIGURATIONS_COL,
+            {'key': 'default_settings'}
+        )
