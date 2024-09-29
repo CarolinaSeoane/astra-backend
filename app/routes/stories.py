@@ -193,10 +193,12 @@ def create_story():
     except Exception as e:
         return send_response([], [f"Failed to create story: {e}"], 500, **g.req_data)
 
+@stories.route('/<story_id>', methods=['GET'])
+def retrieve_story(story_id):
+    story = Story.get_story_by_id(story_id)
+    return send_response(story, [], 200, **g.req_data)
 
-
-
-
+# {{host}}/stories/view?story_id={{story_id}}&team_id={{team_id}}
 
 
 

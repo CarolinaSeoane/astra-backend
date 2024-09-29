@@ -67,7 +67,7 @@ class Story:
             filter["story_id"] = kwargs['story_id']
 
         stories = MongoHelper().get_documents_by(STORIES_COL, filter=filter, projection=projection)
-      
+
         if view_type == 'kanban':
             return kanban_format(stories)
         elif view_type == 'list':
@@ -85,26 +85,16 @@ class Story:
                 sec.append(story_field)
             return story_sections
         return story_fields
-    
+
     @staticmethod
     def is_story_id_taken(story_id):
         filter = {'story_id': story_id}
         return MongoHelper().document_exists(STORIES_COL, filter)
-    
+
     @staticmethod
     def create_story(story_document):
         return MongoHelper().create_document(STORIES_COL, story_document)
-    
+
     @staticmethod
-    def get_done_story_points_count_by_day(story_id, team_id):
-        match = {
-            "sprint.name": story_id,
-            "team": ObjectId(team_id)
-        }
-        group = {
-            "_id": "$end_date",
-            "completed_points": { "$sum": "$estimation" }
-        }
-        sort = {"_id": 1}   # because the sorting occurs after the group by, we no longer have the end_date field. that data
-                            # is now at _id. renaming of the resulting group by fields is possible is really needed.
-        return MongoHelper().aggregate(STORIES_COL, match, group, sort)
+    def get_story_by_id(story_id):
+        return MongoHelper().get_document_by(STORIES_COL, {"story_id": story_id})

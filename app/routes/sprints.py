@@ -24,6 +24,8 @@ def get_velocity():
 def calculate_burn_down(args):
     sprint_name = args["sprint_id"]
     sprint_data = Sprint.get_start_and_end_dates(sprint_name, g.team_id)
+    if not sprint_data:
+        return send_response([], [], 200, **g.req_data)
     start_date = datetime.fromisoformat(sprint_data["start_date"]["$date"][:-1])
     end_date = datetime.fromisoformat(sprint_data["end_date"]["$date"][:-1])
     original_target = Sprint.get_target_points(sprint_name, g.team_id)

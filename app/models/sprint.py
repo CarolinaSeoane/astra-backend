@@ -8,6 +8,7 @@ SPRINTS_COL = CollectionNames.SPRINTS.value
 STORIES_COL = CollectionNames.STORIES.value
 
 
+
 class Sprint:
 
     def __init__(self, name, sprint_number, quarter, year, start_date, end_date, status, target, team, _id=ObjectId()):

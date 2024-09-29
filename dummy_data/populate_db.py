@@ -138,8 +138,8 @@ class Populate:
                 "username": self.username2,
                 "email": "seoane.m.b@gmail.com",
                 "profile_picture": self.pfp2,
-                "access_token": "COMPLETAR",
-                "refresh_token": "",
+                "access_token": "ya29.a0AcM612zC8pqJaxmqD9fiQt4r-o_7HzPLS3pbnmn1iEf0LkXsSozG_y7S7SlCQD8gp78CyZKQ7mdRC5rejew98T4zvoNdEYADNS8w2Hbu5oxoQc1U-oSSPEHUqhRZ0E2ZWsrNAWB6TNoMnTw5DF1pvZErqpDfu3y3WCxkwP3PaCgYKAW4SARASFQHGX2MiGDhouJyj2Izbn-23dfOWAw0175",
+                "refresh_token": "1//0h94vTaXx9580CgYIARAAGBESNwF-L9Ir_LcwUS7ax9LZ2uxVnGwOeHZlzDO3WptQViFivjgmFTOcf9-A5dRyObFcizTN44YaCJU",
                 "teams": [
                     {
                         "_id": self.team1_id,
