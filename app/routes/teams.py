@@ -148,18 +148,18 @@ def update_sprint_set_up(args):
     return send_response([], [], 200, **g.req_data)
 
 ceremony_args = {
-    "days": fields.List(fields.Str(), required=True),
-    "when": fields.Str(required=True),
-    "time": fields.Str(required=True)
+    "days": fields.List(fields.Str(), required=False),
+    "when": fields.Str(required=False),
+    "time": fields.Str(required=True),
+    "google_meet_config": fields.Dict(required=False),
 }
 
-ceremonies_settings_args = {
+@teams.route('/ceremonies', methods=['PUT'])
+@use_args({
     "planning": fields.Nested(ceremony_args, required=True),
     "standup": fields.Nested(ceremony_args, required=True),
     "retrospective": fields.Nested(ceremony_args, required=True)
-}
-@teams.route('/ceremonies_frequency', methods=['PUT'])
-@use_args(ceremonies_settings_args, location='json')
+}, location='json')
 def update_ceremonies_frequency(args):
     Team.update_ceremonies_settings(g.team_id, args)
     return send_response([], [], 200, **g.req_data)

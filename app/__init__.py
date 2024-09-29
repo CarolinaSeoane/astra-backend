@@ -10,6 +10,7 @@ from app.routes.users import users
 from app.routes.teams import teams
 from app.routes.epics import epics
 from app.routes.ceremonies import ceremonies
+from app.routes.sprints import sprints
 # TODO create custom logger
 
 def create_app():
