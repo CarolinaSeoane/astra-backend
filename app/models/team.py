@@ -1,28 +1,35 @@
+import pytz
 from bson import ObjectId
 from datetime import datetime
-import pytz
 
 from app.models.user import User
 from app.services.mongoHelper import MongoHelper
-from app.models.member import MemberStatus
-from app.models.settings import Settings
+from app.models.configurations import MemberStatus
+from app.services.google_meet import create_space
+from app.models.configurations import Configurations, CollectionNames
+
+
+TEAMS_COL = CollectionNames.TEAMS.value
+
 
 class Team:
 
-    def __init__(self, _id, name, organization, team_settings, member_status, members):
+    def __init__(self, _id, name, organization, ceremonies, sprint_set_up, mandatory_story_fields, permits, members):
         self._id = _id
         self.name = name
         self.organization = organization
-        self.team_settings = team_settings
+        self.ceremonies = ceremonies
+        self.sprint_set_up = sprint_set_up
+        self.mandatory_story_fields = mandatory_story_fields
+        self.permits = permits
         self.members = members
-        self.member_status = member_status
 
     @staticmethod
     def get_team(team_id):
         '''
         returns None if team is not found and dict if found
         '''
-        return MongoHelper().get_document_by('teams', {'_id': ObjectId(team_id)})
+        return MongoHelper().get_document_by(TEAMS_COL, {'_id': ObjectId(team_id)})
 
     @classmethod
     def get_team_members(cls, team_id):
@@ -33,7 +40,7 @@ class Team:
         if team is None:
             return []
         return team['members']
-    
+
     @classmethod
     def add_member(cls, team_id, new_user, role, status=MemberStatus.PENDING.value):
         current_time = datetime.now(pytz.utc)
@@ -51,9 +58,10 @@ class Team:
 
         filter = {'_id': ObjectId(team_id)}
         update = {'$push': {'members': team_member}} # push is used to insert a new value to an existing array
-    
+
+        added_to_team = False
         try:
-            MongoHelper().update_collection('teams', filter, update) # check what this returns. maybe i dont have to do a get_teams after
+            MongoHelper().update_collection(TEAMS_COL, filter, update)
             added_to_team = True
             team = cls.get_team(team_id)
             new_user.add_team(team, status)
@@ -69,58 +77,88 @@ class Team:
         print(f"removing member {member_id} from team {team_id}")
         user = User.get_user_by({'_id': ObjectId(member_id)})
         filter = {'_id': ObjectId(team_id)}
-        # update = {'$pull': {'members': {'_id': ObjectId("66a2e863493fe8221a338f0b")}}} # pull is used to remove a value from an existing array
         update = {'$pull': {'members': {'email': user["email"]}}}
-        MongoHelper().update_collection('teams', filter, update)
-        resp = User.remove_from_team(member_id, team_id)
+        MongoHelper().update_collection(TEAMS_COL, filter, update)
+        User.remove_from_team(member_id, team_id)
 
-    @classmethod
-    def get_team_settings(cls, team_id):
-        return cls.get_team(team_id)['team_settings']
-    
     @staticmethod
+    def get_team_settings(team_id, section):
+        projection = {'ceremonies', 'sprint_set_up', 'mandatory_story_fields', 'permits', 'members'}
+        if section:
+            projection = {section}
+        settings = MongoHelper().get_document_by(
+            TEAMS_COL, {'_id': ObjectId(team_id)}, projection=projection
+        )
+        return settings
+
+    @staticmethod #Move to Configurations
     def get_base_permissions():
         return MongoHelper().get_collection('permissions')
 
     @staticmethod
     def update_mandatory_fields(team_id, settings):
         filter = {'_id': team_id}
-        update = {'$set': {'team_settings.story_fields': settings}}
-        MongoHelper().update_collection('teams', filter, update)
+        update = {'$set': {'mandatory_story_fields': settings}}
+        MongoHelper().update_collection(TEAMS_COL, filter, update)
 
     @staticmethod
     def update_sprint_set_up(team_id, set_up):
         filter = {'_id': team_id}
-        update = {'$set': {'team_settings.sprint_set_up': set_up}}
-        MongoHelper().update_collection('teams', filter, update)
+        update = {'$set': {'sprint_set_up': set_up}}
+        MongoHelper().update_collection(TEAMS_COL, filter, update)
 
     @staticmethod
     def update_ceremonies_settings(team_id, ceremonies_settings):
         filter = {'_id': team_id}
-        update = {'$set': {'team_settings.ceremonies': ceremonies_settings}}
-        MongoHelper().update_collection('teams', filter, update)
+        update = {'$set': {'ceremonies': ceremonies_settings}}
+        MongoHelper().update_collection(TEAMS_COL, filter, update)
 
     @staticmethod
     def update_permissions(team_id, permits):
         filter = {'_id': team_id}
-        update = {'$set': {'team_settings.permits': permits}}
-        MongoHelper().update_collection('teams', filter, update)
-    
+        update = {'$set': {'permits': permits}}
+        MongoHelper().update_collection(TEAMS_COL, filter, update)
+
     @staticmethod
     def get_organization(team_id):
-        return MongoHelper().get_document_by('teams', {'_id': ObjectId(team_id)}, projection={'organization'})['organization']
-    
+        return MongoHelper().get_document_by(
+            TEAMS_COL, {'_id': ObjectId(team_id)}, projection={'organization'}
+        )['organization']
+
     @staticmethod
     def is_user_part_of_team(user_id, team_members):
         return user_id in [member['_id']['$oid'] for member in team_members]
-    
+
     @staticmethod
     def add_team(team_document):
-        return MongoHelper().create_document('teams', team_document)
-    
+        return MongoHelper().create_document(TEAMS_COL, team_document)
+
     @staticmethod
     def add_default_settings(team_id):
-        default_settings = Settings.get_default_settings()
+        '''
+        Adds or overwrites team's settings with default settings from
+        "default_settings" collection. Default settings do not include
+        google Meet info and should be added separately
+        '''
+        default_settings_docs = Configurations.get_default_settings()
+        default_settings = {}
+
+        for set in default_settings_docs:
+            setting = set['value']
+            default_settings[setting] = set[setting]
+
+        filter = {'_id': ObjectId(team_id)}
+        update = {'$set': default_settings}
+        res = MongoHelper().update_collection(TEAMS_COL, filter, update)
+        print(res)
+
+    @staticmethod
+    def set_up_google_meet_space(team_id, ceremony, access_token, refresh_token):
+        '''
+        Sets up a google meet space for the specified ceremony using
+        google_meet service
+        '''
+        space = create_space(access_token, refresh_token)
         filter = {'_id':ObjectId(team_id)}
-        update = {'$set': {'team_settings': default_settings}}
-        return MongoHelper().update_collection('teams', filter, update)
+        update = {'$set': {f'ceremonies.{ceremony.lower()}.google_meet_config': space}}
+        return MongoHelper().update_collection(TEAMS_COL, filter, update)

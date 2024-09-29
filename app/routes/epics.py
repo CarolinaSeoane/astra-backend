@@ -1,14 +1,15 @@
+from math import ceil
 from flask import Blueprint, request, g
 from webargs.flaskparser import use_args
 from webargs import fields
 from bson import ObjectId
 
 from app.utils import send_response
-from app.models.epic import Epic, Color
 from app.routes.utils import validate_user_is_active_member_of_team
-from app.models.story import Priority
-from app.models.task import Status
 from app.models.team import Team
+from app.models.configurations import Status, Priority, Color
+from app.models.epic import Epic
+
 
 epics = Blueprint('epics', __name__)
 
@@ -61,7 +62,7 @@ def filters(args):
     color = []
     priority = []
     filters = {}
-    
+
     if args['colors']:
         color = [{'key': col.name, 'label': col.value} for col in Color]
         filters['epic_color'] = {
@@ -69,7 +70,7 @@ def filters(args):
             'value': 'epic_color',
             'options': color
         }
-    
+
     if args['priority']:
         priority = [{'key': priority.value, 'label': priority.value} for priority in Priority]
         filters['priority'] = {
@@ -79,6 +80,26 @@ def filters(args):
         }   
 
     return send_response(filters, [], 200, **g.req_data)
+
+@epics.route("/get_epic_count_by_sprint", methods=['GET'])
+@use_args({"sprint_name": fields.Str(required=True)}, location='query')
+def get_epic_count_by_sprint(args):
+    cursor = Epic.get_count_by_sprint(args['sprint_name'], g.team_id)
+    cursor_list = list(cursor)
+    results = []
+    total = 0
+    for doc in cursor_list:
+        total += doc['count']
+
+    for doc in cursor_list:
+        per = ceil(doc['count'] * 100 / total)
+        epic_info = {
+            "name": doc['_id'],
+            "value": doc['count'],
+            "percentage": f"{per}%"
+        }
+        results.append(epic_info)
+    return send_response(results, [], 200, **g.req_data)
 
 
 # Validación para la actualización de epics
@@ -96,7 +117,7 @@ def filters(args):
 
 #     try:
 #         args = request.get_json()
-        
+
 #         epic = mongo.db.epics.find_one({"title": title})
 #         if not epic:
 #             return jsonify({"message": "Epic not found."}), 404
@@ -120,7 +141,7 @@ def filters(args):
 #             return jsonify({"message": "Epic update failed."}), 500
 
 #     except Exception as e:
-#         print(f"Exception: {e}") 
+#         print(f"Exception: {e}")
 #         return jsonify({"error": str(e)}), 500
 
 # @epics.route('/', methods=['GET'])
@@ -128,11 +149,11 @@ def filters(args):
 #     current_user = get_current_user(request)
 #     if current_user is None:
 #         return jsonify({"message": "Unauthorized"}), 401
-    
+
 #     try:
 #         epics_list = mongo.db.epics.find({"creator._id": current_user['sub']})
 #         epics_data = [convert_objectid_to_str(epic) for epic in epics_list]
 #         return jsonify(epics_data), 200
 #     except Exception as e:
-#         print(f"Exception: {e}")  
+#         print(f"Exception: {e}")
 #         return jsonify({"error": str(e)}), 500

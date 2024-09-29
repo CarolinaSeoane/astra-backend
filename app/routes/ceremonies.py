@@ -1,4 +1,4 @@
-from flask import Blueprint, g, request
+from flask import Blueprint, request
 
 from app.utils import send_response
 from app.routes.utils import validate_user_is_active_member_of_team

@@ -3,7 +3,7 @@ from flask import jsonify
 from app.models.task import Status
 
 
-def send_response(data, errors, status_code, method, endpoint):  
+def send_response(data, errors, status_code, method, endpoint):
     payload = {
         'meta': {
             'method': method,
