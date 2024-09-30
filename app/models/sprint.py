@@ -69,6 +69,12 @@ class Sprint:
         return documents[1:] + [documents[0]] # Send first element (backlog) to the back
 
     @staticmethod
+    def get_all_sprints(team_id):
+        filter = {'team': ObjectId(team_id), 'name': {'$ne': 'Backlog'}}
+        sort = {'start_date': -1}
+        return MongoHelper().get_documents_by(SPRINTS_COL, filter, sort)
+
+    @staticmethod
     def get_velocity(team_id):
         filter = {
             "team": { "$eq": team_id },
@@ -138,3 +144,10 @@ class Sprint:
         return list(MongoHelper().aggregate(
             STORIES_COL, match, group, project=projection
             ))[0]["target"]
+
+    @staticmethod
+    def get_sprint_by(filter):
+        '''
+        returns None if sprint is not found and dict if found
+        '''
+        return MongoHelper().get_document_by(SPRINTS_COL, filter)

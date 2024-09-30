@@ -11,7 +11,7 @@ from app.models.team import Team
 from app.models.sprint import Sprint
 from app.models.epic import Epic
 from app.models.task import Task
-from app.models.configurations import Priority, Type, Configurations
+from app.models.configurations import Priority, Type, Configurations, Status
 
 
 stories = Blueprint("stories", __name__)
@@ -186,6 +186,7 @@ def create_story():
 
     tasks = Task.format(story)
     story['tasks'] = tasks
+    story['story_status'] = Status.NOT_STARTED.value
 
     try:
         response = Story.create_story(story)

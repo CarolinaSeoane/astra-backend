@@ -6,7 +6,7 @@ from app.models.user import User
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import MemberStatus
 from app.services.google_meet import create_space
-from app.models.configurations import Configurations, CollectionNames
+from app.models.configurations import Configurations, CollectionNames, Role
 
 
 TEAMS_COL = CollectionNames.TEAMS.value
@@ -129,6 +129,19 @@ class Team:
     @staticmethod
     def is_user_part_of_team(user_id, team_members):
         return user_id in [member['_id']['$oid'] for member in team_members]
+    
+    @staticmethod
+    def is_user_SM_of_team(user_id, team_id):
+        filter = {
+            '_id': ObjectId(team_id),
+            'members': {
+                '$elemMatch': {
+                    '_id': ObjectId(user_id),
+                    'role': Role.SCRUM_MASTER.value
+                }
+            }
+        }
+        return MongoHelper().document_exists(TEAMS_COL, filter)
 
     @staticmethod
     def add_team(team_document):

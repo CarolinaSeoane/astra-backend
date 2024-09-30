@@ -1,17 +1,33 @@
 from datetime import datetime, timedelta
-from flask import Blueprint, g
+from flask import Blueprint, g, request
 from webargs.flaskparser import use_args
 from webargs import fields
+from bson import ObjectId
 
 from app.utils import send_response
 from app.routes.utils import validate_user_is_active_member_of_team
 from app.models.sprint import Sprint
+from app.models.team import Team
+from app.models.configurations import SprintStatus
+from app.models.story import Story
+from app.models.configurations import Status
 
 
 sprints = Blueprint('sprints', __name__)
 
+excluded_routes = [
+    {
+        'route': '/sprints/finish',
+        'methods': ['PUT']
+    },
+]
+
 @sprints.before_request
 def apply_validate_user_is_active_member_of_team():
+    for excluded_route in excluded_routes:
+        if request.path.startswith(excluded_route['route']) and (request.method in excluded_route['methods']):
+            return None
+
     return validate_user_is_active_member_of_team()
 
 @sprints.route('/velocity', methods=['GET'])
@@ -54,3 +70,33 @@ def calculate_burn_down(args):
         print("end of one loop")
 
     return send_response(burn_down_data, [], 200, **g.req_data)
+
+@sprints.route('/all', methods=['GET'])
+def get_sprints():
+    print('getting sprints')
+    sprints = Sprint.get_all_sprints(g.team_id)
+    return send_response(sprints, [], 200, **g.req_data)
+
+@sprints.route('/finish/attempt/<sprint_id>', methods=['PUT'])
+def finish_sprint(sprint_id):
+    # Validations before closing a sprint
+
+    ## Sprint can only be closed if its status is CURRENT
+    sprint = Sprint.get_sprint_by(ObjectId(sprint_id))
+    if not sprint['status'] == SprintStatus.CURRENT.value:
+        return send_response([], ["This sprint can't be closed."], 406, **g.req_data)
+
+    ## User must be SM of the team
+    team_id = sprint['team']['$oid']
+
+    if not Team.is_user_SM_of_team(g._id, team_id):
+        return send_response([], ["Forbidden. User is not authorized to access this resource"], 403, **g.req_data)
+    
+    # Actions
+    
+    ## Notify stories still open
+    open_stories = Story.get_stories_by_team_id(ObjectId(team_id), 'list', story_status={'$ne': Status.DONE.value}, sprint=sprint['name'])
+    
+    ## Notify day of closing ? +- err ?
+
+    return send_response(open_stories, [], 200, **g.req_data)
