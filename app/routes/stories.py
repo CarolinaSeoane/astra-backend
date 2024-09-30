@@ -3,7 +3,7 @@ import random
 from flask import Blueprint, g, request
 from webargs.flaskparser import use_args
 from webargs import fields
-
+from bson import ObjectId
 from app.models.story import Story
 from app.utils import send_response, get_current_quarter
 from app.routes.utils import validate_user_is_active_member_of_team
@@ -11,6 +11,9 @@ from app.models.team import Team
 from app.models.sprint import Sprint
 from app.models.epic import Epic
 from app.models.task import Task
+from app.models.notification import Notification
+from app.services.notifications_services import notify_story_update
+from app.services.mongoHelper import MongoHelper
 from app.models.configurations import Priority, Type, Configurations
 
 
@@ -186,14 +189,61 @@ def create_story():
 
     tasks = Task.format(story)
     story['tasks'] = tasks
+    story['subscribers'] = [] 
 
     try:
         response = Story.create_story(story)
+        
+        Notification.create_assigned_notification(story, g.team_id)
+        
+        Notification.create_creator_notification(story, g.team_id)
         return send_response([response.acknowledged], [], 201, **g.req_data)
     except Exception as e:
         return send_response([], [f"Failed to create story: {e}"], 500, **g.req_data)
 
 
+@stories.route('/update/<story_id>', methods=['PUT'])
+@use_args({
+    'title': fields.Str(required=False),
+    'description': fields.Str(required=False),
+    'acceptance_criteria': fields.Str(required=False),
+    'assigned_to': fields.Dict(keys=fields.Str(), values=fields.Raw(), required=False),
+    'epic': fields.Str(required=False),
+    'sprint': fields.Str(required=False),
+    'estimation': fields.Str(required=False),
+    'tags': fields.List(fields.Str(), required=False),
+    'priority': fields.Str(required=False),
+    'attachments': fields.List(fields.Str(), required=False),
+    'comments': fields.List(fields.Str(), required=False),
+    'story_type': fields.Str(required=False),
+    'tasks': fields.List(fields.Dict(), required=False),
+    'related_stories': fields.List(fields.Str(), required=False),
+    'team': fields.Str(required=False),
+    'subscribers': fields.List(fields.Str(), required=False),
+}, location='json')
+def update_story(args, story_id):
+    story = Story.get_story_by_id(story_id)
+    if not story:
+        return send_response([], ["Story not found"], 404, **g.req_data)
+
+    updated_fields = {k: v for k, v in args.items() if v is not None}
+
+    if not updated_fields:
+        return send_response([], ["No fields to update"], 400, **g.req_data)
+
+    try:
+        
+        result = MongoHelper().update_collection('stories', {'_id': ObjectId(story_id)}, {"$set": updated_fields})
+
+        if result.modified_count > 0:
+            
+            notify_story_update(story, updated_fields, g.team_id)
+            return send_response([], ["Story updated successfully"], 200, **g.req_data)
+        else:
+            return send_response([], ["No changes made"], 304, **g.req_data)
+    except Exception as e:
+        print("Error updating story:", e)
+        return send_response([], [f"Failed to update story: {e}"], 500, **g.req_data)
 
 
 
