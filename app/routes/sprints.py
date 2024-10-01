@@ -2,7 +2,8 @@ from datetime import datetime, timedelta
 from flask import Blueprint, g, request
 from webargs.flaskparser import use_args
 from webargs import fields
-from bson import ObjectId
+from bson import ObjectId, decode
+from json import loads
 
 from app.utils import send_response
 from app.routes.utils import validate_user_is_active_member_of_team
@@ -83,6 +84,10 @@ def finish_sprint(sprint_id):
 
     ## Sprint can only be closed if its status is CURRENT
     sprint = Sprint.get_sprint_by(ObjectId(sprint_id))
+
+    if not sprint:
+        return send_response([], ["Invalid sprint id."], 404, **g.req_data)
+
     if not sprint['status'] == SprintStatus.CURRENT.value:
         return send_response([], ["This sprint can't be closed."], 406, **g.req_data)
 
@@ -97,6 +102,16 @@ def finish_sprint(sprint_id):
     ## Notify stories still open
     open_stories = Story.get_stories_by_team_id(ObjectId(team_id), 'list', story_status={'$ne': Status.DONE.value}, sprint=sprint['name'])
     
-    ## Notify day of closing ? +- err ?
+    ## Notify day of closing
+    end_date = datetime.fromisoformat(sprint["end_date"]["$date"][:-1])
+    today = datetime.today()
+    difference = (end_date - today).days
+    # A positive number means the sprint is being closed BEFORE it's supposed to
+    # A negative number means the sprint is being closed AFTER it was supposed to
 
-    return send_response(open_stories, [], 200, **g.req_data)
+    data = {
+        # 'open_stories': None,
+        'open_stories': open_stories,
+        'date_diff': difference
+    }
+    return send_response(data, [], 200, **g.req_data)
