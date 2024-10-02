@@ -1,5 +1,5 @@
-import datetime
 import random
+from datetime import datetime
 from flask import Blueprint, g, request
 from webargs.flaskparser import use_args
 from webargs import fields
@@ -11,7 +11,7 @@ from app.models.team import Team
 from app.models.sprint import Sprint
 from app.models.epic import Epic
 from app.models.task import Task
-from app.models.configurations import Priority, Type, Configurations
+from app.models.configurations import Priority, Status, Type, Configurations
 
 
 stories = Blueprint("stories", __name__)
@@ -19,6 +19,9 @@ stories = Blueprint("stories", __name__)
 excluded_routes = [
     '/stories/fields'
 ]
+
+DOING = Status.DOING.value
+
 
 @stories.before_request
 def apply_validate_user_is_active_member_of_team():
@@ -56,8 +59,8 @@ def story_fields(args):
     'story_type': fields.Boolean(required=False, missing=True),
     'estimation': fields.Boolean(required=False, missing=True),
     ## customization
-    'quarter': fields.Str(required=False, missing=str(get_current_quarter(datetime.datetime.today()))), # affects sprints (TODO: should affect epics too!!!!)
-    'year': fields.Str(required=False, missing=str(datetime.datetime.today().year)), # affects sprints (TODO: should affect epics too!!!!)
+    'quarter': fields.Str(required=False, missing=str(get_current_quarter(datetime.today()))), # affects sprints (TODO: should affect epics too!!!!)
+    'year': fields.Str(required=False, missing=str(datetime.today().year)), # affects sprints (TODO: should affect epics too!!!!)
     'future': fields.Str(required=False, missing=False), # affects sprints (TODO: should affect epics too!!!!)
     }, location='query')
 def filters(args):
@@ -193,14 +196,43 @@ def create_story():
     except Exception as e:
         return send_response([], [f"Failed to create story: {e}"], 500, **g.req_data)
 
-@stories.route('/<story_id>', methods=['GET'])
-def retrieve_story(story_id):
-    story = Story.get_story_by_id(story_id)
+@stories.route('/view', methods=['GET'])
+@use_args({"story_id": fields.Str(required=True)}, location="query")
+def retrieve_story(args):
+    story = Story.get_story_by_id(args["story_id"])
     return send_response(story, [], 200, **g.req_data)
 
-# {{host}}/stories/view?story_id={{story_id}}&team_id={{team_id}}
+@stories.route('/edit', methods=['PUT'])
+def edit_story():
+    # if the story goes into doing, we need to include a start_date
+    # if the story goes into done, we need to include an end_date
+    # if the sprint is modified, we need to update the added_to_sprint value
+    story = request.json
+    date_now = datetime.combine(datetime.now().date(), datetime.min.time())
+    old_story = Story.get_story_by_id(story["story_id"])
+    if "_id" in story:
+        del story["_id"]
+    if old_story["sprint"]["name"] != story["sprint"]["name"]:
+        story["added_to_sprint"] = date_now
 
+    tasks = Task.format(story)
+    story["tasks"] = tasks
 
+    if Story.is_done(story):
+        try:
+            response = Story.finalize_story(story, g.team_id)
+            return send_response([response.acknowledged], [], 201, **g.req_data)
+        except Exception as e:
+            return send_response([], [f"Failed to update story: {e}"], 500, **g.req_data)
+
+    story_status = Task.get_story_status(story["tasks"])
+    if story_status == DOING and "start_date" not in story:
+        story["start_date"] = date_now
+    try:
+        response = Story.update(story, story_status)
+        return send_response([response.acknowledged], [], 201, **g.req_data)
+    except Exception as e:
+        return send_response([], [f"Failed to update story: {e}"], 500, **g.req_data)
 
 
 

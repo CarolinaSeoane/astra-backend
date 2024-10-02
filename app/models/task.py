@@ -1,6 +1,12 @@
 from app.models.configurations import Status
 
 
+NOT_STARTED = Status.NOT_STARTED.value
+DOING = Status.DOING.value
+BLOCKED = Status.BLOCKED.value
+DONE = Status.DONE.value
+
+
 class Task:
 
     def __init__(self, _id, title, description, status, app):
@@ -31,7 +37,7 @@ class Task:
             if not title and not description:
                 i += 1
                 continue
-            formatted_task['status'] = Status.NOT_STARTED.value
+            formatted_task['status'] = NOT_STARTED
             formatted_tasks.append(formatted_task)
 
             try:
@@ -48,3 +54,18 @@ class Task:
             i += 1
 
         return formatted_tasks
+
+    @staticmethod
+    def get_story_status(tasks):
+        for task in tasks:
+            if task['status'] == BLOCKED:
+                return BLOCKED
+
+        for task in tasks:
+            if task['status'] == DOING:
+                return DOING
+
+        if all(task['status'] == DONE for task in tasks):
+            return DONE
+
+        return NOT_STARTED

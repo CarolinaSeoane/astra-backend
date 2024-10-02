@@ -139,3 +139,12 @@ class Sprint:
         return list(MongoHelper().aggregate(
             STORIES_COL, match, group, project=projection
             ))[0]["target"]
+
+    @staticmethod
+    def add_completed_points(sprint, team_id, points):
+        match = {
+            "name": sprint,
+            "team": ObjectId(team_id),
+        }
+        update = { "$inc": {"completed": points} }
+        return MongoHelper().update_collection(SPRINTS_COL, match, update)

@@ -1,11 +1,15 @@
+from datetime import datetime
 from bson import ObjectId
 
+from app.models.sprint import Sprint
+from app.models.task import Task
 from app.utils import kanban_format, list_format
 from app.services.mongoHelper import MongoHelper
-from app.models.configurations import Configurations, CollectionNames
+from app.models.configurations import Configurations, CollectionNames, Status
 
 
 STORIES_COL = CollectionNames.STORIES.value
+DONE_STATUS = Status.DONE.value
 
 
 class Story:
@@ -97,4 +101,23 @@ class Story:
 
     @staticmethod
     def get_story_by_id(story_id):
-        return MongoHelper().get_document_by(STORIES_COL, {"story_id": story_id})
+        return MongoHelper().get_document_by(STORIES_COL, filter={"story_id": story_id})
+
+    @staticmethod
+    def is_done(story):
+        return Task.get_story_status(story["tasks"]) == DONE_STATUS
+
+    @staticmethod
+    def finalize_story(story, team_id):
+        if "end_date" not in story:
+            sprint_name = story["sprint"]["name"]
+            points = story["estimation"]
+            story["end_date"] = datetime.combine(datetime.now().date(), datetime.min.time())
+            Sprint.add_completed_points(sprint_name, team_id, points)
+        return Story.update(story, new_status=DONE_STATUS)
+
+    @staticmethod
+    def update(story, new_status):
+        story["story_status"] = new_status
+        match = {'story_id': story["story_id"]}
+        return MongoHelper().replace_document(STORIES_COL, match, new_document=story)

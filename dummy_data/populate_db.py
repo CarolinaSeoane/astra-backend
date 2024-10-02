@@ -40,6 +40,16 @@ class Populate:
     username8 = "MatiasMasseretti"
     username9 = "FedeUTN"
 
+    email1 = "carolina.b.seoane@gmail.com"
+    email2 = "seoane.m.b@gmail.com"
+    email3 = "msaenz@gmail.com"
+    email4 = "juan.pol@gmail.com"
+    email5 = "melisa_leon@gmail.com"
+    email6 = "pepilombardo@gmail.com"
+    email7 = "nic.justo@gmail.com"
+    email8 = "matmass03@gmail.com"
+    email9 = "guderianfront2000@gmail.com"
+
     pfp1 = "6"
     pfp2 = "4"
     pfp3 = "3"
@@ -114,7 +124,7 @@ class Populate:
                 "name": "Carolina",
                 "surname": "Seoane",
                 "username": self.username1,
-                "email": "carolina.b.seoane@gmail.com",
+                "email": self.email1,
                 "profile_picture": self.pfp1,
                 "access_token": "ya29.a0AcM612yUpCKXBgIGJ3v-x9Y9Ld2u2E_7qbvZntH0GJJPqL8Cba3W0A-AcZHzehyQnjOLCyVjKT01lPI7WJWylZrzXyLywF8nlZQ6AnuvL2MzNDcJR45RrwTG0yfx9SePh_5x3DEeD0_KYEGEE-N38cyRVt6xgYW_gDsaCgYKASsSARASFQHGX2MiiGM7KNSCWXl35YdLXKVdUw0170",
                 "refresh_token": "1//0ho11G9eYlzhOCgYIARAAGBESNwF-L9IrVFc5SwzPSm01IoILdYjCpH1Lr6hYBAAWYS1y45NUYenHBvXuRi6EJltNXxNQqiYU7yA",
@@ -136,7 +146,7 @@ class Populate:
                 "name": "Belen",
                 "surname": "Seoane",
                 "username": self.username2,
-                "email": "seoane.m.b@gmail.com",
+                "email": self.email2,
                 "profile_picture": self.pfp2,
                 "access_token": "ya29.a0AcM612zC8pqJaxmqD9fiQt4r-o_7HzPLS3pbnmn1iEf0LkXsSozG_y7S7SlCQD8gp78CyZKQ7mdRC5rejew98T4zvoNdEYADNS8w2Hbu5oxoQc1U-oSSPEHUqhRZ0E2ZWsrNAWB6TNoMnTw5DF1pvZErqpDfu3y3WCxkwP3PaCgYKAW4SARASFQHGX2MiGDhouJyj2Izbn-23dfOWAw0175",
                 "refresh_token": "1//0h94vTaXx9580CgYIARAAGBESNwF-L9Ir_LcwUS7ax9LZ2uxVnGwOeHZlzDO3WptQViFivjgmFTOcf9-A5dRyObFcizTN44YaCJU",
@@ -153,7 +163,7 @@ class Populate:
                 "name": "Maria José",
                 "surname": "Saenz",
                 "username": self.username3,
-                "email": "msaenz@gmail.com",
+                "email": self.email3,
                 "profile_picture": self.pfp3,
                 "access_token": "COMPLETAR",
                 "refresh_token": "",
@@ -170,7 +180,7 @@ class Populate:
                 "name": "Juan",
                 "surname": "Politi",
                 "username": self.username4,
-                "email": "juan.pol@gmail.com",
+                "email": self.email4,
                 "profile_picture": self.pfp4,
                 "access_token": "COMPLETAR",
                 "refresh_token": "",
@@ -187,7 +197,7 @@ class Populate:
                 "name": "Melisa Camila",
                 "surname": "León",
                 "username": self.username5,
-                "email": "melisa_leon@gmail.com",
+                "email": self.email5,
                 "profile_picture": self.pfp5,
                 "access_token": "COMPLETAR",
                 "refresh_token": "",
@@ -204,7 +214,7 @@ class Populate:
                 "name": "Pedro",
                 "surname": "Lombardo",
                 "username": self.username6,
-                "email": "pepilombardo@gmail.com",
+                "email": self.email6,
                 "profile_picture": self.pfp6,
                 "access_token": "COMPLETAR",
                 "refresh_token": "",
@@ -221,7 +231,7 @@ class Populate:
                 "name": "Nicolás",
                 "surname": "Justo",
                 "username": self.username7,
-                "email": "nic.justo@gmail.com",
+                "email": self.email7,
                 "profile_picture": self.pfp7,
                 "access_token": "COMPLETAR",
                 "refresh_token": "",
@@ -238,7 +248,7 @@ class Populate:
                 "name": "Matias",
                 "surname": "Masseretti",
                 "username": self.username8,
-                "email": "matmass03@gmail.com",
+                "email": self.email8,
                 "profile_picture": self.pfp8,
                 "access_token": "COMPLETAR",
                 "refresh_token": "",
@@ -260,7 +270,7 @@ class Populate:
                 "name": "Federico",
                 "surname": "Sepulveda",
                 "username": self.username9,
-                "email": "guderianfront2000@gmail.com",
+                "email": self.email9,
                 "profile_picture": self.pfp9,
                 "access_token": "COMPLETAR",
                 "refresh_token": "",
@@ -575,11 +585,13 @@ class Populate:
                     "_id": self.user1_id,
                     "username": self.username1,
                     "profile_picture": self.pfp1,
+                    "email": self.email1
                 },
                 "assigned_to": {
                     "_id": self.user1_id,
                     "username": self.username1,
                     "profile_picture": self.pfp1,
+                    "email": self.email1
                 },
                 "epic": {
                     "_id": self.epic1_id,
@@ -626,11 +638,13 @@ class Populate:
                     "_id": self.user2_id,
                     "username": self.username2,
                     "profile_picture": self.pfp2,
+                    "email": self.email2
                 },
                 "assigned_to": {
                     "_id": self.user2_id,
                     "username": self.username2,
                     "profile_picture": self.pfp2,
+                    "email": self.email2
                 },
                 "epic": {
                     "_id": self.epic1_id,
@@ -665,11 +679,13 @@ class Populate:
                     "_id": self.user2_id,
                     "username": self.username2,
                     "profile_picture": self.pfp2,
+                    "email": self.email2
                 },
                 "assigned_to": {
                     "_id": self.user1_id,
                     "username": self.username1,
                     "profile_picture": self.pfp1,
+                    "email": self.email1
                 },
                 "epic": {
                     "_id": self.epic1_id,
@@ -704,11 +720,13 @@ class Populate:
                     "_id": self.user2_id,
                     "username": self.username2,
                     "profile_picture": self.pfp2,
+                    "email": self.email2
                 },
                 "assigned_to": {
                     "_id": self.user1_id,
                     "username": self.username1,
                     "profile_picture": self.pfp1,
+                    "email": self.email1
                 },
                 "epic": {
                     "_id": self.epic2_id,
@@ -743,11 +761,13 @@ class Populate:
                     "_id": self.user2_id,
                     "username": self.username2,
                     "profile_picture": self.pfp2,
+                    "email": self.email2
                 },
                 "assigned_to": {
                     "_id": self.user1_id,
                     "username": self.username1,
                     "profile_picture": self.pfp1,
+                    "email": self.email1
                 },
                 "epic": {
                     "_id": self.epic1_id,
@@ -781,11 +801,13 @@ class Populate:
                     "_id": self.user2_id,
                     "username": self.username2,
                     "profile_picture": self.pfp2,
+                    "email": self.email2
                 },
                 "assigned_to": {
                     "_id": self.user1_id,
                     "username": self.username1,
                     "profile_picture": self.pfp1,
+                    "email": self.email1
                 },
                 "epic": {
                     "_id": self.epic1_id,
@@ -819,11 +841,13 @@ class Populate:
                     "_id": self.user1_id,
                     "username": self.username1,
                     "profile_picture": self.pfp1,
+                    "email": self.email1
                 },
                 "assigned_to": {
                     "_id": self.user2_id,
                     "username": self.username2,
                     "profile_picture": self.pfp2,
+                    "email": self.email2
                 },
                 "epic": {
                     "_id": self.epic1_id,
@@ -857,11 +881,13 @@ class Populate:
                     "_id": self.user2_id,
                     "username": self.username2,
                     "profile_picture": self.pfp2,
+                    "email": self.email2
                 },
                 "assigned_to": {
                     "_id": self.user2_id,
                     "username": self.username2,
                     "profile_picture": self.pfp2,
+                    "email": self.email2
                 },
                 "epic": {
                     "_id": self.epic2_id,
@@ -895,11 +921,13 @@ class Populate:
                     "_id": self.user1_id,
                     "username": self.username1,
                     "profile_picture": self.pfp1,
+                    "email": self.email1
                 },
                 "assigned_to": {
                     "_id": self.user1_id,
                     "username": self.username1,
                     "profile_picture": self.pfp1,
+                    "email": self.email1
                 },
                 "epic": {
                     "_id": self.epic1_id,
