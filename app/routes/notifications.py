@@ -170,12 +170,12 @@ def get_unread_notifications_count():
 def get_subscribed_notifications():
     user_id = request.args.get('user_id')
     team_id = request.args.get('team_id')
-
+    print("User ID:", user_id)  
+    print("Team ID:", team_id)  
     if not user_id or not team_id:
         return send_response([], ['Missing user_id or team_id'], 400, **g.req_data)
 
     try:
-        
         notifications = Notification.get_subscribed_notifications(user_id, team_id)
         return send_response(notifications, [], 200, **g.req_data)
     except Exception as e:
@@ -186,11 +186,28 @@ def get_story_edits():
     team_id = request.args.get('team_id')
 
     if not team_id:
-        return send_response([], ['Missing team_id'], 400)
+
+        method = request.method
+        endpoint = request.path
+        return send_response([], ['Missing team_id'], 400, method=method, endpoint=endpoint)
 
     try:
-        
         edits = Notification.get_team_story_edits(team_id)
-        return send_response(edits, [], 200)
+        return send_response(edits, [], 200, method=request.method, endpoint=request.path)
     except Exception as e:
-        return send_response([], [f"Failed to get team story edits: {e}"], 500)
+        return send_response([], [f"Failed to get team story edits: {e}"], 500, method=request.method, endpoint=request.path)
+    
+@notifications.route('/subscribed/count', methods=['GET'])
+def get_subscribed_notifications_count():
+    user_id = request.args.get('user_id')
+    team_id = request.args.get('team_id')
+
+    if not user_id or not team_id:
+        return send_response([], ['Missing user_id or team_id'], 400, **g.req_data)
+
+    try:
+
+        unread_count = Notification.count_unread_notifications(user_id, team_id)
+        return send_response({'unreadCount': unread_count}, [], 200, **g.req_data)
+    except Exception as e:
+        return send_response([], [f"Failed to count unread subscribed notifications: {e}"], 500, **g.req_data)

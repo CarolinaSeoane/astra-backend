@@ -49,7 +49,8 @@ def validate_user_token():
         return send_response([], [f"Unprocessable Entity. Missing Authorization header"], 422, **req_data)
 
     # Validate token
-    decoded = validate_jwt(token)   
+    decoded = validate_jwt(token)
+    print(token)   
     if not decoded:
         return send_response([], [f"Unauthorized. Invalid session token"], 401, **req_data)
     

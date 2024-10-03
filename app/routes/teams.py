@@ -1,4 +1,4 @@
-from flask import Blueprint, g, request
+from flask import Blueprint, g, request,jsonify
 from webargs import fields
 from webargs.flaskparser import use_args
 from bson import ObjectId
@@ -261,3 +261,13 @@ def create_team(args):
         return send_response([], ["Couldn't create team"], 500, **g.req_data)
 
     return send_response([f"Team {args['team_name']} created successfully"], [], 200, **g.req_data)
+
+@teams.route('/product_owner/<team_id>', methods=['GET'])
+def get_product_owner_route(team_id):
+    """
+    Endpoint para obtener el Product Owner de un equipo.
+    """
+    po = Team.get_product_owner(team_id)
+    if po:
+        return jsonify({'po_id': po['_id']}), 200
+    return jsonify({'error': 'No PO found'}), 404

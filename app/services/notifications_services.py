@@ -2,7 +2,7 @@ from datetime import datetime
 from bson import ObjectId
 from app.models.notification import Notification
 from app.models.team import Team 
-#from app.services.mongoHelper import MongoHelper
+
 
 def notify_story_update(story, updated_fields, team_id):
     """
@@ -59,7 +59,8 @@ def notify_story_update(story, updated_fields, team_id):
                 'assigned_to': ObjectId(new_assigned_user_str) if 'assigned_to' in updated_fields else None,
                 'team_id': team_id,
                 'created_at': datetime.now().isoformat(),
-                'viewed': False
+                #'viewed': False
+                'viewed_by': []
             })
         
     
@@ -72,7 +73,8 @@ def notify_story_update(story, updated_fields, team_id):
             'assigned_to': ObjectId(new_assigned_user_str),
             'team_id': team_id,
             'created_at': datetime.now().isoformat(),
-            'viewed': False
+            #'viewed': False
+            'viewed_by': []
         })
    
     
@@ -86,7 +88,8 @@ def notify_story_update(story, updated_fields, team_id):
                 'assigned_to': ObjectId(assigned_to_id_str),
                 'team_id': team_id,
                 'created_at': datetime.now().isoformat(),
-                'viewed': False
+                #'viewed': False
+                'viewed_by': []
             })
     
     
@@ -100,7 +103,8 @@ def notify_story_update(story, updated_fields, team_id):
                 'assigned_to': ObjectId(new_assigned_user_str) if 'assigned_to' in updated_fields and new_assigned_user_str != creator_id_str else None,
                 'team_id': team_id,
                 'created_at': datetime.now().isoformat(),
-                'viewed': False
+                #'viewed': False
+                'viewed_by': []
             })
 
     
@@ -117,6 +121,7 @@ def notify_story_update(story, updated_fields, team_id):
                     'assigned_to': ObjectId(new_assigned_user_str) if 'assigned_to' in updated_fields else None,
                     'team_id': team_id,
                     'created_at': datetime.now().isoformat(),
-                    'viewed': False
+                    #'viewed': False
+                    'viewed_by': []
                 })
 

@@ -201,51 +201,14 @@ def create_story():
     except Exception as e:
         return send_response([], [f"Failed to create story: {e}"], 500, **g.req_data)
 
-
-@stories.route('/update/<story_id>', methods=['PUT'])
+@stories.route('/subscribe/<story_id>', methods=['POST'])
 @use_args({
-    'title': fields.Str(required=False),
-    'description': fields.Str(required=False),
-    'acceptance_criteria': fields.Str(required=False),
-    'assigned_to': fields.Dict(keys=fields.Str(), values=fields.Raw(), required=False),
-    'epic': fields.Str(required=False),
-    'sprint': fields.Str(required=False),
-    'estimation': fields.Str(required=False),
-    'tags': fields.List(fields.Str(), required=False),
-    'priority': fields.Str(required=False),
-    'attachments': fields.List(fields.Str(), required=False),
-    'comments': fields.List(fields.Str(), required=False),
-    'story_type': fields.Str(required=False),
-    'tasks': fields.List(fields.Dict(), required=False),
-    'related_stories': fields.List(fields.Str(), required=False),
-    'team': fields.Str(required=False),
-    'subscribers': fields.List(fields.Str(), required=False),
+    'user_id': fields.Str(required=True)
 }, location='json')
-def update_story(args, story_id):
-    story = Story.get_story_by_id(story_id)
-    if not story:
-        return send_response([], ["Story not found"], 404, **g.req_data)
-
-    updated_fields = {k: v for k, v in args.items() if v is not None}
-
-    if not updated_fields:
-        return send_response([], ["No fields to update"], 400, **g.req_data)
-
-    try:
-        
-        result = MongoHelper().update_collection('stories', {'_id': ObjectId(story_id)}, {"$set": updated_fields})
-
-        if result.modified_count > 0:
-            
-            notify_story_update(story, updated_fields, g.team_id)
-            return send_response([], ["Story updated successfully"], 200, **g.req_data)
-        else:
-            return send_response([], ["No changes made"], 304, **g.req_data)
-    except Exception as e:
-        print("Error updating story:", e)
-        return send_response([], [f"Failed to update story: {e}"], 500, **g.req_data)
-
-
+def subscribe_to_story(args, story_id):
+    user_id = args['user_id']
+    response = Story.subscribe_to_story(story_id, user_id)
+    return response, response['status']
 
 
 
