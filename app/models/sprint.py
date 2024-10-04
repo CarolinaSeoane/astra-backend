@@ -11,7 +11,7 @@ STORIES_COL = CollectionNames.STORIES.value
 
 class Sprint:
 
-    def __init__(self, name, sprint_number, quarter, year, start_date, end_date, status, target, team, completed, _id=ObjectId()):
+    def __init__(self, name, sprint_number, quarter, year, start_date, end_date, status, target, team, completed, actual_end_date, _id=ObjectId()):
         self._id = _id
         self.name = name
         self.sprint_number = sprint_number
@@ -23,6 +23,7 @@ class Sprint:
         self.target = target
         self.team = team
         self.completed = completed
+        self.actual_end_date = actual_end_date
 
     @staticmethod
     def get_sprints(team_id, quarter, year, future):
@@ -162,11 +163,10 @@ class Sprint:
         '''
         # Get finished SPs sum
         sprint = Sprint.get_sprint_by({'_id': ObjectId(sprint_id)})
-        #resolver team id
-        total_sps_finished = Sprint.get_completed_points_up_to(sprint['name'], sprint['team'], datetime.datetime.now)
+        total_sps_finished = Sprint.get_completed_points_up_to(sprint['name'], sprint['team']['$oid'], datetime.datetime.today())[0]['completed_points']
 
         # Set final SP completed
         # Set status as finished
         filter = {'_id': ObjectId(sprint_id)}
-        update = {'$set': {'status': SprintStatus.FINISHED.value, 'completed': total_sps_finished}}
+        update = {'$set': {'status': SprintStatus.FINISHED.value, 'completed': total_sps_finished, 'actual_end_date': datetime.datetime.today()}}
         return MongoHelper().update_document(SPRINTS_COL, filter, update)
