@@ -27,7 +27,7 @@ class MongoHelper:
     def add_new_element_to_collection(self, collection_name, element):
         return self.astra.db[collection_name].insert_one(element)
 
-    def update_collection(self, collection_name, filter, update):
+    def update_document(self, collection_name, filter, update):
         '''
         filter refers to the document to be updated
         update refers to the field and values to be updated and how they should be updated

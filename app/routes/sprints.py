@@ -79,7 +79,7 @@ def get_sprints():
     return send_response(sprints, [], 200, **g.req_data)
 
 @sprints.route('/finish/attempt/<sprint_id>', methods=['PUT'])
-def finish_sprint(sprint_id):
+def attempt_to_finish_sprint(sprint_id):
     # Validations before closing a sprint
 
     ## Sprint can only be closed if its status is CURRENT
@@ -115,3 +115,13 @@ def finish_sprint(sprint_id):
         'date_diff': difference
     }
     return send_response(data, [], 200, **g.req_data)
+
+@sprints.route('/finish/<sprint_id>', methods=['PUT'])
+def finish_sprint(sprint_id):
+    update_res = Sprint.finish_sprint(sprint_id)
+    
+    if update_res.modified_count == 1:
+        return send_response([], [], 200, **g.req_data)
+
+    return send_response([], ["Couldn't update sprint"], 404, **g.req_data)
+

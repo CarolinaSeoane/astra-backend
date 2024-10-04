@@ -62,7 +62,7 @@ class Team:
 
         added_to_team = False
         try:
-            MongoHelper().update_collection(TEAMS_COL, filter, update)
+            MongoHelper().update_document(TEAMS_COL, filter, update)
             added_to_team = True
             team = cls.get_team(team_id)
             new_user.add_team(team, status)
@@ -79,7 +79,7 @@ class Team:
         user = User.get_user_by({'_id': ObjectId(member_id)})
         filter = {'_id': ObjectId(team_id)}
         update = {'$pull': {'members': {'email': user["email"]}}}
-        MongoHelper().update_collection(TEAMS_COL, filter, update)
+        MongoHelper().update_document(TEAMS_COL, filter, update)
         User.remove_from_team(member_id, team_id)
 
     @staticmethod
@@ -100,25 +100,25 @@ class Team:
     def update_mandatory_fields(team_id, settings):
         filter = {'_id': team_id}
         update = {'$set': {'mandatory_story_fields': settings}}
-        MongoHelper().update_collection(TEAMS_COL, filter, update)
+        MongoHelper().update_document(TEAMS_COL, filter, update)
 
     @staticmethod
     def update_sprint_set_up(team_id, set_up):
         filter = {'_id': team_id}
         update = {'$set': {'sprint_set_up': set_up}}
-        MongoHelper().update_collection(TEAMS_COL, filter, update)
+        MongoHelper().update_document(TEAMS_COL, filter, update)
 
     @staticmethod
     def update_ceremonies_settings(team_id, ceremonies_settings):
         filter = {'_id': team_id}
         update = {'$set': {'ceremonies': ceremonies_settings}}
-        MongoHelper().update_collection(TEAMS_COL, filter, update)
+        MongoHelper().update_document(TEAMS_COL, filter, update)
 
     @staticmethod
     def update_permissions(team_id, permits):
         filter = {'_id': team_id}
         update = {'$set': {'permits': permits}}
-        MongoHelper().update_collection(TEAMS_COL, filter, update)
+        MongoHelper().update_document(TEAMS_COL, filter, update)
 
     @staticmethod
     def get_organization(team_id):
@@ -163,7 +163,7 @@ class Team:
 
         filter = {'_id': ObjectId(team_id)}
         update = {'$set': default_settings}
-        res = MongoHelper().update_collection(TEAMS_COL, filter, update)
+        res = MongoHelper().update_document(TEAMS_COL, filter, update)
         print(res)
 
     @staticmethod
@@ -175,4 +175,4 @@ class Team:
         space = create_space(access_token, refresh_token)
         filter = {'_id':ObjectId(team_id)}
         update = {'$set': {f'ceremonies.{ceremony.lower()}.google_meet_config': space}}
-        return MongoHelper().update_collection(TEAMS_COL, filter, update)
+        return MongoHelper().update_document(TEAMS_COL, filter, update)
