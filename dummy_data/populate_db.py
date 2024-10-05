@@ -300,7 +300,8 @@ class Populate:
                 "ceremonies": {
                     "planning": {
                         "when": CeremonyStartOptions.BEGINNING.value,
-                        "time": "10:00",  # "HH:MM,
+                        "starts": "10:00",  # "HH:MM,
+                        "ends": "12:00",
                         "google_meet_config": {
                             "name": "spaces/G3IVgQf5g1cB",
                             "meetingUri": "https://meet.google.com/dox-iazn-miy",
@@ -313,7 +314,8 @@ class Populate:
                     },
                     "standup": {
                         "days": ["mon", "wed", "thu"],
-                        "time": "09:30",  # "HH:MM
+                        "starts": "09:30",  # "HH:MM
+                        "ends": "09:45",
                         "google_meet_config": {
                             "name": "spaces/ATCX4-zHdhYB",
                             "meetingUri": "https://meet.google.com/dsr-aegc-hzc",
@@ -326,7 +328,8 @@ class Populate:
                     },
                     "retrospective": {
                         "when": CeremonyStartOptions.END.value,
-                        "time": "10:00",  # "HH:MM
+                        "starts": "10:00",  # "HH:MM
+                        "ends": "11:00",
                         "google_meet_config": {
                             "name": "spaces/wbnLUy_LK3QB",
                             "meetingUri": "https://meet.google.com/uis-ygog-rnn",
@@ -457,17 +460,20 @@ class Populate:
                 "ceremonies": {
                     "planning": {
                         "when": CeremonyStartOptions.END.value,
-                        "time": "10:00",  # "HH:MM
+                        "starts": "10:00",  # "HH:MM
+                        "ends": "12:00",
                         "google_meet_config": {},
                     },
                     "standup": {
                         "days": ["mon", "wed", "thu"],
-                        "time": "09:30",  # "HH:MM
+                        "starts": "09:30",  # "HH:MM
+                        "ends": "10:00",
                         "google_meet_config": {},
                     },
                     "retrospective": {
                         "when": CeremonyStartOptions.END.value,
-                        "time": "10:00",  # "HH:MM
+                        "starts": "10:00",  # "HH:MM
+                        "ends": "12:00",
                         "google_meet_config": {},
                     },
                 },
@@ -1274,17 +1280,20 @@ class Populate:
                 "ceremonies": {
                     "planning": {
                         "when": CeremonyStartOptions.BEGINNING.value,
-                        "time": "10:00",  # "HH:MM
+                        "starts": "10:00",  # "HH:MM
+                        "ends": "12:00",
                         "google_meet_config": {},
                     },
                     "standup": {
                         "days": ["mon", "tue", "wed", "thu", "fri"],
-                        "time": "12:00",  # "HH:MM
+                        "starts": "12:00",  # "HH:MM
+                        "ends": "12:15",
                         "google_meet_config": {},
                     },
                     "retrospective": {
                         "when": CeremonyStartOptions.END.value,
-                        "time": "16:00",  # "HH:MM
+                        "starts": "16:00",  # "HH:MM
+                        "ends": "17:00",
                         "google_meet_config": {},
                     },
                 },

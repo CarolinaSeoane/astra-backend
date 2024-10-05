@@ -2,12 +2,12 @@ from flask import Blueprint, request
 
 from app.utils import send_response
 from app.routes.utils import validate_user_is_active_member_of_team
-from app.services.google_meet import create_space
+
 
 ceremonies = Blueprint("ceremonies", __name__)
 
 excluded_routes = [
-    '/ceremonies/event' # change
+    
 ]
 
 @ceremonies.before_request
@@ -17,7 +17,29 @@ def apply_validate_user_is_active_member_of_team():
             return None
     return validate_user_is_active_member_of_team()
 
-@ceremonies.route("/event", methods=['GET'])
-def create_google_meet_space():
-    event = create_space()
-    return send_response([event], [], 200, {'key': '**g.req_data'}, '')
+@ceremonies.route('/ceremonies', methods=['GET'])
+def team_ceremonies():
+    ceremonies = [
+        {
+            'name': 'Standup begins',
+            'date': '2024-08-01T20:28:30',
+            'in_progress': False
+        },
+        {
+            'name': 'Standup',
+            'date': '2024-08-01T20:28:35',
+            'in_progress': True
+        },
+        {
+            'name': 'Retro begins',
+            'date': '2024-08-01T20:28:50',
+            'in_progress': False
+        },
+        {
+            'name': 'Retro',
+            'date': '2024-08-01T20:28:55',
+            'in_progress': True
+        },
+    ]
+
+    return send_response(ceremonies, [], 200, **g.req_data)
