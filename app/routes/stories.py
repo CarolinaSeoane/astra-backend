@@ -1,5 +1,5 @@
-import datetime
 import random
+from datetime import datetime
 from flask import Blueprint, g, request
 from webargs.flaskparser import use_args
 from webargs import fields
@@ -19,6 +19,9 @@ stories = Blueprint("stories", __name__)
 excluded_routes = [
     '/stories/fields'
 ]
+
+DOING = Status.DOING.value
+
 
 @stories.before_request
 def apply_validate_user_is_active_member_of_team():
@@ -55,9 +58,10 @@ def story_fields(args):
     'priority': fields.Boolean(required=False, missing=True),
     'story_type': fields.Boolean(required=False, missing=True),
     'estimation': fields.Boolean(required=False, missing=True),
+    'task_statuses': fields.Boolean(required=False, missing=True),
     ## customization
-    'quarter': fields.Str(required=False, missing=str(get_current_quarter(datetime.datetime.today()))), # affects sprints (TODO: should affect epics too!!!!)
-    'year': fields.Str(required=False, missing=str(datetime.datetime.today().year)), # affects sprints (TODO: should affect epics too!!!!)
+    'quarter': fields.Str(required=False, missing=str(get_current_quarter(datetime.today()))), # affects sprints (TODO: should affect epics too!!!!)
+    'year': fields.Str(required=False, missing=str(datetime.today().year)), # affects sprints (TODO: should affect epics too!!!!)
     'future': fields.Str(required=False, missing=False), # affects sprints (TODO: should affect epics too!!!!)
     }, location='query')
 def filters(args):
@@ -67,6 +71,7 @@ def filters(args):
     priority = []
     story_type = []
     estimation = []
+    task_statuses = []
     filters = {}
 
     if args['sprints']:
@@ -163,6 +168,15 @@ def filters(args):
             'options': estimation[est_method]['options']
         }
 
+    if args['task_statuses']:
+        statuses = Task.get_statuses()
+        for status in statuses:
+            task_statuses.append({
+                "label": status,
+                "key": status
+            })
+        filters['task_statuses'] = task_statuses
+
     return send_response(filters, [], 200, **g.req_data)
 
 @stories.route('/generate_id', methods=['GET'])
@@ -194,142 +208,41 @@ def create_story():
     except Exception as e:
         return send_response([], [f"Failed to create story: {e}"], 500, **g.req_data)
 
+@stories.route('/view', methods=['GET'])
+@use_args({"story_id": fields.Str(required=True)}, location="query")
+def retrieve_story(args):
+    story = Story.get_story_by_id(args["story_id"])
+    return send_response(story, [], 200, **g.req_data)
 
+@stories.route('/edit', methods=['PUT'])
+def edit_story():
+    # if the story goes into doing, we need to include a start_date
+    # if the story goes into done, we need to include an end_date
+    # if the sprint is modified, we need to update the added_to_sprint value
+    story = request.json
+    story['team'] = g.team_id
+    date_now = datetime.combine(datetime.now().date(), datetime.min.time())
+    old_story = Story.get_story_by_id(story["story_id"])
+    if "_id" in story:
+        del story["_id"]
+    if old_story["sprint"]["name"] != story["sprint"]["name"]:
+        story["added_to_sprint"] = date_now
 
+    tasks = Task.format(story)
+    story["tasks"] = tasks
 
+    if Story.is_done(story):
+        try:
+            response = Story.finalize_story(story, g.team_id)
+            return send_response([response.acknowledged], [], 201, **g.req_data)
+        except Exception as e:
+            return send_response([], [f"Failed to update story: {e}"], 500, **g.req_data)
 
-
-
-
-
-
-# Validacion para la actualizacion de stories
-# update_story_args = {
-#     'title': fields.Str(required=False),
-#     'description': fields.Str(required=False),
-#     'acceptance_criteria': fields.Str(required=False),
-#     'assigned_to': fields.List(fields.Str(), required=False),
-#     'epic': fields.Str(required=False),
-#     'sprint': fields.Int(required=False),
-#     'story_points': fields.Int(required=False),
-#     'tags': fields.List(fields.Str(), required=False),
-#     'priority': fields.Str(required=False),
-#     'estimation_method': fields.Str(required=False),
-#     'type': fields.Str(required=False),
-#     'tasks': fields.List(fields.Str(), required=False), 
-#     'estimation': fields.Str(required=False),
-#     'team': fields.Str(required=False)
-# }
-# @stories.route('/<string:story_id>', methods=['PUT'])
-# def update_story(story_id):
-#     current_user = get_current_user(request)
-#     if current_user is None:
-#         return jsonify({"message": "Unauthorized"}), 401
-
-#     try:
-#         args = request.get_json()
-#         print("Received data:", args)
-
-#         story = mongo.db.stories.find_one({"_id": ObjectId(story_id)})
-#         if story is None:
-#             return jsonify({"message": "Story not found."}), 404
-
-#         creator_id = story.get('creator', {}).get('_id', None)
-#         if creator_id != current_user['sub']:
-#             return jsonify({"message": "Unauthorized to update this story."}), 403
-
-#         # Manejar la lista de usuarios asignados
-#         assigned_to_user_ids = args.get('assigned_to', [])
-#         assigned_to_users = []
-#         for user_id in assigned_to_user_ids:
-#             if ObjectId.is_valid(user_id):
-#                 user_id = ObjectId(user_id)
-#                 user = mongo.db.users.find_one({"_id": user_id})
-#                 if user:
-#                     assigned_to_users.append({
-#                         "_id": user['_id'], 
-#                         "username": user.get('username', 'Unknown'),
-#                         "profile_picture": user.get('profile_picture', '')
-#                     })
-#                 else:
-#                     return jsonify({"message": f"Assigned user with ID {user_id} not found."}), 404
-#             else:
-#                 return jsonify({"message": f"Invalid user ID {user_id}."}), 400
-#         if not assigned_to_users:
-#             # Si no hay usuarios asignados, asignar al creador
-#             assigned_to_users = [{
-#                 "_id": current_user['sub'],
-#                 "username": current_user.get('username', 'Unknown'),
-#                 "profile_picture": current_user.get('picture', '')
-#             }]
-
-#         # Obtener los datos completos de las tareas
-#         tasks = []
-#         for task_id in args.get('tasks', []):
-#             print("Task ID:", task_id)
-#             task = mongo.db.tasks.find_one({"_id": ObjectId(task_id)})
-#             if task:
-#                 tasks.append({
-#                     "title": task.get("title"),
-#                     "description": task.get("description"),
-#                     "app": task.get("app"),
-#                     "status": task.get("status")
-#                 })
-#             else:
-#                 return jsonify({"message": f"Task with ID {task_id} not found."}), 404
-
-#         # Obtener los datos del epic
-#         epic_id = args.get('epic')
-#         if ObjectId.is_valid(epic_id):
-#             epic_id = ObjectId(epic_id)
-#             epic_data = mongo.db.epics.find_one({"_id": epic_id})
-#             if epic_data:
-#                 epic_info = {
-#                     "_id": epic_data["_id"],  
-#                     "title": epic_data.get("title")
-#                 }
-#             else:
-#                 return jsonify({"message": f"Epic with ID {epic_id} not found."}), 404
-#         else:
-#             return jsonify({"message": f"Invalid epic ID {epic_id}."}), 400
-        
-#         # Obtener los datos del equipo
-#         team_id = args.get('team')
-#         if team_id and ObjectId.is_valid(team_id):
-#             team_id = ObjectId(team_id)
-#             team_data = mongo.db.teams.find_one({"_id": team_id})
-#             if team_data:
-#                 team_info = {
-#                     "_id": team_data["_id"],  
-#                     "name": team_data.get("name")
-#                 }
-#             else:
-#                 return jsonify({"message": f"Team with ID {team_id} not found."}), 404
-#         else:
-#             team_info = None
-        
-#         # Filtra los campos que se deben actualizar
-#         update_fields = {
-#             **args,
-#             'assigned_to': assigned_to_users,
-#             'tasks': tasks,
-#             'epic': epic_info,
-#             'team': team_info
-#         }
-
-#         # Solo actualiza los campos sin cambiar el título
-#         result = mongo.db.stories.update_one({"_id": ObjectId(story_id)}, {"$set": update_fields})
-#         if result.matched_count == 0:
-#             return jsonify({"message": "Story update failed."}), 500
-
-#         # Recupera la historia actualizada
-#         updated_story = mongo.db.stories.find_one({"_id": ObjectId(story_id)})
-#         if updated_story:
-#             updated_story = convert_objectid_to_str(updated_story)
-#             return jsonify(updated_story), 200
-#         else:
-#             return jsonify({"message": "Story update failed."}), 500
-
-#     except Exception as e:
-#         print(f"Exception: {e}")
-#         return jsonify({"error": str(e)}), 500
+    story_status = Task.get_story_status(story["tasks"])
+    if story_status == DOING and "start_date" not in story:
+        story["start_date"] = date_now
+    try:
+        response = Story.update(story, story_status)
+        return send_response([response.acknowledged], [], 201, **g.req_data)
+    except Exception as e:
+        return send_response([], [f"Failed to update story: {e}"], 500, **g.req_data)

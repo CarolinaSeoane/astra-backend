@@ -19,7 +19,7 @@ def exchange_code_for_tokens(auth_code):
 
     response = requests.post(url, data=data)
     tokens = response.json()
-    # print(tokens)
+    print(f"{tokens}")
     return tokens
 
 def validate_credentials(google_access_token):

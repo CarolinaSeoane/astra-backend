@@ -65,3 +65,6 @@ class MongoHelper:
             name = f"${key}"
             pipeline.append({name: value})
         return self.astra.db[collection_name].aggregate(pipeline)
+
+    def replace_document(self, collection_name, filter, new_document):
+        return self.astra.db[collection_name].replace_one(filter, new_document)

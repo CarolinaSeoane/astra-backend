@@ -198,3 +198,12 @@ class Sprint:
         filter = {'_id': ObjectId(next_sprint['_id']['$oid'])}
         update = {'$set': {'next': True}}
         MongoHelper().update_document(SPRINTS_COL, filter, update)
+
+    @staticmethod
+    def add_completed_points(sprint, team_id, points):
+        match = {
+            "name": sprint,
+            "team": ObjectId(team_id),
+        }
+        update = { "$inc": {"completed": points} }
+        return MongoHelper().update_document(SPRINTS_COL, match, update)
