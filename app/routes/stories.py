@@ -58,6 +58,7 @@ def story_fields(args):
     'priority': fields.Boolean(required=False, missing=True),
     'story_type': fields.Boolean(required=False, missing=True),
     'estimation': fields.Boolean(required=False, missing=True),
+    'task_statuses': fields.Boolean(required=False, missing=True),
     ## customization
     'quarter': fields.Str(required=False, missing=str(get_current_quarter(datetime.today()))), # affects sprints (TODO: should affect epics too!!!!)
     'year': fields.Str(required=False, missing=str(datetime.today().year)), # affects sprints (TODO: should affect epics too!!!!)
@@ -70,6 +71,7 @@ def filters(args):
     priority = []
     story_type = []
     estimation = []
+    task_statuses = []
     filters = {}
 
     if args['sprints']:
@@ -165,6 +167,15 @@ def filters(args):
             'value': 'estimation',
             'options': estimation[est_method]['options']
         }
+
+    if args['task_statuses']:
+        statuses = Task.get_statuses()
+        for status in statuses:
+            task_statuses.append({
+                "label": status,
+                "key": status
+            })
+        filters['task_statuses'] = task_statuses
 
     return send_response(filters, [], 200, **g.req_data)
 

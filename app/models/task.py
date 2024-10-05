@@ -69,3 +69,7 @@ class Task:
             return DONE
 
         return NOT_STARTED
+
+    @staticmethod
+    def get_statuses():
+        return [NOT_STARTED, DOING, BLOCKED, DONE]
