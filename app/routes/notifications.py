@@ -5,61 +5,11 @@ from app.utils import send_response
 
 notifications = Blueprint('notifications', __name__)
 
-#@notifications.route('/create', methods=['POST'])
-#def create_notification():
-#    try:
-#        data = request.json
-
-        # Convertir los IDs de cadena a ObjectId
-#        user_id = ObjectId(data.get('user_id'))
-#        story_id = ObjectId(data.get('story_id'))
-#        creator = ObjectId(data.get('creator'))
-#        assigned_to = ObjectId(data.get('assigned_to')) if data.get('assigned_to') else None
-#        team_id = ObjectId(data.get('team_id')) 
-#        created_at = data.get('created_at')
-#        viewed = data.get('viewed', False)
-
-        
-#        notification_data = {
-#            'user_id': user_id,
-#            'message': data.get('message'),
-#            'story_id': story_id,
-#            'creator': creator,
-#            'assigned_to': assigned_to,
-#            'team_id': team_id,  # Agregar team_id
-#            'created_at': created_at,
-#            'viewed': viewed  
-#        }
-        
-        
-#        if not all([notification_data.get('user_id'), notification_data.get('message'), notification_data.get('story_id'), notification_data.get('creator'), notification_data.get('team_id')]):
-#            return jsonify({'error': 'Missing required fields'}), 400
-        
-        
-#        result = Notification.create_notification(notification_data)
-        
-        
-#        notification = {
-#            'id': str(result.inserted_id),
-#            'user_id': str(user_id),
-#            'message': data.get('message'),
-#            'story_id': str(story_id),
-#            'creator': str(creator),
-#            'assigned_to': str(assigned_to) if assigned_to else None,
-#            'team_id': str(team_id),  
-#            'created_at': created_at,
-#            'viewed': viewed  # Campo por defecto
-#        }
-
-#        return jsonify({'message': 'Notification created successfully', 'notification': notification}), 201
-
-#    except Exception as e:
-#        return jsonify({'error': str(e)}), 500
 @notifications.route('/create', methods=['POST'])
 def create_notification():
     notification_data = request.json
 
-   
+
     if not all(key in notification_data for key in ['user_id', 'message', 'story_id', 'creator', 'team_id']):
         return jsonify({'error': 'Faltan datos necesarios'}), 400
 
@@ -69,6 +19,7 @@ def create_notification():
         return jsonify({'message': 'Notificación creada con éxito'}), 201
     except Exception as e:
         return jsonify({'error': f'Error al crear la notificación: {e}'}), 500
+
 @notifications.route('/mark_as_viewed', methods=['POST'])
 def mark_notifications_as_viewed():
     user_id = request.json.get('user_id')
@@ -184,15 +135,20 @@ def get_subscribed_notifications():
 @notifications.route('/team/edits', methods=['GET'])
 def get_story_edits():
     team_id = request.args.get('team_id')
-
+    user_id = request.args.get('user_id')
     if not team_id:
 
         method = request.method
         endpoint = request.path
         return send_response([], ['Missing team_id'], 400, method=method, endpoint=endpoint)
-
+    
+    if not user_id: 
+        method = request.method
+        endpoint = request.path
+        return send_response([], ['Missing user_id'], 400, method=method, endpoint=endpoint)
+    
     try:
-        edits = Notification.get_team_story_edits(team_id)
+        edits = Notification.get_team_story_edits(team_id, user_id)
         return send_response(edits, [], 200, method=request.method, endpoint=request.path)
     except Exception as e:
         return send_response([], [f"Failed to get team story edits: {e}"], 500, method=request.method, endpoint=request.path)
@@ -207,7 +163,18 @@ def get_subscribed_notifications_count():
 
     try:
 
-        unread_count = Notification.count_unread_notifications(user_id, team_id)
+        unread_count = Notification.count_subscribed_notifications(user_id, team_id)
         return send_response({'unreadCount': unread_count}, [], 200, **g.req_data)
     except Exception as e:
         return send_response([], [f"Failed to count unread subscribed notifications: {e}"], 500, **g.req_data)
+    
+@notifications.route('/team/edits/count', methods=['GET'])
+def get_story_edits_count():
+    user_id = request.args.get('user_id')
+    team_id = request.args.get('team_id')
+
+    if not user_id or not team_id:
+        return send_response([], ['Missing user_id or team_id'], 400)
+
+    count = Notification.count_team_story_edits(user_id, team_id)
+    return jsonify({'count': count})

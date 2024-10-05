@@ -4,7 +4,6 @@ import datetime
 
 class Notification:
 
-    #def __init__(self, user_id, message, story_id, creator, team_id, assigned_to=None, created_at=None, viewed=False, _id=ObjectId()):
     def __init__(self, user_id, message, story_id, creator, team_id, assigned_to=None, created_at=None, viewed_by=None, _id=ObjectId()):
         self._id = _id
         self._id = _id
@@ -15,7 +14,6 @@ class Notification:
         self.team_id = team_id  
         self.assigned_to = assigned_to
         self.created_at = created_at or datetime.datetime.now()
-        #self.viewed = viewed
         self.viewed_by = viewed_by or []
     @classmethod
     def create_notification(cls, notification_data):
@@ -36,7 +34,6 @@ class Notification:
                 'assigned_to': assigned_user_id,
                 'team_id': team_id,  
                 'created_at': datetime.datetime.now().isoformat(),
-                #'viewed': False 
                 'viewed_by': []
             }
             cls.create_notification(notification_data)
@@ -56,7 +53,6 @@ class Notification:
                 'assigned_to': None, 
                 'team_id': team_id,  
                 'created_at': datetime.datetime.now().isoformat(),
-                #'viewed': False 
                 'viewed_by': []
             }
             cls.create_notification(notification_data)
@@ -109,26 +105,6 @@ class Notification:
         }
         return MongoHelper().get_documents_by('notifications', filter=filter_criteria, sort={'created_at': -1})
 
-    #@classmethod
-    #def mark_notifications_as_viewed(cls, user_id, team_id, filter_type):
-    #    filter_criteria = {"viewed": False, "team_id": ObjectId(team_id)}  
-
-    #    if filter_type == 'assigned':
-    #        filter_criteria["assigned_to"] = ObjectId(user_id)
-    #    elif filter_type == 'creator':
-    #        filter_criteria["creator"] = ObjectId(user_id)
-    #    else:
-    #        filter_criteria["$or"] = [
-    #            {"user_id": ObjectId(user_id)},
-    #            {"assigned_to": ObjectId(user_id)},
-    #            {"creator": ObjectId(user_id)}
-    #        ]
-
-    #    mongo_helper = MongoHelper()
-    #    mongo_helper.astra.db['notifications'].update_many(
-    #        filter_criteria,
-    #        {"$set": {"viewed": True}}
-    #    )
     @classmethod
     def mark_notifications_as_viewed(cls, user_id, team_id, filter_type):
         filter_criteria = {"team_id": ObjectId(team_id)}  
@@ -155,24 +131,10 @@ class Notification:
 
         mongo_helper = MongoHelper()
         mongo_helper.astra.db['notifications'].update_many(
-            {**filter_criteria, "viewed_by.user_id": {"$ne": ObjectId(user_id)}},  # Solo actualiza si el usuario no ha visto
+            {**filter_criteria, "viewed_by.user_id": {"$ne": ObjectId(user_id)}}, 
             update_criteria
         )
    
-    #@classmethod
-    #def count_unread_notifications(cls, user_id, team_id):
-    #    filter_criteria = {
-    #        "$or": [
-    #            {"user_id": ObjectId(user_id)},
-    #            {"assigned_to": ObjectId(user_id)},
-    #            {"creator": ObjectId(user_id)}
-    #        ],
-    #        "team_id": ObjectId(team_id),  
-    #        "viewed": False
-    #    }
-    #    mongo_helper = MongoHelper()
-    #    return mongo_helper.astra.db['notifications'].count_documents(filter_criteria)
-    
     @classmethod
     def count_unread_notifications(cls, user_id, team_id):
         filter_criteria = {
@@ -209,7 +171,7 @@ class Notification:
         }
         mongo_helper = MongoHelper()
         return mongo_helper.astra.db['notifications'].count_documents(filter_criteria)
-
+   
     @classmethod
     def count_all_notifications(cls, user_id, team_id):
         filter_criteria = {
@@ -240,9 +202,6 @@ class Notification:
         
         subscribed_story_ids = cls.get_subscribed_story_ids(user_id, team_id)
 
-        print("Notifications:", notifications)
-        print("Subscribed Story IDs:", subscribed_story_ids)
-
         filtered_notifications = [
             notification for notification in notifications 
             if notification['story_id'] in subscribed_story_ids
@@ -252,48 +211,68 @@ class Notification:
 
     @classmethod
     def get_subscribed_story_ids(cls, user_id, team_id):
-        print("User ID:", user_id)
-        print("Team ID:", team_id)
 
         user_id = ObjectId(user_id)  
         team_id = ObjectId(team_id)  
 
-        print("Type of User ID:", type(user_id))
-        print("Type of Team ID:", type(team_id))
-
-
         filter_criteria = {
-            "team_id": team_id,
+            "team": team_id,
         }
 
-        print("Querying stories with filter:", filter_criteria)
-
         all_stories = MongoHelper().get_documents_by('stories', filter=filter_criteria)
-        
-        print("All Stories for Team:", all_stories)
 
-        subscribed_stories = [story for story in all_stories if user_id in story.get('subscribers', [])]
-
-        print("Subscribed Stories:", subscribed_stories)
+        subscribed_stories = []
+        for story in all_stories:
+            
+            if any(subscriber.get('$oid') == str(user_id) for subscriber in story.get('subscribers', [])):
+                subscribed_stories.append(story)
 
         return [story.get('_id') for story in subscribed_stories]
     
     @classmethod
     def count_subscribed_notifications(cls, user_id, team_id):
+        
+        subscribed_story_ids = cls.get_subscribed_story_ids(user_id, team_id)
+        print("Subscribed Story IDs:", subscribed_story_ids)
+        
+        if not subscribed_story_ids or not isinstance(subscribed_story_ids, list):
+            return 0 
+        
+        subscribed_story_ids = [
+            ObjectId(story_id['$oid']) for story_id in subscribed_story_ids if story_id and '$oid' in story_id
+        ]
+        
+        if not subscribed_story_ids:
+            return 0 
+        
         filter_criteria = {
             "user_id": ObjectId(user_id),
-            "team_id": ObjectId(team_id),
-            
+            "story_id": {"$in": subscribed_story_ids}, 
+            "viewed_by.user_id": {"$ne": ObjectId(user_id)}
         }
-        
+        print("Filter Criteria:", filter_criteria)
         mongo_helper = MongoHelper()
-        return mongo_helper.astra.db['notifications'].count_documents(filter_criteria)#creo que no sirve
+        count = mongo_helper.astra.db['notifications'].count_documents(filter_criteria)
 
+        return count
+    
     @classmethod
-    def get_team_story_edits(cls, team_id):
+    def get_team_story_edits(cls, team_id, user_id):
         
         filter_criteria = {
-            "team_id": ObjectId(team_id)  
+            "team_id": ObjectId(team_id),
+            "creator": {"$ne": ObjectId(user_id)}, 
+            "assigned_to": {"$ne": ObjectId(user_id)}  
         }
         return MongoHelper().get_documents_by('notifications', filter=filter_criteria)
-  
+
+    @classmethod
+    def count_team_story_edits(cls, user_id, team_id):
+        filter_criteria = {
+            "team_id": ObjectId(team_id),
+            "creator": {"$ne": ObjectId(user_id)}, 
+            "assigned_to": {"$ne": ObjectId(user_id)},  
+            "viewed": False 
+        }
+        mongo_helper = MongoHelper()
+        return mongo_helper.astra.db['notifications'].count_documents(filter_criteria)

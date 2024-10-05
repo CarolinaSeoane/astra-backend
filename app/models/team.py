@@ -162,18 +162,3 @@ class Team:
         filter = {'_id':ObjectId(team_id)}
         update = {'$set': {f'ceremonies.{ceremony.lower()}.google_meet_config': space}}
         return MongoHelper().update_collection(TEAMS_COL, filter, update)
-    
-    @staticmethod
-    def get_product_owner(team_id):
-        """
-        Obtiene el Product Owner (PO) del equipo por el ID del equipo.
-        
-        :param team_id: El ID del equipo.
-        :return: El diccionario del PO o None si no se encuentra.
-        """
-        team = Team.get_team(team_id)  
-        if team:
-            for member in team['members']:
-                if member.get('role') == 'PO':  
-                    return member  
-        return None  
