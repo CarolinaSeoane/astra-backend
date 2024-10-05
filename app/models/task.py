@@ -21,36 +21,36 @@ class Task:
         tasks = {key: value for key, value in story.items() if key.split('_')[0] == 'task'}
         formatted_tasks = []
 
-        i = 1
+        i = 0
         while tasks:
             title_key = f"task_{i}_title"
             description_key = f"task_{i}_description"
+            status_key = f"task_{i}_status"
+            keys = [title_key, description_key, status_key]
 
             title = tasks.get(title_key, '')
             description = tasks.get(description_key, '')
+            status = tasks.get(status_key, '')
 
             formatted_task = {}
             if title:
                 formatted_task['title'] = title
             if description:
                 formatted_task['description'] = description
+            if status:
+                formatted_task['status'] = status
+            else:
+                formatted_task['status'] = NOT_STARTED
             if not title and not description:
                 i += 1
                 continue
-            formatted_task['status'] = NOT_STARTED
             formatted_tasks.append(formatted_task)
 
-            try:
-                del tasks[title_key]
-                del story[title_key]
-            except KeyError:
-                pass
-
-            try:
-                del tasks[description_key]
-                del story[description_key]
-            except KeyError:
-                pass
+            for key in keys:
+                try:
+                    del tasks[key]
+                except KeyError:
+                    pass
             i += 1
 
         return formatted_tasks

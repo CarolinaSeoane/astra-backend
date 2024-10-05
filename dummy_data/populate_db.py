@@ -868,6 +868,21 @@ class Populate:
                         "title": "Añadir validación de campos vacíos",
                         "description": "Verificar que todos los campos requeridos estén completados",
                         "status": Status.DOING.value,
+                    },
+                    {
+                        "title": "ESTE ES EL TITULO 2",
+                        "description": "ESTA ES LA DESCRIPCION 2",
+                        "status": Status.BLOCKED.value,
+                    },
+                    {
+                        "title": "ESTE ES EL TITULO 3",
+                        "description": "ESTA ES LA DESCRIPCION 3",
+                        "status": Status.DONE.value,
+                    },
+                    {
+                        "title": "ESTE ES EL TITULO 4",
+                        "description": "ESTA ES LA DESCRIPCION 4",
+                        "status": Status.NOT_STARTED.value,
                     }
                 ],
                 "team": self.team1_id,
