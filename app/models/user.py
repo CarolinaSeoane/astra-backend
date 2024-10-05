@@ -75,3 +75,9 @@ class User:
         filter = {'_id': ObjectId(user_id)}
         update = {'$pull': {'teams': {'_id': ObjectId(team_id)}}}
         MongoHelper().update_document(USERS_COL, filter, update)
+
+    @staticmethod
+    def update_access_token(user_id, token):
+        filter = {'_id': ObjectId(user_id)}
+        update = {'$set': {'access_token': token}}
+        return MongoHelper().update_document(USERS_COL, filter, update)
