@@ -17,6 +17,7 @@ def apply_validate_user_is_active_member_of_team():
 @sprints.route('/velocity', methods=['GET'])
 def get_velocity():
     velocity = Sprint.get_velocity(g.team_id) # TODO trim down the response to x previous sprints
+    # TODO get velocity up to current date
     return send_response(velocity, [], 200, **g.req_data)
 
 @sprints.route('/burn_down_chart', methods=['GET'])
@@ -24,6 +25,8 @@ def get_velocity():
 def calculate_burn_down(args):
     sprint_name = args["sprint_id"]
     sprint_data = Sprint.get_start_and_end_dates(sprint_name, g.team_id)
+    if not sprint_data:
+        return send_response([], [], 200, **g.req_data)
     start_date = datetime.fromisoformat(sprint_data["start_date"]["$date"][:-1])
     end_date = datetime.fromisoformat(sprint_data["end_date"]["$date"][:-1])
     original_target = Sprint.get_target_points(sprint_name, g.team_id)

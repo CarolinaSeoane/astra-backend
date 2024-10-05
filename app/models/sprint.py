@@ -8,6 +8,7 @@ SPRINTS_COL = CollectionNames.SPRINTS.value
 STORIES_COL = CollectionNames.STORIES.value
 
 
+
 class Sprint:
 
     def __init__(self, name, sprint_number, quarter, year, start_date, end_date, status, target, team, _id=ObjectId()):
@@ -138,3 +139,12 @@ class Sprint:
         return list(MongoHelper().aggregate(
             STORIES_COL, match, group, project=projection
             ))[0]["target"]
+
+    @staticmethod
+    def add_completed_points(sprint, team_id, points):
+        match = {
+            "name": sprint,
+            "team": ObjectId(team_id),
+        }
+        update = { "$inc": {"completed": points} }
+        return MongoHelper().update_collection(SPRINTS_COL, match, update)
