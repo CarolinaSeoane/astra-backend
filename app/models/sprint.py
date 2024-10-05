@@ -170,3 +170,31 @@ class Sprint:
         filter = {'_id': ObjectId(sprint_id)}
         update = {'$set': {'status': SprintStatus.FINISHED.value, 'completed': total_sps_finished, 'actual_end_date': datetime.datetime.today()}}
         return MongoHelper().update_document(SPRINTS_COL, filter, update)
+    
+    @staticmethod
+    def start_sprint(sprint_id):
+        '''
+        Starts a sprint by setting the status of the given sprint as CURRENT and
+        deleting the next attribute from the doc
+        '''
+        # Set status as current and delete next flag
+        filter = {'_id': ObjectId(sprint_id)}
+        update = {'$set': {'status': SprintStatus.CURRENT.value, 'actual_start_date': datetime.datetime.today()}, '$unset': {'next': ""}}
+        return MongoHelper().update_document(SPRINTS_COL, filter, update)
+
+    @staticmethod
+    def set_following_sprint(sprint_id):
+        '''
+        Adds the next attribute to the sprint that follows the given sprint (if it exists)
+        '''
+        curr_sprint = Sprint.get_sprint_by({'_id': ObjectId(sprint_id)})
+        
+        # Find the next sprint
+        filter = {'team': ObjectId(curr_sprint['team']['$oid']), 'status': SprintStatus.FUTURE.value}
+        sort = {'start_date': 1}
+        next_sprint = MongoHelper().get_document_by(SPRINTS_COL, filter, sort)
+
+        # Set next flag
+        filter = {'_id': ObjectId(next_sprint['_id']['$oid'])}
+        update = {'$set': {'next': True}}
+        MongoHelper().update_document(SPRINTS_COL, filter, update)

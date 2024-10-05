@@ -18,7 +18,11 @@ sprints = Blueprint('sprints', __name__)
 
 excluded_routes = [
     {
-        'route': '/sprints/finish',
+        'route': '/sprints/finish', # shouldnt be here
+        'methods': ['PUT']
+    },
+    {
+        'route': '/sprints/start', # shouldnt be here
         'methods': ['PUT']
     },
 ]
@@ -74,7 +78,6 @@ def calculate_burn_down(args):
 
 @sprints.route('/all', methods=['GET'])
 def get_sprints():
-    print('getting sprints')
     sprints = Sprint.get_all_sprints(g.team_id)
     return send_response(sprints, [], 200, **g.req_data)
 
@@ -125,3 +128,18 @@ def finish_sprint(sprint_id):
 
     return send_response([], ["Couldn't update sprint"], 404, **g.req_data)
 
+@sprints.route('/start/<sprint_id>', methods=['PUT'])
+def start_sprint(sprint_id):
+    # Set new sprint as current
+    update_res = Sprint.start_sprint(sprint_id)
+
+    # Set following sprint as next
+    Sprint.set_following_sprint(sprint_id)
+    
+    # Create ceremonies for current sprint
+    
+    
+    if update_res.modified_count == 1:
+        return send_response([], [], 200, **g.req_data)
+
+    return send_response([], ["Couldn't update sprint"], 404, **g.req_data)
