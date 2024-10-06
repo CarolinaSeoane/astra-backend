@@ -29,6 +29,7 @@ class Populate:
     user7_id = ObjectId()
     user8_id = ObjectId()
     user9_id = ObjectId()
+    user10_id = ObjectId()
 
     username1 = "CarolinaSeoane"
     username2 = "BelenSeoane"
@@ -39,6 +40,7 @@ class Populate:
     username7 = "Nicolas"
     username8 = "MatiasMasseretti"
     username9 = "FedeUTN"
+    username10 = "Matias"
 
     email1 = "carolina.b.seoane@gmail.com"
     email2 = "seoane.m.b@gmail.com"
@@ -49,6 +51,7 @@ class Populate:
     email7 = "nic.justo@gmail.com"
     email8 = "matmass03@gmail.com"
     email9 = "guderianfront2000@gmail.com"
+    email10 = "mmasseretti@frba.utn.edu.ar"
 
     pfp1 = "6"
     pfp2 = "4"
@@ -59,6 +62,7 @@ class Populate:
     pfp7 = "9"
     pfp8 = "16"
     pfp9 = "1"
+    pfp10 = "16"
 
     team1_id = ObjectId("66f37a50e315dc85955a32a3")
     team2_id = ObjectId()
@@ -250,8 +254,8 @@ class Populate:
                 "username": self.username8,
                 "email": self.email8,
                 "profile_picture": self.pfp8,
-                "access_token": "COMPLETAR",
-                "refresh_token": "",
+                "access_token": "ya29.a0AcM612x9iPmfxIiJPix05MWPgbMZErmt41hOCFg-jaESyqO6RrrJybuNPCeKQ7C42c_kqxwdj_p3IO_mGjJs0gZ7phTInpj68IqilGHCRkYoeF6yOzX1jaqzBoe5hEP-jYYOrBOTIDUTLvcBH_WKqiDzXBm77ApYlAumKXGlaCgYKAT0SARASFQHGX2MiNm7wqRu61h6oQW4C1gCNhg0175",
+                "refresh_token": "1//0hpvlkdX2QmeACgYIARAAGBESNwF-L9Irbmh5tWeNjVI5UxUy82EhFW-onsJv-7EyjZ2ci65-PzjtTco9OJxNmvVtg6GVe-xLhZY",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -287,6 +291,23 @@ class Populate:
                     },
                 ],
             },
+            {
+                "_id": self.user10_id,
+                "name": "Matias",
+                "surname": "Masseretti",
+                "username": self.username10,
+                "email": self.email10,
+                "profile_picture": self.pfp10,
+                "access_token": "ya29.a0AcM612yVWOD7qi24XwzEmFGPOpH8Sdo7j_hzpYglRQpuHmvDfrHtKpFACg8FitxiGyFnt2aBVlBcgthbgHCKAi0L_ANLOUaMw5O6UUvaBaxInhpf7N_kI7EX5VE8-hK_Xo-XWuvXgTnqBGwTenXBvkWX-vrDNFX_oxuON_gtaCgYKATcSARMSFQHGX2MiEsXYYi0ef7VhLnaU-Frbnw0175",
+                "refresh_token": "1//0hNYwDqlvAs0lCgYIARAAGBESNgF-L9Ir5sxC71C2DNgiWdg6Wrj07LeCdUoDirjvnS5CMlsg1EGinYvuclbGzJJ2mimtL-I5hQ",
+                "teams": [
+                    {
+                        "_id": self.team1_id,
+                        "name": "Argo",
+                        "member_status": MemberStatus.ACTIVE.value,
+                    }
+                ],
+            }
         ]
         self.helper.post_to_collection(CollectionNames.USERS.value, users)
         print("populated users")
@@ -447,6 +468,14 @@ class Populate:
                         "role": Role.DEV.value,
                         "member_status": MemberStatus.ACTIVE.value,
                     },
+                    {
+                        "_id": self.user10_id,
+                        "username": self.username10,
+                        "email": "mmasseretti@frba.utn.edu.ar",
+                        "profile_picture": self.pfp10,
+                        "role": Role.PRODUCT_OWNER.value,
+                        "member_status": MemberStatus.ACTIVE.value,
+                    }
                 ],
             },
             {

@@ -261,3 +261,19 @@ def create_team(args):
         return send_response([], ["Couldn't create team"], 500, **g.req_data)
 
     return send_response([f"Team {args['team_name']} created successfully"], [], 200, **g.req_data)
+
+@teams.route('/product_owner/role_check/<user_id>', methods=['GET'])
+def return_is_product_owner(user_id):
+    members=Team.get_team_members(g.team_id)
+    if user_is_product_owner_of_team(members,user_id):
+        print("is product owner")
+        return send_response(True, [], 200, **g.req_data)
+    else:
+        print("is not product owner")
+        return send_response(False, [], 200, **g.req_data)
+
+def user_is_product_owner_of_team(team_members,user_id):
+    for member in team_members:
+        if member['role'] == 'Product Owner' and member['_id']['$oid'] == user_id:
+            return True
+    return False

@@ -3,7 +3,7 @@ from datetime import datetime
 from flask import Blueprint, g, request
 from webargs.flaskparser import use_args
 from webargs import fields
-
+from bson import ObjectId
 from app.models.story import Story
 from app.utils import send_response, get_current_quarter
 from app.routes.utils import validate_user_is_active_member_of_team
@@ -12,7 +12,8 @@ from app.models.sprint import Sprint
 from app.models.epic import Epic
 from app.models.task import Task
 from app.models.configurations import Priority, Status, Type, Configurations
-
+from app.models.notification import Notification
+from app.services.notifications_services import notify_story_update
 
 stories = Blueprint("stories", __name__)
 
@@ -200,9 +201,15 @@ def create_story():
 
     tasks = Task.format(story)
     story['tasks'] = tasks
+    story['subscribers'] = [] 
 
     try:
         response = Story.create_story(story)
+        
+        Notification.create_assigned_notification(story, g.team_id)
+        
+        Notification.create_creator_notification(story, g.team_id)
+        
         return send_response([response.acknowledged], [], 201, **g.req_data)
     except Exception as e:
         return send_response([], [f"Failed to create story: {e}"], 500, **g.req_data)
@@ -224,15 +231,22 @@ def edit_story():
     old_story = Story.get_story_by_id(story["story_id"])
     if "_id" in story:
         del story["_id"]
-    if old_story["sprint"]["name"] != story["sprint"]["name"]:
-        story["added_to_sprint"] = date_now
-
+        
+#    updated_fields = {}
+    
+#    if old_story["sprint"]["name"] != story["sprint"]["name"]:
+#        story["added_to_sprint"] = date_now
+#        updated_fields["sprint"] = story["sprint"]
+        
     tasks = Task.format(story)
     story["tasks"] = tasks
 
     if Story.is_done(story):
         try:
             response = Story.finalize_story(story, g.team_id)
+             # Notificar cambios después de actualizar la historia
+#            notify_story_update(old_story, updated_fields, g.team_id, g.user_id)
+            
             return send_response([response.acknowledged], [], 201, **g.req_data)
         except Exception as e:
             return send_response([], [f"Failed to update story: {e}"], 500, **g.req_data)
@@ -240,8 +254,20 @@ def edit_story():
     story_status = Task.get_story_status(story["tasks"])
     if story_status == DOING and "start_date" not in story:
         story["start_date"] = date_now
+#        updated_fields["start_date"] = story["start_date"]
     try:
         response = Story.update(story, story_status)
+        # Notificar cambios después de actualizar la historia
+#        notify_story_update(old_story, updated_fields, g.team_id, g.user_id)
         return send_response([response.acknowledged], [], 201, **g.req_data)
     except Exception as e:
         return send_response([], [f"Failed to update story: {e}"], 500, **g.req_data)
+
+@stories.route('/subscribe/<story_id>', methods=['POST'])
+@use_args({
+    'user_id': fields.Str(required=True)
+}, location='json')
+def subscribe_to_story(args, story_id):
+    user_id = args['user_id']
+    response = Story.subscribe_to_story(story_id, user_id)
+    return response, response['status']
