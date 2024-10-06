@@ -71,6 +71,11 @@ class CollectionNames(Enum):
     TEAMS = "teams"
     USERS = "users"
 
+class CeremonyStatus(Enum):
+    DONE = 'Done'
+    NOT_HAPPENED_YET = 'Not happened yet'
+    DIDNT_TAKE_PLACE = 'Did not take place'
+
 CONFIGURATIONS_COL = CollectionNames.CONFIGURATIONS.value
 class Configurations:
 

@@ -2,8 +2,7 @@ from datetime import datetime, timedelta
 from flask import Blueprint, g, request
 from webargs.flaskparser import use_args
 from webargs import fields
-from bson import ObjectId, decode
-from json import loads
+from bson import ObjectId
 
 from app.utils import send_response
 from app.routes.utils import validate_user_is_active_member_of_team
@@ -12,6 +11,7 @@ from app.models.team import Team
 from app.models.configurations import SprintStatus
 from app.models.story import Story
 from app.models.configurations import Status
+from app.models.ceremony import Ceremony
 
 
 sprints = Blueprint('sprints', __name__)
@@ -19,10 +19,6 @@ sprints = Blueprint('sprints', __name__)
 excluded_routes = [
     {
         'route': '/sprints/finish', # shouldnt be here
-        'methods': ['PUT']
-    },
-    {
-        'route': '/sprints/start', # shouldnt be here
         'methods': ['PUT']
     },
 ]
@@ -140,7 +136,7 @@ def start_sprint(sprint_id):
     Sprint.set_following_sprint(sprint_id)
     
     # Create ceremonies for current sprint
-    
+    Ceremony.create_sprint_ceremonies(g.team_id)
     
     if update_res.modified_count == 1:
         return send_response([], [], 200, **g.req_data)

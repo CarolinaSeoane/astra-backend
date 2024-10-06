@@ -343,7 +343,7 @@ class Populate:
                 },
                 "estimation_method": ["fibonacci"],
                 "sprint_set_up": {
-                    "sprint_duration": "2",  # weeks
+                    "sprint_duration": 2,  # weeks
                     "sprint_begins_on": "mon",
                 },
                 "mandatory_story_fields": [
@@ -479,7 +479,7 @@ class Populate:
                 },
                 "estimation_method": ["fibonacci"],
                 "sprint_set_up": {
-                    "sprint_duration": "3",  # weeks
+                    "sprint_duration": 3,  # weeks
                     "sprint_begins_on": "mon",
                 },
                 "mandatory_story_fields": [
@@ -1309,7 +1309,7 @@ class Populate:
                 "key": "default_settings",
                 "value": "sprint_set_up",
                 "sprint_set_up": {
-                    "sprint_duration": "2",  # weeks
+                    "sprint_duration": 2,  # weeks
                     "sprint_begins_on": "mon",
                 },
             },
