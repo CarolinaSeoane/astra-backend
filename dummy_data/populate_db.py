@@ -89,6 +89,7 @@ class Populate:
     sprint4_q3_team1 = ObjectId()
     sprint5_q3_team1 = ObjectId()
     sprint6_q3_team1 = ObjectId()
+    sprint7_q4_team1 = ObjectId()
 
     backlog_team2 = ObjectId()
 
@@ -1217,7 +1218,7 @@ class Populate:
                 "year": "2024",
                 "start_date": datetime.datetime(2024, 8, 5),
                 "end_date": datetime.datetime(2024, 8, 18),
-                "status": SprintStatus.CURRENT.value,
+                "status": SprintStatus.FINISHED.value,
                 "target": 85,
                 "completed": 80,
                 "team": self.team1_id,
@@ -1230,7 +1231,7 @@ class Populate:
                 "year": "2024",
                 "start_date": datetime.datetime(2024, 8, 19),
                 "end_date": datetime.datetime(2024, 9, 1),
-                "status": SprintStatus.FUTURE.value,
+                "status": SprintStatus.FINISHED.value,
                 "target": 97,
                 "completed": 109,
                 "team": self.team1_id,
@@ -1243,9 +1244,22 @@ class Populate:
                 "year": "2024",
                 "start_date": datetime.datetime(2024, 9, 2),
                 "end_date": datetime.datetime(2024, 9, 15),
-                "status": SprintStatus.FUTURE.value,
+                "status": SprintStatus.FINISHED.value,
                 "target": 115,
                 "completed": 109,
+                "team": self.team1_id,
+            },
+            {
+                "_id": self.sprint7_q4_team1,
+                "name": "S7-Q4-2024",
+                "sprint_number": "7",
+                "quarter": "4",
+                "year": "2024",
+                "start_date": datetime.datetime(2024, 9, 30),
+                "end_date": datetime.datetime(2024, 10, 13),
+                "status": SprintStatus.CURRENT.value,
+                "target": 120,
+                "completed": 74,
                 "team": self.team1_id,
             },
             {

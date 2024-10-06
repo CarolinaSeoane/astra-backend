@@ -148,3 +148,11 @@ class Sprint:
         }
         update = { "$inc": {"completed": points} }
         return MongoHelper().update_collection(SPRINTS_COL, match, update)
+
+    @staticmethod
+    def get_sprint_by(sprint_name, team_id):
+        filter = {
+            "name": sprint_name,
+            "team": ObjectId(team_id)
+        }
+        return MongoHelper().get_document_by(SPRINTS_COL, filter)

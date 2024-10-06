@@ -57,3 +57,9 @@ def calculate_burn_down(args):
         print("end of one loop")
 
     return send_response(burn_down_data, [], 200, **g.req_data)
+
+@sprints.route('', methods=["GET"])
+@use_args({"sprint_name": fields.Str(required=True)}, location="query")
+def get_sprint(args):
+    sprint = Sprint.get_sprint_by(args["sprint_name"], g.team_id)
+    return send_response(sprint, [], 200, **g.req_data)
