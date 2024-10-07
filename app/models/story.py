@@ -159,6 +159,6 @@ class Story:
             return {"message": f"Failed to subscribe: {e}", "status": 500}
     
 
-    @staticmethod
-    def get_story_by_id(story_id):
-        return MongoHelper().get_document_by('stories', {'_id': ObjectId(story_id)})
+    #@staticmethod
+    #def get_story_by_id(story_id):
+    #    return MongoHelper().get_document_by('stories', {'_id': ObjectId(story_id)})
