@@ -8,7 +8,9 @@ from app.services.google_auth import validate_credentials, exchange_code_for_tok
 from app.services.token import generate_jwt
 from app.models.user import User
 from app.utils import send_response
-
+from app.models.sprint import Sprint
+from app.models.story import Story
+from app.services.mongoHelper import MongoHelper 
 
 users = Blueprint('users', __name__)
 
@@ -99,3 +101,112 @@ def refresh_context(user_id):
     user['token'] = session_token
 
     return send_response(user, [], 200, **g.req_data)
+
+
+
+@users.route("/velocity", methods=['GET']) 
+def response_velocity():
+    team_id = request.args.get('team_id')
+    user_id = request.args.get('user_id')
+
+    if not team_id or not user_id:
+        return send_response(None, "Missing team_id or user_id", 400, **g.req_data)
+
+    velocity_data, average_velocity = data_velocity(team_id, user_id)
+
+    if not velocity_data: 
+        data = {"velocity_data": [], "average_velocity": 0}
+        return send_response(data, "No velocity data available", 200, **g.req_data)
+
+    data = {
+        "velocity_data": velocity_data,
+        "average_velocity": average_velocity
+    }
+
+    message = "Request successful"
+    return send_response(data, message, 200, **g.req_data)
+
+
+def data_velocity(team_id, user_id):
+    sprints = Sprint.get_sprints_active(team_id)
+    
+    if not sprints:
+        return [], 0
+
+    velocity_data = []
+    total_completed = 0
+    total_sprints = 0
+
+    for sprint in sprints:
+        nombre = sprint['name']
+        stories = Story.get_stories_by_team_id(ObjectId(team_id), view_type='list', sprint=sprint['name'], assigned_to=user_id)
+        
+        if not stories:
+            continue  # Skip this sprint if there are no stories
+
+        sprint_target = 0
+        sprint_completed = 0
+
+        for story in stories:
+            try:
+                estimation = int(story['estimation'])  #estimation = int(story.get('estimation', 0)) #Default value 0 if 'estimation' is missing
+                sprint_target += estimation 
+
+                if story.get('completeness', 0) == 100:
+                    sprint_completed += estimation
+            except (ValueError, TypeError):
+                continue  
+
+
+        if sprint_target > 0:
+            velocity_data.append({
+                'name': nombre,
+                'target': sprint_target,
+                'completed': sprint_completed
+            })
+            total_completed += sprint_completed
+            total_sprints += 1 
+
+    average_velocity = total_completed / total_sprints if total_sprints > 0 else 0
+
+    return velocity_data, average_velocity
+
+
+@users.route('/completed_stories', methods=['GET'])
+def completed_stories():
+    user_id = request.args.get('user_id') 
+    team_id = request.args.get('team_id') 
+
+    if not user_id or not team_id:
+        return send_response(None, "Missing team_id or user_id", 400, **g.req_data)
+
+    # all active sprints of team
+    active_sprints = Sprint.get_sprints_active(team_id)
+
+    if not active_sprints:
+            data = [
+                {'value': 0, 'name': "Late"},
+                {'value': 0, 'name': "Total stories"}
+            ]
+            return send_response(data, "No active sprints found", 200, **g.req_data)
+            
+    total_stories = 0
+    incomplete_stories = 0
+
+    for sprint in active_sprints:
+        sprint_id = str(sprint['_id']['$oid'])
+        #print("sprint_id", sprint_id)
+
+        sprint_total, sprint_incomplete = Sprint.count_stories(sprint_id, team_id, user_id)
+
+        total_stories += sprint_total
+        incomplete_stories += sprint_incomplete
+
+    data = [
+        { 'value': incomplete_stories, 'name': "Late" },
+        { 'value': total_stories, 'name': "Total stories" }
+    ]
+
+    #print(f"Total Stories: {total_stories}, Incomplete Stories: {incomplete_stories}")
+
+    return send_response(data, "Success", 200, **g.req_data)

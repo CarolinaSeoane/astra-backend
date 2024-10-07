@@ -2,7 +2,9 @@ from bson import ObjectId
 
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import SprintStatus, CollectionNames
-
+from datetime import datetime
+from dateutil import parser
+from app.utils import list_format
 
 SPRINTS_COL = CollectionNames.SPRINTS.value
 STORIES_COL = CollectionNames.STORIES.value
@@ -148,3 +150,106 @@ class Sprint:
         }
         update = { "$inc": {"completed": points} }
         return MongoHelper().update_collection(SPRINTS_COL, match, update)
+
+
+
+    @staticmethod
+    def get_sprints_active(team_id):
+        '''
+        Returns active sprints (Finished and Current) for a given team. Excludes the Backlog sprint.
+        '''
+        filter = {
+            'team': ObjectId(team_id),
+            '$or': [
+                {'status': SprintStatus.CURRENT.value},
+                {'status': SprintStatus.FINISHED.value}
+            ]
+        }
+        documents = MongoHelper().get_documents_by('sprints', filter)
+        return documents if documents else None
+
+
+    @staticmethod
+    def get_sprints_past(team_id):
+        '''
+        Returns only finished sprints for a given team. Excludes the Backlog sprint.
+        '''
+        filter = {
+            'team': ObjectId(team_id),
+            'status': SprintStatus.FINISHED.value
+        }
+        documents = MongoHelper().get_documents_by('sprints', filter)
+        return documents if documents else None
+
+    
+
+    @staticmethod
+    def count_stories(sprint_id, team_id, user_id):
+        '''
+        returns the total stories told and the number of stories not completed in a sprint for a team and a specific user.
+        '''
+
+        filter_sprint = {
+            '_id': ObjectId(sprint_id)
+        }
+        #print("id filter sprint", filter_sprint)
+
+        sprint_documents = MongoHelper().get_documents_by('sprints', filter_sprint)
+        #print("sprint_documents", sprint_documents
+
+        if not sprint_documents:
+            return 0, 0 
+
+        sprint = sprint_documents[0]
+       
+        try:
+            sprint_start_date_str = sprint['start_date']['$date']
+            sprint_end_date_str = sprint['end_date']['$date']
+
+            sprint_start_date = datetime.strptime(sprint_start_date_str, "%Y-%m-%dT%M:%S:%fZ")
+            sprint_end_date = datetime.strptime(sprint_end_date_str, "%Y-%m-%dT%M:%S:%fZ")
+        except (KeyError, ValueError):
+            return 0, 0
+
+        filter_stories = {
+            'team': ObjectId(team_id),
+            'assigned_to._id': ObjectId(user_id),
+            'sprint._id': ObjectId(sprint_id)
+        }
+
+        stories = MongoHelper().get_documents_by('stories', filter_stories)
+
+        if not stories:
+            return 0, 0
+
+        stories= list_format(stories) #Format List add COMPLETENESS
+ 
+        total_stories = 0
+        incomplete_stories = 0
+
+        for story in stories:
+            total_stories += 1
+
+            story_end_date_dict = story.get('end_date', None)
+
+            if story_end_date_dict and '$date' in story_end_date_dict:
+                story_end_date_str = story_end_date_dict['$date']
+
+                # Convert parser.isoparse
+                if story_end_date_str:
+                    story_end_date = parser.isoparse(story_end_date_str).replace(tzinfo=None)
+                    #print("story_end_date", story_end_date)
+                else:
+                    story_end_date = None
+            else:
+                story_end_date = None
+
+            completeness = story.get('completeness', 0)            
+
+            if completeness < 100 or not story_end_date or story_end_date > sprint_end_date:
+                incomplete_stories += 1
+
+                
+        #print(f"TOTAL STORIES: {total_stories}, Incomplete Stories: {incomplete_stories}")
+
+        return total_stories, incomplete_stories
