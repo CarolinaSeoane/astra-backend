@@ -129,15 +129,15 @@ class Story:
         Suscribe un usuario a una historia específica.
         """
         try:
-            
-            story_id = ObjectId(story_id)
-            user_id = ObjectId(user_id)
 
+            #story_id = ObjectId(story_id)
+            user_id = ObjectId(user_id)
+            
             
             mongo_helper = MongoHelper()
 
             
-            story = mongo_helper.get_document_by('stories', {'_id': story_id})
+            story = mongo_helper.get_document_by('stories', {'story_id': story_id})  #  STRING OF STORIE NOT NUMBER
             if not story:
                 return {"message": "Story not found", "status": 404}
 
@@ -147,7 +147,7 @@ class Story:
 
             
             update = {"$addToSet": {"subscribers": user_id}}
-            result = mongo_helper.update_collection('stories', {'_id': story_id}, update)
+            result = mongo_helper.update_collection('stories', {'story_id': story_id}, update)  #  STRING OF STORIE NOT NUMBER 
 
             if result.modified_count > 0:
                 return {"message": "User successfully subscribed", "status": 200}
