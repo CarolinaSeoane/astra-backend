@@ -17,10 +17,7 @@ from app.models.ceremony import Ceremony
 sprints = Blueprint('sprints', __name__)
 
 excluded_routes = [
-    {
-        'route': '/sprints/finish', # shouldnt be here
-        'methods': ['PUT']
-    },
+
 ]
 
 @sprints.before_request
@@ -85,7 +82,7 @@ def attempt_to_finish_sprint(sprint_id):
     # Validations before closing a sprint
 
     ## Sprint can only be closed if its status is CURRENT
-    sprint = Sprint.get_sprint_by(ObjectId(sprint_id))
+    sprint = Sprint.get_sprint_by({'_id': ObjectId(sprint_id)})
 
     if not sprint:
         return send_response([], ["Invalid sprint id."], 404, **g.req_data)
@@ -142,3 +139,9 @@ def start_sprint(sprint_id):
         return send_response([], [], 200, **g.req_data)
 
     return send_response([], ["Couldn't update sprint"], 404, **g.req_data)
+
+@sprints.route('', methods=["GET"])
+@use_args({"sprint_name": fields.Str(required=True)}, location="query")
+def get_sprint(args):
+    # sprint = Sprint.get_sprint_by(args["sprint_name"], g.team_id)
+    return send_response([], [], 200, **g.req_data)

@@ -90,6 +90,13 @@ class Populate:
     sprint5_q3_team1 = ObjectId()
     sprint6_q3_team1 = ObjectId()
 
+    sprint1_q4_team1 = ObjectId()
+    sprint2_q4_team1 = ObjectId()
+    sprint3_q4_team1 = ObjectId()
+    sprint4_q4_team1 = ObjectId()
+    sprint5_q4_team1 = ObjectId()
+    sprint6_q4_team1 = ObjectId()
+
     backlog_team2 = ObjectId()
 
     def __init__(self):
@@ -1232,7 +1239,7 @@ class Populate:
                 "year": "2024",
                 "start_date": datetime.datetime(2024, 8, 5),
                 "end_date": datetime.datetime(2024, 8, 18),
-                "status": SprintStatus.CURRENT.value,
+                "status": SprintStatus.FINISHED.value,
                 "target": 85,
                 "completed": 80,
                 "team": self.team1_id,
@@ -1245,9 +1252,9 @@ class Populate:
                 "year": "2024",
                 "start_date": datetime.datetime(2024, 8, 19),
                 "end_date": datetime.datetime(2024, 9, 1),
-                "status": SprintStatus.FUTURE.value,
-                "next": True,
+                "status": SprintStatus.FINISHED.value,
                 "target": 97,
+                "completed": 74,
                 "team": self.team1_id,
             },
             {
@@ -1258,8 +1265,83 @@ class Populate:
                 "year": "2024",
                 "start_date": datetime.datetime(2024, 9, 2),
                 "end_date": datetime.datetime(2024, 9, 15),
-                "status": SprintStatus.FUTURE.value,
+                "status": SprintStatus.FINISHED.value,
                 "target": 115,
+                "completed": 115,
+                "team": self.team1_id,
+            },
+            {
+                "_id": self.sprint1_q4_team1,
+                "name": "S1-Q4-2024",
+                "sprint_number": "1",
+                "quarter": "4",
+                "year": "2024",
+                "start_date": datetime.datetime(2024, 9, 16),
+                "end_date": datetime.datetime(2024, 9, 29),
+                "status": SprintStatus.CURRENT.value,
+                "target": 120,
+                "completed": 74,
+                "team": self.team1_id,
+            },
+            {
+                "_id": self.sprint2_q4_team1,
+                "name": "S2-Q4-2024",
+                "sprint_number": "2",
+                "quarter": "4",
+                "year": "2024",
+                "start_date": datetime.datetime(2024, 9, 30),
+                "end_date": datetime.datetime(2024, 10, 13),
+                "status": SprintStatus.FUTURE.value,
+                "next": True,
+                "target": 120,
+                "team": self.team1_id,
+            },
+            {
+                "_id": self.sprint3_q4_team1,
+                "name": "S3-Q4-2024",
+                "sprint_number": "3",
+                "quarter": "4",
+                "year": "2024",
+                "start_date": datetime.datetime(2024, 10, 14),
+                "end_date": datetime.datetime(2024, 10, 27),
+                "status": SprintStatus.FUTURE.value,
+                "target": 120,
+                "team": self.team1_id,
+            },
+            {
+                "_id": self.sprint4_q4_team1,
+                "name": "S4-Q4-2024",
+                "sprint_number": "4",
+                "quarter": "4",
+                "year": "2024",
+                "start_date": datetime.datetime(2024, 10, 28),
+                "end_date": datetime.datetime(2024, 11, 10),
+                "status": SprintStatus.FUTURE.value,
+                "target": 120,
+                "team": self.team1_id,
+            },
+            {
+                "_id": self.sprint5_q4_team1,
+                "name": "S5-Q4-2024",
+                "sprint_number": "5",
+                "quarter": "4",
+                "year": "2024",
+                "start_date": datetime.datetime(2024, 11, 11),
+                "end_date": datetime.datetime(2024, 11, 24),
+                "status": SprintStatus.FUTURE.value,
+                "target": 160,
+                "team": self.team1_id,
+            },
+            {
+                "_id": self.sprint6_q4_team1,
+                "name": "S6-Q4-2024",
+                "sprint_number": "6",
+                "quarter": "4",
+                "year": "2024",
+                "start_date": datetime.datetime(2024, 11, 25),
+                "end_date": datetime.datetime(2024, 12, 8),
+                "status": SprintStatus.FUTURE.value,
+                "target": 135,
                 "team": self.team1_id,
             },
             {

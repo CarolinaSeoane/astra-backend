@@ -163,7 +163,13 @@ class Sprint:
         '''
         # Get finished SPs sum
         sprint = Sprint.get_sprint_by({'_id': ObjectId(sprint_id)})
-        total_sps_finished = Sprint.get_completed_points_up_to(sprint['name'], sprint['team']['$oid'], datetime.datetime.today())[0]['completed_points']
+
+        completed_points = Sprint.get_completed_points_up_to(sprint['name'], sprint['team']['$oid'], datetime.datetime.today())
+
+        if completed_points:
+            total_sps_finished = completed_points[0]['completed_points']
+        else:
+            total_sps_finished = 0
 
         # Set final SP completed
         # Set status as finished
@@ -195,9 +201,10 @@ class Sprint:
         next_sprint = MongoHelper().get_document_by(SPRINTS_COL, filter, sort)
 
         # Set next flag
-        filter = {'_id': ObjectId(next_sprint['_id']['$oid'])}
-        update = {'$set': {'next': True}}
-        MongoHelper().update_document(SPRINTS_COL, filter, update)
+        if next_sprint:
+            filter = {'_id': ObjectId(next_sprint['_id']['$oid'])}
+            update = {'$set': {'next': True}}
+            MongoHelper().update_document(SPRINTS_COL, filter, update)
 
     @staticmethod
     def add_completed_points(sprint, team_id, points):
@@ -207,3 +214,4 @@ class Sprint:
         }
         update = { "$inc": {"completed": points} }
         return MongoHelper().update_document(SPRINTS_COL, match, update)
+
