@@ -14,6 +14,7 @@ from app.models.task import Task
 from app.models.configurations import Priority, Status, Type, Configurations
 from app.models.notification import Notification
 from app.services.notifications_services import notify_story_update
+from app.services.mongoHelper import MongoHelper
 
 stories = Blueprint("stories", __name__)
 
@@ -226,27 +227,44 @@ def edit_story():
     # if the story goes into done, we need to include an end_date
     # if the sprint is modified, we need to update the added_to_sprint value
     story = request.json
+    print("Received story data:", story)
     story['team'] = g.team_id
+    print("Team ID:", g.team_id)
+
     date_now = datetime.combine(datetime.now().date(), datetime.min.time())
     old_story = Story.get_story_by_id(story["story_id"])
+    if not old_story:
+            return send_response([], ["Old story not found"], 404, **g.req_data)
+
+    print("Old story data:", old_story)  # Depuración
+        
     if "_id" in story:
         del story["_id"]
         
-#    updated_fields = {}
-    
-#    if old_story["sprint"]["name"] != story["sprint"]["name"]:
-#        story["added_to_sprint"] = date_now
-#        updated_fields["sprint"] = story["sprint"]
+    updated_fields = {}
+       # Revisar todos los campos en un solo bloque
+    for field in ["title", "description", "acceptance_criteria", "priority", "story_type", "assigned_to", "epic", "sprint", "estimation", "tags", "estimation_method", "tasks"]:
+        if old_story.get(field) != story.get(field):
+            updated_fields[field] = story.get(field)
+            # Lógica especial para sprint
+            if field == "sprint" and old_story["sprint"]["name"] != story["sprint"]["name"]:
+                story["added_to_sprint"] = date_now
+    #if old_story["sprint"]["name"] != story["sprint"]["name"]:
+    #    story["added_to_sprint"] = date_now
+    #    updated_fields["sprint"] = story["sprint"]
         
     tasks = Task.format(story)
     story["tasks"] = tasks
+    story["subscribers"] = old_story.get("subscribers", [])
 
     if Story.is_done(story):
         try:
             response = Story.finalize_story(story, g.team_id)
-             # Notificar cambios después de actualizar la historia
-#            notify_story_update(old_story, updated_fields, g.team_id, g.user_id)
-            
+            print("Finalizando historia:", response)
+            if updated_fields:
+                print("Llamando a notify_story_update")
+                notify_story_update(old_story, updated_fields, g.team_id)
+        
             return send_response([response.acknowledged], [], 201, **g.req_data)
         except Exception as e:
             return send_response([], [f"Failed to update story: {e}"], 500, **g.req_data)
@@ -254,11 +272,21 @@ def edit_story():
     story_status = Task.get_story_status(story["tasks"])
     if story_status == DOING and "start_date" not in story:
         story["start_date"] = date_now
-#        updated_fields["start_date"] = story["start_date"]
+        updated_fields["start_date"] = story["start_date"]
+        # Compara campos para actualizar
+    #for field in ["title", "description", "acceptance_criteria", "priority", "story_type"]:
+    #for field in ["title", "description", "acceptance_criteria", "priority", "story_type", "assigned_to", "epic", "sprint", "estimation", "tags", "estimation_method", "tasks"]:
+    #    if old_story.get(field) != story.get(field):
+    #        updated_fields[field] = story.get(field)
     try:
         response = Story.update(story, story_status)
-        # Notificar cambios después de actualizar la historia
-#        notify_story_update(old_story, updated_fields, g.team_id, g.user_id)
+        print("Actualizando historia:", response)
+        
+        # Notifica solo si hay cambios en updated_fields
+        if updated_fields:
+            print("Llamando a notify_story_update")
+            notify_story_update(old_story, updated_fields, g.team_id)
+
         return send_response([response.acknowledged], [], 201, **g.req_data)
     except Exception as e:
         return send_response([], [f"Failed to update story: {e}"], 500, **g.req_data)

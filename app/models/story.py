@@ -130,14 +130,15 @@ class Story:
         """
         try:
             
-            story_id = ObjectId(story_id)
+            #story_id = ObjectId(story_id)
             user_id = ObjectId(user_id)
 
             
             mongo_helper = MongoHelper()
 
             
-            story = mongo_helper.get_document_by('stories', {'_id': story_id})
+            #story = mongo_helper.get_document_by('stories', {'_id': story_id})
+            story = mongo_helper.get_document_by('stories', {'story_id': story_id})
             if not story:
                 return {"message": "Story not found", "status": 404}
 
@@ -147,8 +148,8 @@ class Story:
 
             
             update = {"$addToSet": {"subscribers": user_id}}
-            result = mongo_helper.update_collection('stories', {'_id': story_id}, update)
-
+            #result = mongo_helper.update_collection('stories', {'_id': story_id}, update)
+            result = mongo_helper.update_collection('stories', {'story_id': story_id}, update)
             if result.modified_count > 0:
                 return {"message": "User successfully subscribed", "status": 200}
             else:
@@ -157,8 +158,9 @@ class Story:
         except Exception as e:
             print("Error subscribing to story:", e)
             return {"message": f"Failed to subscribe: {e}", "status": 500}
-    
+        
 
-    @staticmethod
-    def get_story_by_id(story_id):
-        return MongoHelper().get_document_by('stories', {'_id': ObjectId(story_id)})
+    
+    #@staticmethod
+    #def get_story_by_id(story_id):
+    #    return MongoHelper().get_document_by('stories', {'_id': ObjectId(story_id)})

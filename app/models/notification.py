@@ -231,35 +231,56 @@ class Notification:
     
     @classmethod
     def count_subscribed_notifications(cls, user_id, team_id):
-        
+
         subscribed_story_ids = cls.get_subscribed_story_ids(user_id, team_id)
         print("Subscribed Story IDs:", subscribed_story_ids)
         
         if not subscribed_story_ids or not isinstance(subscribed_story_ids, list):
+            print("No hay historias suscritas o no es una lista.")
             return 0 
         
-        subscribed_story_ids = [
-            ObjectId(story_id['$oid']) for story_id in subscribed_story_ids if story_id and '$oid' in story_id
-        ]
-        
+        try:
+            subscribed_story_ids = [
+                ObjectId(story_id['$oid']) for story_id in subscribed_story_ids if story_id and '$oid' in story_id
+            ]
+        except Exception as e:
+            print(f"Error al convertir a ObjectId: {e}")
+            return 0
+       
+        print("Segundas Subscribed Story IDs:", subscribed_story_ids)
+       
         if not subscribed_story_ids:
+            print("No hay historias suscritas después de convertir a ObjectId.")
             return 0 
         
+        #filter_criteria = {
+        #    "user_id": ObjectId(user_id),
+        #    "story_id": {"$in": subscribed_story_ids}, 
+        #    "viewed_by.user_id": {"$ne": ObjectId(user_id)}
+        #}
         filter_criteria = {
             "user_id": ObjectId(user_id),
-            "story_id": {"$in": subscribed_story_ids}, 
+            "story_id.$oid": {"$in": [str(story_id) for story_id in subscribed_story_ids]},  # Ajustamos para filtrar por story_id.$oid como string
             "viewed_by.user_id": {"$ne": ObjectId(user_id)}
+            #"viewed_by": {"$nin": [ObjectId(user_id)]}
+        
         }
         print("Filter Criteria:", filter_criteria)
         mongo_helper = MongoHelper()
-        count = mongo_helper.astra.db['notifications'].count_documents(filter_criteria)
-
+        try:
+            # Contar documentos que coinciden con los criterios
+            count = mongo_helper.astra.db['notifications'].count_documents(filter_criteria)
+        except Exception as e:
+            print(f"Error al contar documentos: {e}")
+            return 0
+        print("count",count)
         return count
     
     @classmethod
     def get_team_story_edits(cls, team_id, user_id):
         
         filter_criteria = {
+            "user_id": ObjectId(user_id),
             "team_id": ObjectId(team_id),
             "creator": {"$ne": ObjectId(user_id)}, 
             "assigned_to": {"$ne": ObjectId(user_id)}  
@@ -269,10 +290,11 @@ class Notification:
     @classmethod
     def count_team_story_edits(cls, user_id, team_id):
         filter_criteria = {
+            "user_id": ObjectId(user_id),
             "team_id": ObjectId(team_id),
             "creator": {"$ne": ObjectId(user_id)}, 
             "assigned_to": {"$ne": ObjectId(user_id)},  
-            "viewed": False 
+            "viewed_by.user_id": {"$ne": ObjectId(user_id)}
         }
         mongo_helper = MongoHelper()
         return mongo_helper.astra.db['notifications'].count_documents(filter_criteria)
