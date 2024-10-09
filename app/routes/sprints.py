@@ -12,13 +12,12 @@ from app.models.configurations import SprintStatus
 from app.models.story import Story
 from app.models.configurations import Status
 from app.models.ceremony import Ceremony
+from app.services.astra_scheduler import get_next_weekday, get_current_quarter
 
 
 sprints = Blueprint('sprints', __name__)
 
-excluded_routes = [
-
-]
+excluded_routes = []
 
 @sprints.before_request
 def apply_validate_user_is_active_member_of_team():
@@ -145,3 +144,26 @@ def start_sprint(sprint_id):
 def get_sprint(args):
     # sprint = Sprint.get_sprint_by(args["sprint_name"], g.team_id)
     return send_response([], [], 200, **g.req_data)
+
+@sprints.route('/start/attempt', methods=['GET'])
+def attempt_to_start_sprint():
+    # Generate possible start dates based off the team's settings
+    
+    ## Get sprint set up
+    sprint_set_up = Team.get_team_settings(g.team_id, 'sprint_set_up')['sprint_set_up']
+
+    ## Get team's latest sprint
+    latest_sprint = Sprint.get_latest_sprint(g.team_id)
+    if not latest_sprint:
+        latest_end_date = datetime.today()
+    else:
+        latest_end_date = latest_sprint['end_date']
+    
+    latest_quarter = get_current_quarter(latest_end_date)
+    
+    # Generate dates for the next quarter
+    possible_start_dates = []
+    # TODO
+
+
+    return send_response(possible_start_dates, [], 200, **g.req_data)

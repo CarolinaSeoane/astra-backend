@@ -5,13 +5,14 @@ from webargs.flaskparser import use_args
 from webargs import fields
 
 from app.models.story import Story
-from app.utils import send_response, get_current_quarter
+from app.utils import send_response
 from app.routes.utils import validate_user_is_active_member_of_team
 from app.models.team import Team
 from app.models.sprint import Sprint
 from app.models.epic import Epic
 from app.models.task import Task
 from app.models.configurations import Priority, Type, Configurations, Status
+from app.services.astra_scheduler import get_current_quarter
 
 
 stories = Blueprint("stories", __name__)

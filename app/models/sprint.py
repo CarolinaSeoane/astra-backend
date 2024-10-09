@@ -214,4 +214,13 @@ class Sprint:
         }
         update = { "$inc": {"completed": points} }
         return MongoHelper().update_document(SPRINTS_COL, match, update)
+    
+    @staticmethod
+    def get_latest_sprint(team_id):
+        '''
+        Returns None if the team only has a backlog but no sprints
+        ''' 
+        filter = {'team': ObjectId(team_id), 'start_date': { '$exists': True }}
+        sort = {'start_date': -1}
+        return MongoHelper().get_document_by(SPRINTS_COL, filter, sort)
 
