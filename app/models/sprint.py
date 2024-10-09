@@ -156,3 +156,16 @@ class Sprint:
             "team": ObjectId(team_id)
         }
         return MongoHelper().get_document_by(SPRINTS_COL, filter)
+
+    @staticmethod
+    def get_stories_grouped_by_status(sprint_name, team_id):
+        match = {
+            "sprint.name": sprint_name,
+            "team": ObjectId(team_id)
+        }
+        group = {
+            "_id": "$tasks.status",
+            "value": { "$sum": 1 }
+        }
+        unwind = "$tasks"
+        return MongoHelper().aggregate(STORIES_COL, match=match, group=group, unwind=unwind)

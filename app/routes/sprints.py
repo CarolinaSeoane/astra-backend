@@ -63,3 +63,13 @@ def calculate_burn_down(args):
 def get_sprint(args):
     sprint = Sprint.get_sprint_by(args["sprint_name"], g.team_id)
     return send_response(sprint, [], 200, **g.req_data)
+
+@sprints.route('/stories_status_rundown', methods=['GET'])
+@use_args({"sprint_name": fields.Str(required=True)}, location='query')
+def get_stories_status_rundown(args):
+    results = Sprint.get_stories_grouped_by_status(args['sprint_name'], g.team_id)
+    stories_by_status = []
+    for res in results:
+        res['name'] = res.pop('_id')
+        stories_by_status.append(res)
+    return send_response(stories_by_status, [], 200, **g.req_data)
