@@ -142,14 +142,15 @@ def start_sprint(sprint_id):
 @sprints.route('', methods=["GET"])
 @use_args({"sprint_name": fields.Str(required=True)}, location="query")
 def get_sprint(args):
-    # sprint = Sprint.get_sprint_by(args["sprint_name"], g.team_id)
-    return send_response([], [], 200, **g.req_data)
-
-from datetime import datetime, timedelta
+    filter = {
+        "name": args["sprint_name"],
+        "team": ObjectId(g.team_id)
+    }
+    sprint = Sprint.get_sprint_by(filter)
+    return send_response(sprint, [], 200, **g.req_data)
 
 @sprints.route('/start/attempt', methods=['GET'])
-def attempt_to_start_sprint():
-    
+def attempt_to_start_sprint():   
     # Get sprint setup
     sprint_begins_on = Team.get_team_settings(g.team_id, 'sprint_set_up')['sprint_set_up']['sprint_begins_on']
     allowed_day = get_weekday_number(sprint_begins_on)
@@ -160,3 +161,13 @@ def attempt_to_start_sprint():
 
     # Return the possible start dates as a response
     return send_response({'allowed_day': allowed_day, 'latest_sprint': latest_end_date}, [], 200, **g.req_data)
+
+@sprints.route('/stories_status_rundown', methods=['GET'])
+@use_args({"sprint_name": fields.Str(required=True)}, location='query')
+def get_stories_status_rundown(args):
+    results = Sprint.get_stories_grouped_by_status(args['sprint_name'], g.team_id)
+    stories_by_status = []
+    for res in results:
+        res['name'] = res.pop('_id')
+        stories_by_status.append(res)
+    return send_response(stories_by_status, [], 200, **g.req_data)
