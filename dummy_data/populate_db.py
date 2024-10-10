@@ -89,7 +89,13 @@ class Populate:
     sprint4_q3_team1 = ObjectId()
     sprint5_q3_team1 = ObjectId()
     sprint6_q3_team1 = ObjectId()
-    sprint7_q4_team1 = ObjectId()
+
+    sprint1_q4_team1 = ObjectId()
+    sprint2_q4_team1 = ObjectId()
+    sprint3_q4_team1 = ObjectId()
+    sprint4_q4_team1 = ObjectId()
+    sprint5_q4_team1 = ObjectId()
+    sprint6_q4_team1 = ObjectId()
 
     backlog_team2 = ObjectId()
 
@@ -301,7 +307,8 @@ class Populate:
                 "ceremonies": {
                     "planning": {
                         "when": CeremonyStartOptions.BEGINNING.value,
-                        "time": "10:00",  # "HH:MM,
+                        "starts": "10:00",  # "HH:MM,
+                        "ends": "12:00",
                         "google_meet_config": {
                             "name": "spaces/G3IVgQf5g1cB",
                             "meetingUri": "https://meet.google.com/dox-iazn-miy",
@@ -314,7 +321,8 @@ class Populate:
                     },
                     "standup": {
                         "days": ["mon", "wed", "thu"],
-                        "time": "09:30",  # "HH:MM
+                        "starts": "09:30",  # "HH:MM
+                        "ends": "09:45",
                         "google_meet_config": {
                             "name": "spaces/ATCX4-zHdhYB",
                             "meetingUri": "https://meet.google.com/dsr-aegc-hzc",
@@ -327,7 +335,8 @@ class Populate:
                     },
                     "retrospective": {
                         "when": CeremonyStartOptions.END.value,
-                        "time": "10:00",  # "HH:MM
+                        "starts": "10:00",  # "HH:MM
+                        "ends": "11:00",
                         "google_meet_config": {
                             "name": "spaces/wbnLUy_LK3QB",
                             "meetingUri": "https://meet.google.com/uis-ygog-rnn",
@@ -341,7 +350,7 @@ class Populate:
                 },
                 "estimation_method": ["fibonacci"],
                 "sprint_set_up": {
-                    "sprint_duration": "2",  # weeks
+                    "sprint_duration": 2,  # weeks
                     "sprint_begins_on": "mon",
                 },
                 "mandatory_story_fields": [
@@ -458,23 +467,26 @@ class Populate:
                 "ceremonies": {
                     "planning": {
                         "when": CeremonyStartOptions.END.value,
-                        "time": "10:00",  # "HH:MM
+                        "starts": "10:00",  # "HH:MM
+                        "ends": "12:00",
                         "google_meet_config": {},
                     },
                     "standup": {
                         "days": ["mon", "wed", "thu"],
-                        "time": "09:30",  # "HH:MM
+                        "starts": "09:30",  # "HH:MM
+                        "ends": "10:00",
                         "google_meet_config": {},
                     },
                     "retrospective": {
                         "when": CeremonyStartOptions.END.value,
-                        "time": "10:00",  # "HH:MM
+                        "starts": "10:00",  # "HH:MM
+                        "ends": "12:00",
                         "google_meet_config": {},
                     },
                 },
                 "estimation_method": ["fibonacci"],
                 "sprint_set_up": {
-                    "sprint_duration": "3",  # weeks
+                    "sprint_duration": 3,  # weeks
                     "sprint_begins_on": "mon",
                 },
                 "mandatory_story_fields": [
@@ -604,6 +616,7 @@ class Populate:
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
+                "story_status": Status.DOING.value,
                 "creation_date": datetime.datetime(2024, 7, 20),
                 "added_to_sprint": datetime.datetime(2024, 8, 4),
                 "start_date": datetime.datetime(2024, 8, 5),
@@ -657,6 +670,7 @@ class Populate:
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
+                "story_status": Status.NOT_STARTED.value,
                 "creation_date": datetime.datetime(2024, 7, 20),
                 "added_to_sprint": datetime.datetime(2024, 8, 6),
                 "start_date": datetime.datetime(2024, 8, 7),
@@ -698,6 +712,7 @@ class Populate:
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
+                "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2023, 12, 28),
                 "added_to_sprint": datetime.datetime(2024, 1, 2),
                 "start_date": datetime.datetime(2024, 1, 2),
@@ -739,6 +754,7 @@ class Populate:
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.DISCOVERY.value,
                 "estimation_method": "Fibonacci",
+                "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2023, 12, 21),
                 "added_to_sprint": datetime.datetime(2024, 1, 2),
                 "start_date": datetime.datetime(2024, 1, 3),
@@ -780,6 +796,7 @@ class Populate:
                 "priority": Priority.LOW.value,
                 "story_type": Type.BUGFIX.value,
                 "estimation_method": "Fibonacci",
+                "story_status": Status.DOING.value,
                 "creation_date": datetime.datetime(2023, 8, 2),
                 "added_to_sprint": datetime.datetime(2024, 8, 12),
                 "start_date": datetime.datetime(2024, 8, 19),
@@ -820,6 +837,7 @@ class Populate:
                 "priority": Priority.HIGH.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
+                "story_status": Status.DOING.value,
                 "creation_date": datetime.datetime(2023, 12, 27),
                 "added_to_sprint": datetime.datetime(2023, 12, 30),
                 "start_date": datetime.datetime(2024, 1, 3),
@@ -860,6 +878,7 @@ class Populate:
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.BUGFIX.value,
                 "estimation_method": "Fibonacci",
+                "story_status": Status.DOING.value,
                 "creation_date": datetime.datetime(2023, 12, 27),
                 "added_to_sprint": datetime.datetime(2024, 1, 4),
                 "start_date": datetime.datetime(2024, 1, 5),
@@ -915,6 +934,7 @@ class Populate:
                 "priority": Priority.LOW.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
+                "story_status": Status.DOING.value,
                 "creation_date": datetime.datetime(2023, 12, 15),
                 "added_to_sprint": datetime.datetime(2024, 1, 2),
                 "start_date": datetime.datetime(2024, 1, 2),
@@ -955,6 +975,7 @@ class Populate:
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.BUGFIX.value,
                 "estimation_method": "Fibonacci",
+                "story_status": Status.DOING.value,
                 "creation_date": datetime.datetime(2023, 12, 29),
                 "added_to_sprint": datetime.datetime(2023, 12, 29),
                 "start_date": datetime.datetime(2024, 1, 4),
@@ -1018,9 +1039,9 @@ class Populate:
             {
                 "_id": self.sprint1_q1_team1,
                 "name": "S1-Q1-2024",
-                "sprint_number": "1",
-                "quarter": "1",
-                "year": "2024",
+                "sprint_number": 1,
+                "quarter": 1,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 1, 1),
                 "end_date": datetime.datetime(2024, 1, 14),
                 "status": SprintStatus.FINISHED.value,
@@ -1031,9 +1052,9 @@ class Populate:
             {
                 "_id": self.sprint2_q1_team1,
                 "name": "S2-Q1-2024",
-                "sprint_number": "2",
-                "quarter": "1",
-                "year": "2024",
+                "sprint_number": 2,
+                "quarter": 1,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 1, 15),
                 "end_date": datetime.datetime(2024, 1, 28),
                 "status": SprintStatus.FINISHED.value,
@@ -1044,9 +1065,9 @@ class Populate:
             {
                 "_id": self.sprint3_q1_team1,
                 "name": "S3-Q1-2024",
-                "sprint_number": "3",
-                "quarter": "1",
-                "year": "2024",
+                "sprint_number": 3,
+                "quarter": 1,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 1, 29),
                 "end_date": datetime.datetime(2024, 2, 11),
                 "status": SprintStatus.FINISHED.value,
@@ -1057,9 +1078,9 @@ class Populate:
             {
                 "_id": self.sprint4_q1_team1,
                 "name": "S4-Q1-2024",
-                "sprint_number": "4",
-                "quarter": "1",
-                "year": "2024",
+                "sprint_number": 4,
+                "quarter": 1,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 2, 12),
                 "end_date": datetime.datetime(2024, 2, 25),
                 "status": SprintStatus.FINISHED.value,
@@ -1070,9 +1091,9 @@ class Populate:
             {
                 "_id": self.sprint5_q1_team1,
                 "name": "S5-Q1-2024",
-                "sprint_number": "5",
-                "quarter": "1",
-                "year": "2024",
+                "sprint_number": 5,
+                "quarter": 1,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 2, 26),
                 "end_date": datetime.datetime(2024, 3, 10),
                 "status": SprintStatus.FINISHED.value,
@@ -1083,9 +1104,9 @@ class Populate:
             {
                 "_id": self.sprint6_q1_team1,
                 "name": "S6-Q1-2024",
-                "sprint_number": "6",
-                "quarter": "1",
-                "year": "2024",
+                "sprint_number": 6,
+                "quarter": 1,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 3, 11),
                 "end_date": datetime.datetime(2024, 3, 24),
                 "status": SprintStatus.FINISHED.value,
@@ -1096,9 +1117,9 @@ class Populate:
             {
                 "_id": self.sprint1_q2_team1,
                 "name": "S1-Q2-2024",
-                "sprint_number": "1",
-                "quarter": "2",
-                "year": "2024",
+                "sprint_number": 1,
+                "quarter": 2,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 3, 25),
                 "end_date": datetime.datetime(2024, 4, 7),
                 "status": SprintStatus.FINISHED.value,
@@ -1109,9 +1130,9 @@ class Populate:
             {
                 "_id": self.sprint2_q2_team1,
                 "name": "S2-Q2-2024",
-                "sprint_number": "2",
-                "quarter": "2",
-                "year": "2024",
+                "sprint_number": 2,
+                "quarter": 2,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 4, 15),
                 "end_date": datetime.datetime(2024, 4, 28),
                 "status": SprintStatus.FINISHED.value,
@@ -1122,9 +1143,9 @@ class Populate:
             {
                 "_id": self.sprint3_q2_team1,
                 "name": "S3-Q2-2024",
-                "sprint_number": "3",
-                "quarter": "2",
-                "year": "2024",
+                "sprint_number": 3,
+                "quarter": 2,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 4, 29),
                 "end_date": datetime.datetime(2024, 5, 12),
                 "status": SprintStatus.FINISHED.value,
@@ -1135,9 +1156,9 @@ class Populate:
             {
                 "_id": self.sprint4_q2_team1,
                 "name": "S4-Q2-2024",
-                "sprint_number": "4",
-                "quarter": "2",
-                "year": "2024",
+                "sprint_number": 4,
+                "quarter": 2,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 5, 13),
                 "end_date": datetime.datetime(2024, 5, 26),
                 "status": SprintStatus.FINISHED.value,
@@ -1148,9 +1169,9 @@ class Populate:
             {
                 "_id": self.sprint5_q2_team1,
                 "name": "S5-Q2-2024",
-                "sprint_number": "5",
-                "quarter": "2",
-                "year": "2024",
+                "sprint_number": 5,
+                "quarter": 2,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 5, 27),
                 "end_date": datetime.datetime(2024, 6, 9),
                 "status": SprintStatus.FINISHED.value,
@@ -1161,9 +1182,9 @@ class Populate:
             {
                 "_id": self.sprint6_q2_team1,
                 "name": "S6-Q2-2024",
-                "sprint_number": "6",
-                "quarter": "2",
-                "year": "2024",
+                "sprint_number": 6,
+                "quarter": 2,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 6, 10),
                 "end_date": datetime.datetime(2024, 6, 23),
                 "status": SprintStatus.FINISHED.value,
@@ -1174,9 +1195,9 @@ class Populate:
             {
                 "_id": self.sprint1_q3_team1,
                 "name": "S1-Q3-2024",
-                "sprint_number": "1",
-                "quarter": "3",
-                "year": "2024",
+                "sprint_number": 1,
+                "quarter": 3,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 6, 24),
                 "end_date": datetime.datetime(2024, 7, 7),
                 "status": SprintStatus.FINISHED.value,
@@ -1187,9 +1208,9 @@ class Populate:
             {
                 "_id": self.sprint2_q3_team1,
                 "name": "S2-Q3-2024",
-                "sprint_number": "2",
-                "quarter": "3",
-                "year": "2024",
+                "sprint_number": 2,
+                "quarter": 3,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 7, 8),
                 "end_date": datetime.datetime(2024, 7, 21),
                 "status": SprintStatus.FINISHED.value,
@@ -1200,9 +1221,9 @@ class Populate:
             {
                 "_id": self.sprint3_q3_team1,
                 "name": "S3-Q3-2024",
-                "sprint_number": "3",
-                "quarter": "3",
-                "year": "2024",
+                "sprint_number": 3,
+                "quarter": 3,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 7, 22),
                 "end_date": datetime.datetime(2024, 8, 4),
                 "status": SprintStatus.FINISHED.value,
@@ -1213,9 +1234,9 @@ class Populate:
             {
                 "_id": self.sprint4_q3_team1,
                 "name": "S4-Q3-2024",
-                "sprint_number": "4",
-                "quarter": "3",
-                "year": "2024",
+                "sprint_number": 4,
+                "quarter": 3,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 8, 5),
                 "end_date": datetime.datetime(2024, 8, 18),
                 "status": SprintStatus.FINISHED.value,
@@ -1226,40 +1247,101 @@ class Populate:
             {
                 "_id": self.sprint5_q3_team1,
                 "name": "S5-Q3-2024",
-                "sprint_number": "5",
-                "quarter": "3",
-                "year": "2024",
+                "sprint_number": 5,
+                "quarter": 3,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 8, 19),
                 "end_date": datetime.datetime(2024, 9, 1),
                 "status": SprintStatus.FINISHED.value,
                 "target": 97,
-                "completed": 109,
+                "completed": 74,
                 "team": self.team1_id,
             },
             {
                 "_id": self.sprint6_q3_team1,
                 "name": "S6-Q3-2024",
-                "sprint_number": "6",
-                "quarter": "3",
-                "year": "2024",
+                "sprint_number": 6,
+                "quarter": 3,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 9, 2),
                 "end_date": datetime.datetime(2024, 9, 15),
                 "status": SprintStatus.FINISHED.value,
                 "target": 115,
-                "completed": 109,
+                "completed": 115,
                 "team": self.team1_id,
             },
             {
-                "_id": self.sprint7_q4_team1,
-                "name": "S7-Q4-2024",
-                "sprint_number": "7",
-                "quarter": "4",
-                "year": "2024",
-                "start_date": datetime.datetime(2024, 9, 30),
-                "end_date": datetime.datetime(2024, 10, 13),
+                "_id": self.sprint1_q4_team1,
+                "name": "S1-Q4-2024",
+                "sprint_number": 1,
+                "quarter": 4,
+                "year": 2024,
+                "start_date": datetime.datetime(2024, 9, 16),
+                "end_date": datetime.datetime(2024, 9, 29),
                 "status": SprintStatus.CURRENT.value,
                 "target": 120,
                 "completed": 74,
+                "team": self.team1_id,
+            },
+            {
+                "_id": self.sprint2_q4_team1,
+                "name": "S2-Q4-2024",
+                "sprint_number": 2,
+                "quarter": 4,
+                "year": 2024,
+                "start_date": datetime.datetime(2024, 9, 30),
+                "end_date": datetime.datetime(2024, 10, 13),
+                "status": SprintStatus.FUTURE.value,
+                "next": True,
+                "target": 120,
+                "team": self.team1_id,
+            },
+            {
+                "_id": self.sprint3_q4_team1,
+                "name": "S3-Q4-2024",
+                "sprint_number": 3,
+                "quarter": 4,
+                "year": 2024,
+                "start_date": datetime.datetime(2024, 10, 14),
+                "end_date": datetime.datetime(2024, 10, 27),
+                "status": SprintStatus.FUTURE.value,
+                "target": 120,
+                "team": self.team1_id,
+            },
+            {
+                "_id": self.sprint4_q4_team1,
+                "name": "S4-Q4-2024",
+                "sprint_number": 4,
+                "quarter": 4,
+                "year": 2024,
+                "start_date": datetime.datetime(2024, 10, 28),
+                "end_date": datetime.datetime(2024, 11, 10),
+                "status": SprintStatus.FUTURE.value,
+                "target": 120,
+                "team": self.team1_id,
+            },
+            {
+                "_id": self.sprint5_q4_team1,
+                "name": "S5-Q4-2024",
+                "sprint_number": 5,
+                "quarter": 4,
+                "year": 2024,
+                "start_date": datetime.datetime(2024, 11, 11),
+                "end_date": datetime.datetime(2024, 11, 24),
+                "status": SprintStatus.FUTURE.value,
+                "target": 160,
+                "team": self.team1_id,
+            },
+            {
+                "_id": self.sprint6_q4_team1,
+                "name": "S6-Q4-2024",
+                "sprint_number": 6,
+                "quarter": 4,
+                "year": 2024,
+                "start_date": datetime.datetime(2024, 11, 25),
+                "end_date": datetime.datetime(2024, 12, 8),
+                "status": SprintStatus.FUTURE.value,
+                "target": 135,
                 "team": self.team1_id,
             },
             {
@@ -1280,17 +1362,20 @@ class Populate:
                 "ceremonies": {
                     "planning": {
                         "when": CeremonyStartOptions.BEGINNING.value,
-                        "time": "10:00",  # "HH:MM
+                        "starts": "10:00",  # "HH:MM
+                        "ends": "12:00",
                         "google_meet_config": {},
                     },
                     "standup": {
                         "days": ["mon", "tue", "wed", "thu", "fri"],
-                        "time": "12:00",  # "HH:MM
+                        "starts": "12:00",  # "HH:MM
+                        "ends": "12:15",
                         "google_meet_config": {},
                     },
                     "retrospective": {
                         "when": CeremonyStartOptions.END.value,
-                        "time": "16:00",  # "HH:MM
+                        "starts": "16:00",  # "HH:MM
+                        "ends": "17:00",
                         "google_meet_config": {},
                     },
                 },
@@ -1306,7 +1391,7 @@ class Populate:
                 "key": "default_settings",
                 "value": "sprint_set_up",
                 "sprint_set_up": {
-                    "sprint_duration": "2",  # weeks
+                    "sprint_duration": 2,  # weeks
                     "sprint_begins_on": "mon",
                 },
             },

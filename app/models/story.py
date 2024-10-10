@@ -69,6 +69,8 @@ class Story:
             filter["story_type"] = kwargs['story_type']
         if 'story_id' in kwargs and kwargs['story_id']:
             filter["story_id"] = kwargs['story_id']
+        if 'story_status' in kwargs and kwargs['story_status']:
+            filter["story_status"] = kwargs['story_status']
 
         stories = MongoHelper().get_documents_by(STORIES_COL, filter=filter, projection=projection)
 
