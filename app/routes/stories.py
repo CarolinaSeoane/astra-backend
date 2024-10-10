@@ -12,7 +12,7 @@ from app.models.sprint import Sprint
 from app.models.epic import Epic
 from app.models.task import Task
 from app.models.configurations import Priority, Type, Configurations, Status
-from app.services.astra_scheduler import get_current_quarter
+from app.services.astra_scheduler import get_quarter
 
 
 stories = Blueprint("stories", __name__)
@@ -61,7 +61,7 @@ def story_fields(args):
     'estimation': fields.Boolean(required=False, missing=True),
     'task_statuses': fields.Boolean(required=False, missing=True),
     ## customization
-    'quarter': fields.Integer(required=False, missing=get_current_quarter(datetime.today())), # affects sprints (TODO: should affect epics too!!!!)
+    'quarter': fields.Integer(required=False, missing=get_quarter(datetime.today())), # affects sprints (TODO: should affect epics too!!!!)
     'year': fields.Integer(required=False, missing=datetime.today().year), # affects sprints (TODO: should affect epics too!!!!)
     'future': fields.Str(required=False, missing=False), # affects sprints (TODO: should affect epics too!!!!)
     }, location='query')
