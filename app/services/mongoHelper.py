@@ -51,7 +51,7 @@ class MongoHelper:
     def create_document(self, collection_name, document):
         return self.astra.db[collection_name].insert_one(document)
 
-    def aggregate(self, collection_name, match, group, **kwargs):
+    def aggregate(self, collection_name, match, group, unwind=None, **kwargs):
         '''
         Executes an aggregation pipeline sequentially, starting with the match stage,
         followed by the group stage, and finally the sort stage. If sorting before grouping 
@@ -61,6 +61,8 @@ class MongoHelper:
             - project
         '''
         pipeline = [{"$match": match}, {"$group": group}]
+        if unwind:
+            pipeline = [{"$match": match}, {"$unwind": unwind}, {"$group": group}]
         for key, value in kwargs.items():
             name = f"${key}"
             pipeline.append({name: value})
