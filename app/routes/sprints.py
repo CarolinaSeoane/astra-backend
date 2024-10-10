@@ -12,7 +12,7 @@ from app.models.configurations import SprintStatus
 from app.models.story import Story
 from app.models.configurations import Status
 from app.models.ceremony import Ceremony
-from app.services.astra_scheduler import get_next_weekday, get_current_quarter
+from app.services.astra_scheduler import get_weekday_number
 
 
 sprints = Blueprint('sprints', __name__)
@@ -145,25 +145,18 @@ def get_sprint(args):
     # sprint = Sprint.get_sprint_by(args["sprint_name"], g.team_id)
     return send_response([], [], 200, **g.req_data)
 
+from datetime import datetime, timedelta
+
 @sprints.route('/start/attempt', methods=['GET'])
 def attempt_to_start_sprint():
-    # Generate possible start dates based off the team's settings
     
-    ## Get sprint set up
-    sprint_set_up = Team.get_team_settings(g.team_id, 'sprint_set_up')['sprint_set_up']
+    # Get sprint setup
+    sprint_begins_on = Team.get_team_settings(g.team_id, 'sprint_set_up')['sprint_set_up']['sprint_begins_on']
+    allowed_day = get_weekday_number(sprint_begins_on)
 
-    ## Get team's latest sprint
+    # Get team's latest sprint
     latest_sprint = Sprint.get_latest_sprint(g.team_id)
-    if not latest_sprint:
-        latest_end_date = datetime.today()
-    else:
-        latest_end_date = latest_sprint['end_date']
-    
-    latest_quarter = get_current_quarter(latest_end_date)
-    
-    # Generate dates for the next quarter
-    possible_start_dates = []
-    # TODO
+    latest_end_date = latest_sprint['end_date'] if latest_sprint else datetime.today()
 
-
-    return send_response(possible_start_dates, [], 200, **g.req_data)
+    # Return the possible start dates as a response
+    return send_response({'allowed_day': allowed_day, 'latest_sprint': latest_end_date}, [], 200, **g.req_data)
