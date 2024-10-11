@@ -160,6 +160,28 @@ class Team:
         google_meet service
         '''
         space = create_space(access_token, refresh_token)
-        filter = {'_id':ObjectId(team_id)}
+        filter = {'_id': ObjectId(team_id)}
         update = {'$set': {f'ceremonies.{ceremony.lower()}.google_meet_config': space}}
         return MongoHelper().update_collection(TEAMS_COL, filter, update)
+
+    @staticmethod
+    def get_member_role(team_id, user_id):
+        match = {
+            "_id": ObjectId(team_id),
+            "members": {"$elemMatch": {"_id": ObjectId(user_id)}}
+        }
+        projection = {"members.role.$": 1}
+        return MongoHelper().get_document_by(
+            TEAMS_COL, match, projection=projection
+        )["members"][0]["role"]
+
+    @staticmethod
+    def get_permissions_value_based_on_role(team_id, role):
+        match = {
+            '_id': ObjectId(team_id),
+            "permits": {"$elemMatch": {"role": role}}
+        }
+        projection = {"permits.options.$": 1}
+        return MongoHelper().get_document_by(
+            TEAMS_COL, match, projection=projection
+        )["permits"][0]["options"]

@@ -102,8 +102,6 @@ def refresh_context(user_id):
 
     return send_response(user, [], 200, **g.req_data)
 
-
-
 @users.route("/velocity", methods=['GET']) 
 def response_velocity():
     team_id = request.args.get('team_id')
@@ -126,10 +124,9 @@ def response_velocity():
     message = "Request successful"
     return send_response(data, message, 200, **g.req_data)
 
-
 def data_velocity(team_id, user_id):
     sprints = Sprint.get_sprints_active(team_id)
-    
+
     if not sprints:
         return [], 0
 
@@ -140,7 +137,7 @@ def data_velocity(team_id, user_id):
     for sprint in sprints:
         nombre = sprint['name']
         stories = Story.get_stories_by_team_id(ObjectId(team_id), view_type='list', sprint=sprint['name'], assigned_to=user_id)
-        
+
         if not stories:
             continue  # Skip this sprint if there are no stories
 
@@ -155,8 +152,7 @@ def data_velocity(team_id, user_id):
                 if story.get('completeness', 0) == 100:
                     sprint_completed += estimation
             except (ValueError, TypeError):
-                continue  
-
+                continue
 
         if sprint_target > 0:
             velocity_data.append({
@@ -171,11 +167,10 @@ def data_velocity(team_id, user_id):
 
     return velocity_data, average_velocity
 
-
 @users.route('/completed_stories', methods=['GET'])
 def completed_stories():
-    user_id = request.args.get('user_id') 
-    team_id = request.args.get('team_id') 
+    user_id = request.args.get('user_id')
+    team_id = request.args.get('team_id')
 
     if not user_id or not team_id:
         return send_response(None, "Missing team_id or user_id", 400, **g.req_data)
@@ -189,7 +184,7 @@ def completed_stories():
                 {'value': 0, 'name': "Total stories"}
             ]
             return send_response(data, "No active sprints found", 200, **g.req_data)
-            
+
     total_stories = 0
     incomplete_stories = 0
 
@@ -209,4 +204,4 @@ def completed_stories():
 
     #print(f"Total Stories: {total_stories}, Incomplete Stories: {incomplete_stories}")
 
-    return send_response(data, "Success", 200, **g.req_data)
+    return send_response(data, "Success", 200, **g.req_data) 

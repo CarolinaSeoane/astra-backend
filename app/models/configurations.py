@@ -72,8 +72,10 @@ class CollectionNames(Enum):
     USERS = "users"
 
 CONFIGURATIONS_COL = CollectionNames.CONFIGURATIONS.value
-class Configurations:
 
+PERMISSIONS_COL = CollectionNames.PERMISSIONS.value
+
+class Configurations:
     def __init__(self, _id, key, value):
         self._id = _id
         self.key = key
@@ -116,3 +118,21 @@ class Configurations:
             CONFIGURATIONS_COL,
             {'key': 'default_settings'}
         )
+
+    @staticmethod
+    def get_permissions_label(role, permissions_value):
+        res = MongoHelper().get_collection(PERMISSIONS_COL)[0]
+        if not res:
+            return []
+
+        labels = []
+        options = res["options"]
+        for option in options:
+            if option["role"] == role:
+                for action in option["actions"]:
+                    if action["value"] in permissions_value:
+                        labels.append({
+                            "label": action["label"],
+                            "description": action["description"]
+                        })
+        return labels

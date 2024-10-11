@@ -365,7 +365,10 @@ class Populate:
                             "all_time_metrics",
                         ],
                     },
-                    {"role": Role.DEV.value, "options": ["create_story", "edit_story"]},
+                    {
+                        "role": Role.DEV.value,
+                        "options": ["create_story", "edit_story"]
+                    },
                 ],
                 "members": [
                     {
@@ -978,26 +981,51 @@ class Populate:
                     {
                         "role": Role.PRODUCT_OWNER.value,
                         "actions": [
-                            {"value": "edit_story", "label": "Edit story"},
-                            {"value": "delete_story", "label": "Delete story"},
-                            {"value": "add_team_members", "label": "Add team members"},
-                            {"value": "join_standup", "label": "Join standup"},
+                            {
+                                "value": "edit_story",
+                                "label": "Edit story",
+                                "description": "Modify the content and details of any story in the project."
+                            },
+                            {
+                                "value": "delete_story",
+                                "label": "Delete story",
+                                "description": "Permanently remove a story from the project."
+                            },
+                            {
+                                "value": "add_team_members",
+                                "label": "Add team members",
+                                "description": "Invite new members to join the project team."
+                            },
+                            {
+                                "value": "join_standup",
+                                "label": "Join standup",
+                                "description": "Participate in daily stand-up meetings."
+                            },
                             {
                                 "value": "all_time_metrics",
                                 "label": "Access to all time metrics",
+                                "description": "View metrics across all time periods for performance tracking."
                             },
                         ],
                     },
                     {
                         "role": Role.DEV.value,
                         "actions": [
-                            {"value": "create_story", "label": "Create story"},
-                            {"value": "edit_story", "label": "Edit story"},
-                            {"value": "delete_story", "label": "Delete story"},
                             {
-                                "value": "modify_sprint_schedule",
-                                "label": "Modify sprint schedule",
+                                "value": "create_story",
+                                "label": "Create story",
+                                "description": "Add a new story to the project backlog."
                             },
+                            {
+                                "value": "edit_story",
+                                "label": "Edit story",
+                                "description": "Modify the content and details of any story in the project."
+                            },
+                            {
+                                "value": "delete_story",
+                                "label": "Delete story",
+                                "description": "Permanently remove a story from the project."
+                            }
                         ],
                     },
                 ]
