@@ -281,7 +281,7 @@ def get_permissions_based_on_role(args, role):
     team_id = args["team_id"]
     role = role.replace("_", " ")
     if role == Role.SCRUM_MASTER.value:
-        permissions_label = Configurations.get_sm_permissions()
+        permissions_label = Configurations.get_permissions_label(Role.SCRUM_MASTER.value)
     else:
         permissions_value = Team.get_permissions_value_based_on_role(team_id, role)
         permissions_label = Configurations.get_permissions_label(role, permissions_value)
