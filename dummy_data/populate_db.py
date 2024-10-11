@@ -156,6 +156,11 @@ class Populate:
                         "name": "Argo",
                         "member_status": MemberStatus.ACTIVE.value,
                     },
+                    {
+                        "_id": self.team2_id,
+                        "name": "Flyers",
+                        "member_status": MemberStatus.ACTIVE.value,
+                    },
                 ],
             },
             {
@@ -509,8 +514,17 @@ class Populate:
                     {
                         "_id": self.user1_id,
                         "username": self.username1,
-                        "email": "carolina.b.seoane@gmail.com",
+                        "email": self.email1,
                         "profile_picture": self.pfp1,
+                        "role": Role.SCRUM_MASTER.value,
+                        "member_status": MemberStatus.ACTIVE.value,
+                        # "date": self.user1_id.generation_time
+                    },
+                    {
+                        "_id": self.user2_id,
+                        "username": self.username2,
+                        "email": self.email2,
+                        "profile_picture": self.pfp2,
                         "role": Role.SCRUM_MASTER.value,
                         "member_status": MemberStatus.ACTIVE.value,
                         # "date": self.user1_id.generation_time
@@ -1028,6 +1042,42 @@ class Populate:
                             }
                         ],
                     },
+                    {
+                        "role": Role.SCRUM_MASTER.value,
+                        "actions": [
+                            {
+                                "value": "create_story",
+                                "label": "Create story",
+                                "description": "Add a new story to the project backlog."
+                            },
+                            {
+                                "value": "edit_story",
+                                "label": "Edit story",
+                                "description": "Modify the content and details of any story in the project."
+                            },
+                            {
+                                "value": "delete_story",
+                                "label": "Delete story",
+                                "description": "Permanently remove a story from the project."
+                            },
+
+                            {
+                                "value": "add_team_members",
+                                "label": "Add team members",
+                                "description": "Invite new members to join the project team."
+                            },
+                            {
+                                "value": "join_standup",
+                                "label": "Join standup",
+                                "description": "Participate in daily stand-up meetings."
+                            },
+                            {
+                                "value": "all_time_metrics",
+                                "label": "Access to all time metrics",
+                                "description": "View metrics across all time periods for performance tracking."
+                            },
+                        ],
+                    }
                 ]
             }
         ]

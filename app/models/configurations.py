@@ -136,3 +136,21 @@ class Configurations:
                             "description": action["description"]
                         })
         return labels
+
+    @staticmethod
+    def get_sm_permissions():
+        res = MongoHelper().get_collection(PERMISSIONS_COL)[0]
+        if not res:
+            return []
+
+        labels = []
+        options = res["options"]
+        for option in options:
+            if option["role"] == Role.SCRUM_MASTER.value:
+                for action in option["actions"]:
+                    # if action["value"] in permissions_value:
+                    labels.append({
+                        "label": action["label"],
+                        "description": action["description"]
+                    })
+        return labels
