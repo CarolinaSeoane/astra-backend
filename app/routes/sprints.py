@@ -3,7 +3,6 @@ from flask import Blueprint, g, request
 from webargs.flaskparser import use_args
 from webargs import fields
 from bson import ObjectId
-from json import dumps
 
 from app.utils import send_response
 from app.routes.utils import validate_user_is_active_member_of_team
@@ -13,7 +12,7 @@ from app.models.configurations import SprintStatus
 from app.models.story import Story
 from app.models.configurations import Status
 from app.models.ceremony import Ceremony
-from app.services.astra_scheduler import get_weekday_number, generate_sprints_for_quarter
+from app.services.astra_scheduler import get_weekday_number, generate_sprints_for_quarter, get_quarter
 
 
 sprints = Blueprint('sprints', __name__)
@@ -167,9 +166,11 @@ def attempt_to_create_sprint():
 @use_args({'start_date': fields.DateTime(required=True, format="iso")}, location='json')
 def create_sprints(args):
     sprint_duration = Team.get_team_settings(g.team_id, 'sprint_set_up')['sprint_set_up']['sprint_duration']
-    
-    sprints = generate_sprints_for_quarter(args['start_date'], sprint_duration, g.team_id)
-
+    latest_sprint = Sprint.get_latest_sprint(g.team_id)
+    latest_sprint_number = latest_sprint['sprint_number'] if latest_sprint['quarter'] == get_quarter(args['start_date']) else 0
+    sprints = generate_sprints_for_quarter(args['start_date'], sprint_duration, g.team_id, latest_sprint_number)
+    Sprint.add_sprints(sprints)
+    # ToDo: handle errors
     return send_response([], [], 200, **g.req_data)
 
 @sprints.route('/stories_status_rundown', methods=['GET'])

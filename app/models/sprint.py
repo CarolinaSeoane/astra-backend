@@ -94,7 +94,7 @@ class Sprint:
             "status": SprintStatus.ACTIVE.value,
             "team": team_id
         }
-        return MongoHelper().add_new_element_to_collection(SPRINTS_COL, new_backlog)
+        return MongoHelper().create_document(SPRINTS_COL, new_backlog)
 
     @staticmethod
     def get_target_points(sprint, team_id):
@@ -236,3 +236,7 @@ class Sprint:
         }
         unwind = "$tasks"
         return MongoHelper().aggregate(STORIES_COL, match=match, group=group, unwind=unwind)
+    
+    @staticmethod
+    def add_sprints(sprints):
+        return MongoHelper().create_documents(SPRINTS_COL, sprints)

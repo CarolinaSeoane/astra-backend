@@ -32,11 +32,11 @@ def get_next_weekday(start_date, weekday):
 def is_same_quarter(date1, date2):
     return get_quarter(date1) == get_quarter(date2) and date1.year == date2.year
 
-def generate_sprints_for_quarter(selected_date, sprint_duration, team_id):
+def generate_sprints_for_quarter(selected_date, sprint_duration, team_id, latest_sprint_number):
     '''
     Generate sprints for the entire quarter based on the selected start date.
     '''
- # Determine the quarter and year from the selected date
+    # Determine the quarter and year from the selected date
     selected_quarter = get_quarter(selected_date)
     year = selected_date.year
 
@@ -52,7 +52,7 @@ def generate_sprints_for_quarter(selected_date, sprint_duration, team_id):
 
         # Create sprint document
         sprint = {
-            'name': f"S{sprint_number}-Q{selected_quarter}-{year}",
+            'name': f"S{latest_sprint_number + sprint_number}-Q{selected_quarter}-{year}",
             'sprint_number': sprint_number,
             'quarter': selected_quarter,
             'year': year,
