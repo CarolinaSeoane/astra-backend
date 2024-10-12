@@ -10,7 +10,7 @@ from app.models.user import User
 from app.utils import send_response
 from app.models.sprint import Sprint
 from app.models.story import Story
-from app.services.mongoHelper import MongoHelper 
+
 
 users = Blueprint('users', __name__)
 
@@ -102,20 +102,12 @@ def refresh_context(user_id):
 
     return send_response(user, [], 200, **g.req_data)
 
-@users.route("/velocity", methods=['GET']) 
+@users.route("/velocity", methods=['GET'])
 def response_velocity():
-    team_id = request.args.get('team_id')
-    user_id = request.args.get('user_id')
-
-    if not team_id or not user_id:
-        return send_response(None, "Missing team_id or user_id", 400, **g.req_data)
+    team_id = g.team_id
+    user_id = g._id
 
     velocity_data, average_velocity = data_velocity(team_id, user_id)
-
-    if not velocity_data: 
-        data = {"velocity_data": [], "average_velocity": 0}
-        return send_response(data, "No velocity data available", 200, **g.req_data)
-
     data = {
         "velocity_data": velocity_data,
         "average_velocity": average_velocity
@@ -125,7 +117,7 @@ def response_velocity():
     return send_response(data, message, 200, **g.req_data)
 
 def data_velocity(team_id, user_id):
-    sprints = Sprint.get_sprints_active(team_id)
+    sprints = Sprint.get_active_sprints(team_id)
 
     if not sprints:
         return [], 0
@@ -135,8 +127,13 @@ def data_velocity(team_id, user_id):
     total_sprints = 0
 
     for sprint in sprints:
-        nombre = sprint['name']
-        stories = Story.get_stories_by_team_id(ObjectId(team_id), view_type='list', sprint=sprint['name'], assigned_to=user_id)
+        sprint_name = sprint['name']
+        stories = Story.get_stories_by_team_id(
+            ObjectId(team_id),
+            view_type='list',
+            sprint=sprint['name'],
+            assigned_to=user_id
+        )
 
         if not stories:
             continue  # Skip this sprint if there are no stories
@@ -146,8 +143,8 @@ def data_velocity(team_id, user_id):
 
         for story in stories:
             try:
-                estimation = int(story['estimation'])  #estimation = int(story.get('estimation', 0)) #Default value 0 if 'estimation' is missing
-                sprint_target += estimation 
+                estimation = int(story['estimation'])
+                sprint_target += estimation
 
                 if story.get('completeness', 0) == 100:
                     sprint_completed += estimation
@@ -156,12 +153,12 @@ def data_velocity(team_id, user_id):
 
         if sprint_target > 0:
             velocity_data.append({
-                'name': nombre,
+                'name': sprint_name,
                 'target': sprint_target,
                 'completed': sprint_completed
             })
             total_completed += sprint_completed
-            total_sprints += 1 
+            total_sprints += 1
 
     average_velocity = total_completed / total_sprints if total_sprints > 0 else 0
 
@@ -176,14 +173,14 @@ def completed_stories():
         return send_response(None, "Missing team_id or user_id", 400, **g.req_data)
 
     # all active sprints of team
-    active_sprints = Sprint.get_sprints_active(team_id)
+    active_sprints = Sprint.get_active_sprints(team_id)
 
     if not active_sprints:
-            data = [
-                {'value': 0, 'name': "Late"},
-                {'value': 0, 'name': "Total stories"}
-            ]
-            return send_response(data, "No active sprints found", 200, **g.req_data)
+        data = [
+            {'value': 0, 'name': "Late"},
+            {'value': 0, 'name': "Total stories"}
+        ]
+        return send_response(data, "No active sprints found", 200, **g.req_data)
 
     total_stories = 0
     incomplete_stories = 0
@@ -204,4 +201,4 @@ def completed_stories():
 
     #print(f"Total Stories: {total_stories}, Incomplete Stories: {incomplete_stories}")
 
-    return send_response(data, "Success", 200, **g.req_data) 
+    return send_response(data, "Success", 200, **g.req_data)

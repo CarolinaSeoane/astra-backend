@@ -16,8 +16,8 @@ def apply_validate_user_is_active_member_of_team():
 
 @sprints.route('/velocity', methods=['GET'])
 def get_velocity():
-    velocity = Sprint.get_velocity(g.team_id) # TODO trim down the response to x previous sprints
-    # TODO get velocity up to current date
+    all_time_velocity = Sprint.get_velocity(g.team_id)
+    velocity = all_time_velocity[-9:]
     return send_response(velocity, [], 200, **g.req_data)
 
 @sprints.route('/burn_down_chart', methods=['GET'])
