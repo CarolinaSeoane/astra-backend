@@ -1293,7 +1293,6 @@ class Populate:
                 "end_date": datetime.datetime(2024, 10, 13),
                 "status": SprintStatus.FUTURE.value,
                 "next": True,
-                "target": 120,
                 "team": self.team1_id,
             },
             {
@@ -1305,7 +1304,6 @@ class Populate:
                 "start_date": datetime.datetime(2024, 10, 14),
                 "end_date": datetime.datetime(2024, 10, 27),
                 "status": SprintStatus.FUTURE.value,
-                "target": 120,
                 "team": self.team1_id,
             },
             {
@@ -1317,7 +1315,6 @@ class Populate:
                 "start_date": datetime.datetime(2024, 10, 28),
                 "end_date": datetime.datetime(2024, 11, 10),
                 "status": SprintStatus.FUTURE.value,
-                "target": 120,
                 "team": self.team1_id,
             },
             {
@@ -1329,7 +1326,6 @@ class Populate:
                 "start_date": datetime.datetime(2024, 11, 11),
                 "end_date": datetime.datetime(2024, 11, 24),
                 "status": SprintStatus.FUTURE.value,
-                "target": 160,
                 "team": self.team1_id,
             },
             {
@@ -1341,7 +1337,6 @@ class Populate:
                 "start_date": datetime.datetime(2024, 11, 25),
                 "end_date": datetime.datetime(2024, 12, 8),
                 "status": SprintStatus.FUTURE.value,
-                "target": 135,
                 "team": self.team1_id,
             },
             {
