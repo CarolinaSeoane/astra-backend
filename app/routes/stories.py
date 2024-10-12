@@ -5,13 +5,14 @@ from webargs.flaskparser import use_args
 from webargs import fields
 
 from app.models.story import Story
-from app.utils import send_response, get_current_quarter
+from app.utils import send_response
 from app.routes.utils import validate_user_is_active_member_of_team
 from app.models.team import Team
 from app.models.sprint import Sprint
 from app.models.epic import Epic
 from app.models.task import Task
-from app.models.configurations import Priority, Status, Type, Configurations
+from app.models.configurations import Priority, Type, Configurations, Status
+from app.services.astra_scheduler import get_quarter
 
 
 stories = Blueprint("stories", __name__)
@@ -60,8 +61,8 @@ def story_fields(args):
     'estimation': fields.Boolean(required=False, missing=True),
     'task_statuses': fields.Boolean(required=False, missing=True),
     ## customization
-    'quarter': fields.Str(required=False, missing=str(get_current_quarter(datetime.today()))), # affects sprints (TODO: should affect epics too!!!!)
-    'year': fields.Str(required=False, missing=str(datetime.today().year)), # affects sprints (TODO: should affect epics too!!!!)
+    'quarter': fields.Integer(required=False, missing=get_quarter(datetime.today())), # affects sprints (TODO: should affect epics too!!!!)
+    'year': fields.Integer(required=False, missing=datetime.today().year), # affects sprints (TODO: should affect epics too!!!!)
     'future': fields.Str(required=False, missing=False), # affects sprints (TODO: should affect epics too!!!!)
     }, location='query')
 def filters(args):
@@ -200,6 +201,7 @@ def create_story():
 
     tasks = Task.format(story)
     story['tasks'] = tasks
+    story['story_status'] = Status.NOT_STARTED.value
 
     try:
         response = Story.create_story(story)

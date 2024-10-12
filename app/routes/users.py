@@ -49,7 +49,9 @@ def handle_login(args):
             }
         return send_response(data, ["User not found. Please complete the sign-up process."], 404, **req_data)
     else:
-        # User is signed up and we only need to log them in
+        # User is signed up and we only need to log them in and update their access token
+        User.update_access_token(user['_id']['$oid'], tokens['access_token'])
+
         session_token = generate_jwt(email, user['_id']['$oid'])
         user['token'] = session_token
         data = {

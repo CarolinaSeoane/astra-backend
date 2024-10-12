@@ -14,7 +14,7 @@ class Sprint:
 
     def __init__(
             self, name, sprint_number, quarter, year, start_date,
-            end_date, status, target, team, _id=ObjectId()
+            end_date, status, target, team, completed, actual_end_date, _id=ObjectId()
         ):
         self._id = _id
         self.name = name
@@ -26,6 +26,8 @@ class Sprint:
         self.status = status
         self.target = target
         self.team = team
+        self.completed = completed
+        self.actual_end_date = actual_end_date
 
     @staticmethod
     def get_sprints(team_id, quarter, year, future):
@@ -74,6 +76,12 @@ class Sprint:
         return documents[1:] + [documents[0]] # Send first element (backlog) to the back
 
     @staticmethod
+    def get_all_sprints(team_id):
+        filter = {'team': ObjectId(team_id), 'name': {'$ne': 'Backlog'}}
+        sort = {'start_date': -1}
+        return MongoHelper().get_documents_by(SPRINTS_COL, filter, sort)
+
+    @staticmethod
     def get_velocity(team_id):
         filter = {
             "team": { "$eq": team_id },
@@ -96,7 +104,7 @@ class Sprint:
             "status": SprintStatus.ACTIVE.value,
             "team": team_id
         }
-        return MongoHelper().add_new_element_to_collection(SPRINTS_COL, new_backlog)
+        return MongoHelper().create_document(SPRINTS_COL, new_backlog)
 
     @staticmethod
     def get_target_points(sprint, team_id):
@@ -151,13 +159,71 @@ class Sprint:
             ))[0]["target"]
 
     @staticmethod
+    def get_sprint_by(filter):
+        '''
+        returns None if sprint is not found and dict if found
+        '''
+        return MongoHelper().get_document_by(SPRINTS_COL, filter)
+
+    @staticmethod
+    def finish_sprint(sprint_id):
+        '''
+        Finishes a sprint by setting status of the given sprint as FINISHED
+        and adding a total count of the finished story points
+        '''
+        # Get finished SPs sum
+        sprint = Sprint.get_sprint_by({'_id': ObjectId(sprint_id)})
+
+        completed_points = Sprint.get_completed_points_up_to(sprint['name'], sprint['team']['$oid'], datetime.today())
+
+        if completed_points:
+            total_sps_finished = completed_points[0]['completed_points']
+        else:
+            total_sps_finished = 0
+
+        # Set final SP completed
+        # Set status as finished
+        filter = {'_id': ObjectId(sprint_id)}
+        update = {'$set': {'status': SprintStatus.FINISHED.value, 'completed': total_sps_finished, 'actual_end_date': datetime.today()}}
+        return MongoHelper().update_document(SPRINTS_COL, filter, update)
+
+    @staticmethod
+    def start_sprint(sprint_id):
+        '''
+        Starts a sprint by setting the status of the given sprint as CURRENT and
+        deleting the next attribute from the doc
+        '''
+        # Set status as current and delete next flag
+        filter = {'_id': ObjectId(sprint_id)}
+        update = {'$set': {'status': SprintStatus.CURRENT.value, 'actual_start_date': datetime.today()}, '$unset': {'next': ""}}
+        return MongoHelper().update_document(SPRINTS_COL, filter, update)
+
+    @staticmethod
+    def set_following_sprint(sprint_id):
+        '''
+        Adds the next attribute to the sprint that follows the given sprint (if it exists)
+        '''
+        curr_sprint = Sprint.get_sprint_by({'_id': ObjectId(sprint_id)})
+
+        # Find the next sprint
+        filter = {'team': ObjectId(curr_sprint['team']['$oid']), 'status': SprintStatus.FUTURE.value}
+        sort = {'start_date': 1}
+        next_sprint = MongoHelper().get_document_by(SPRINTS_COL, filter, sort)
+
+        # Set next flag
+        if next_sprint:
+            filter = {'_id': ObjectId(next_sprint['_id']['$oid'])}
+            update = {'$set': {'next': True}}
+            MongoHelper().update_document(SPRINTS_COL, filter, update)
+
+    @staticmethod
     def add_completed_points(sprint, team_id, points):
         match = {
             "name": sprint,
             "team": ObjectId(team_id),
         }
         update = { "$inc": {"completed": points} }
-        return MongoHelper().update_collection(SPRINTS_COL, match, update)
+        return MongoHelper().update_document(SPRINTS_COL, match, update)
 
     @staticmethod
     def get_active_sprints(team_id):
@@ -255,3 +321,29 @@ class Sprint:
         #print(f"TOTAL STORIES: {total_stories}, Incomplete Stories: {incomplete_stories}")
 
         return total_stories, incomplete_stories
+
+    @staticmethod
+    def get_latest_sprint(team_id):
+        '''
+        Returns None if the team only has a backlog but no sprints
+        '''
+        filter = {'team': ObjectId(team_id), 'start_date': { '$exists': True }}
+        sort = {'start_date': -1}
+        return MongoHelper().get_document_by(SPRINTS_COL, filter, sort)
+
+    @staticmethod
+    def get_stories_grouped_by_status(sprint_name, team_id):
+        match = {
+            "sprint.name": sprint_name,
+            "team": ObjectId(team_id)
+        }
+        group = {
+            "_id": "$tasks.status",
+            "value": { "$sum": 1 }
+        }
+        unwind = "$tasks"
+        return MongoHelper().aggregate(STORIES_COL, match=match, group=group, unwind=unwind)
+
+    @staticmethod
+    def add_sprints(sprints):
+        return MongoHelper().create_documents(SPRINTS_COL, sprints)

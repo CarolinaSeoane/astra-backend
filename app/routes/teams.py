@@ -92,33 +92,6 @@ def remove_team_member(member_id):
 
     return send_response([], ["User not authorized to complete operation"], 400, **g.req_data)
 
-@teams.route('/ceremonies', methods=['GET'])
-def team_ceremonies():
-    ceremonies = [
-        {
-            'name': 'Standup begins',
-            'date': '2024-08-01T20:28:30',
-            'in_progress': False
-        },
-        {
-            'name': 'Standup',
-            'date': '2024-08-01T20:28:35',
-            'in_progress': True
-        },
-        {
-            'name': 'Retro begins',
-            'date': '2024-08-01T20:28:50',
-            'in_progress': False
-        },
-        {
-            'name': 'Retro',
-            'date': '2024-08-01T20:28:55',
-            'in_progress': True
-        },
-    ]
-
-    return send_response(ceremonies, [], 200, **g.req_data)
-
 # Validate query param
 def validate_section(value):
     validate_sections = ['ceremonies', 'sprint_set_up', 'mandatory_story_fields', 'permits', 'estimation_method']
@@ -150,7 +123,8 @@ def update_sprint_set_up(args):
 ceremony_args = {
     "days": fields.List(fields.Str(), required=False),
     "when": fields.Str(required=False),
-    "time": fields.Str(required=True),
+    "starts": fields.Str(required=True),
+    "ends": fields.Str(required=True),
     "google_meet_config": fields.Dict(required=False),
 }
 

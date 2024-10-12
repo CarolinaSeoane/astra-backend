@@ -67,7 +67,7 @@ class User:
         }
         filter = {'_id': ObjectId(self._id['$oid'])}
         update = {'$push': {'teams': new_team}}
-        return MongoHelper().update_collection(USERS_COL, filter, update)
+        return MongoHelper().update_document(USERS_COL, filter, update)
 
     @staticmethod
     def remove_from_team(user_id, team_id):
@@ -76,4 +76,10 @@ class User:
         '''
         filter = {'_id': ObjectId(user_id)}
         update = {'$pull': {'teams': {'_id': ObjectId(team_id)}}}
-        MongoHelper().update_collection(USERS_COL, filter, update)
+        MongoHelper().update_document(USERS_COL, filter, update)
+
+    @staticmethod
+    def update_access_token(user_id, token):
+        filter = {'_id': ObjectId(user_id)}
+        update = {'$set': {'access_token': token}}
+        return MongoHelper().update_document(USERS_COL, filter, update)
