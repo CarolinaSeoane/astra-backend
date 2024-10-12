@@ -113,12 +113,15 @@ def generate_planning_ceremony(team_planning_settings, curr_sprint):
     planning_datetime_end = datetime.combine(planning_date, time(hour=int(planning_end_time.split(":")[0]), minute=int(planning_end_time.split(":")[1])))
     
     return {
-        'type': CeremonyType.PLANNING.value,
+        'ceremony_type': CeremonyType.PLANNING.value,
         'starts': planning_datetime_start,
         'ends': planning_datetime_end,
         'google_meet_config': team_planning_settings['google_meet_config'],
-        'status': CeremonyStatus.NOT_HAPPENED_YET.value,
-        'happens_on_sprint': ObjectId(curr_sprint['_id']['$oid']),
+        'ceremony_status': CeremonyStatus.NOT_HAPPENED_YET.value,
+        'happens_on_sprint': {
+            '_id': ObjectId(curr_sprint['_id']['$oid']),
+            'name': curr_sprint['name']
+        },
         'team': ObjectId(curr_sprint['team']['$oid']),
         # 'refers_to_sprint': 'TODO?', 
         # 'meeting_code': 'PlanningS32024',
@@ -176,11 +179,11 @@ def generate_retrospective_ceremony(team_retro_settings, curr_sprint):
     retro_datetime_end = datetime.combine(retro_date, time(hour=int(retro_end_time.split(":")[0]), minute=int(retro_end_time.split(":")[1])))
     
     return {
-        'type': CeremonyType.RETRO.value,
+        'ceremony_type': CeremonyType.RETRO.value,
         'starts': retro_datetime_start,
         'ends': retro_datetime_end,
         'google_meet_config': team_retro_settings['google_meet_config'],
-        'status': CeremonyStatus.NOT_HAPPENED_YET.value,
+        'ceremony_status': CeremonyStatus.NOT_HAPPENED_YET.value,
         'happens_on_sprint': ObjectId(curr_sprint['_id']['$oid']),
         'team': ObjectId(curr_sprint['team']['$oid']),
         # 'refers_to_sprint': 'TODO?', 

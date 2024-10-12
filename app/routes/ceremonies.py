@@ -24,7 +24,7 @@ def apply_validate_user_is_active_member_of_team():
             return None
     return validate_user_is_active_member_of_team()
 
-@ceremonies.route('/sprint/<sprint_id>', methods=['GET'])
+@ceremonies.route('/sprint/algo/<sprint_id>', methods=['GET'])
 def team_ceremonies(sprint_id):
     ceremonies = [
         {
@@ -51,6 +51,16 @@ def team_ceremonies(sprint_id):
 
     Ceremony.get_sprint_ceremonies(sprint_id)
 
+    return send_response(ceremonies, [], 200, **g.req_data)
+
+@ceremonies.route('', methods=['GET'])
+@use_args({
+    'sprint': fields.Str(required=False),
+    'ceremony_type': fields.Str(required=False),
+    'ceremony_status': fields.Str(required=False),
+    }, location='query')
+def ceremonies_list(args):
+    ceremonies = Ceremony.get_ceremonies_by_team_id(g.team_id, **args)
     return send_response(ceremonies, [], 200, **g.req_data)
 
 @ceremonies.route("/filters", methods=['GET'])
