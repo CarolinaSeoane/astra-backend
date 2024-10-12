@@ -1,6 +1,5 @@
 from bson import ObjectId
 
-from app.db_connection import mongo
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import MemberStatus, CollectionNames
 
@@ -9,7 +8,10 @@ USERS_COL = CollectionNames.USERS.value
 
 class User:
 
-    def __init__(self, name, surname, username, email, profile_picture, access_token=None, refresh_token=None, teams=list(), _id=ObjectId()):
+    def __init__(
+            self, name, surname, username, email, profile_picture, access_token=None,
+            refresh_token=None, teams=list(), _id=ObjectId()
+        ):
         self._id = _id
         self.name = name
         self.surname = surname
@@ -49,7 +51,7 @@ class User:
         return MongoHelper().document_exists(USERS_COL, filter)
 
     def save_user(self):
-        mongo.db.users.insert_one(self.__dict__) # TODO use mongoHelper
+        MongoHelper().add_new_element_to_collection(USERS_COL, self.__dict__)
 
     def add_team(self, team, status=MemberStatus.PENDING.value):
         '''

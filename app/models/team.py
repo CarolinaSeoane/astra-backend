@@ -1,6 +1,6 @@
+from datetime import datetime
 import pytz
 from bson import ObjectId
-from datetime import datetime
 
 from app.models.user import User
 from app.services.mongoHelper import MongoHelper
@@ -14,7 +14,8 @@ TEAMS_COL = CollectionNames.TEAMS.value
 
 class Team:
 
-    def __init__(self, _id, name, organization, ceremonies, sprint_set_up, mandatory_story_fields, permits, members, estimation_method):
+    def __init__(self, _id, name, organization, ceremonies, sprint_set_up, 
+                 mandatory_story_fields, permits, members, estimation_method):
         self._id = _id
         self.name = name
         self.organization = organization
@@ -129,7 +130,7 @@ class Team:
     @staticmethod
     def is_user_part_of_team(user_id, team_members):
         return user_id in [member['_id']['$oid'] for member in team_members]
-    
+
     @staticmethod
     def is_user_SM_of_team(user_id, team_id):
         filter = {
@@ -173,6 +174,28 @@ class Team:
         google_meet service
         '''
         space = create_space(access_token, refresh_token)
-        filter = {'_id':ObjectId(team_id)}
+        filter = {'_id': ObjectId(team_id)}
         update = {'$set': {f'ceremonies.{ceremony.lower()}.google_meet_config': space}}
         return MongoHelper().update_document(TEAMS_COL, filter, update)
+
+    @staticmethod
+    def get_member_role(team_id, user_id):
+        match = {
+            "_id": ObjectId(team_id),
+            "members": {"$elemMatch": {"_id": ObjectId(user_id)}}
+        }
+        projection = {"members.role.$": 1}
+        return MongoHelper().get_document_by(
+            TEAMS_COL, match, projection=projection
+        )["members"][0]["role"]
+
+    @staticmethod
+    def get_permissions_value_based_on_role(team_id, role):
+        match = {
+            '_id': ObjectId(team_id),
+            "permits": {"$elemMatch": {"role": role}}
+        }
+        projection = {"permits.options.$": 1}
+        return MongoHelper().get_document_by(
+            TEAMS_COL, match, projection=projection
+        )["permits"][0]["options"]

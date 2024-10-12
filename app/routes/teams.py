@@ -7,7 +7,7 @@ from app.models.team import Team
 from app.models.user import User
 from app.utils import send_response
 from app.routes.utils import validate_user_is_active_member_of_team
-from app.models.configurations import MemberStatus, Role, CeremonyType
+from app.models.configurations import Configurations, MemberStatus, Role, CeremonyType
 from app.models.organization import Organization
 from app.models.sprint import Sprint
 
@@ -226,12 +226,37 @@ def create_team(args):
         Team.add_default_settings(new_team_id)
         print('after team settings')
         # Add Google Meet space to each ceremony
-        Team.set_up_google_meet_space(new_team_id, CeremonyType.STANDUP.value, user_obj.access_token, user_obj.refresh_token)
-        Team.set_up_google_meet_space(new_team_id, CeremonyType.PLANNING.value, user_obj.access_token, user_obj.refresh_token)
-        Team.set_up_google_meet_space(new_team_id, CeremonyType.RETRO.value, user_obj.access_token, user_obj.refresh_token)
+        Team.set_up_google_meet_space(
+            new_team_id, CeremonyType.STANDUP.value, user_obj.access_token, user_obj.refresh_token
+        )
+        Team.set_up_google_meet_space(
+            new_team_id, CeremonyType.PLANNING.value, user_obj.access_token, user_obj.refresh_token
+        )
+        Team.set_up_google_meet_space(
+            new_team_id, CeremonyType.RETRO.value, user_obj.access_token, user_obj.refresh_token
+        )
     except Exception as e:
         print(e)
         #TODO: rollback
         return send_response([], ["Couldn't create team"], 500, **g.req_data)
 
     return send_response([f"Team {args['team_name']} created successfully"], [], 200, **g.req_data)
+
+@teams.route('/member_role', methods=['GET'])
+@use_args({"team_id": fields.Str(required=True)}, location='query')
+def get_member_role(args):
+    team_id = args["team_id"]
+    role = Team.get_member_role(team_id, g._id)
+    return send_response(role, [], 200, **g.req_data)
+
+@teams.route('/permissions_by_role/<role>', methods=['GET'])
+@use_args({"team_id": fields.Str(required=True)}, location='query')
+def get_permissions_based_on_role(args, role):
+    team_id = args["team_id"]
+    role = role.replace("_", " ")
+    if role == Role.SCRUM_MASTER.value:
+        permissions_label = Configurations.get_permissions_label(Role.SCRUM_MASTER.value)
+    else:
+        permissions_value = Team.get_permissions_value_based_on_role(team_id, role)
+        permissions_label = Configurations.get_permissions_label(role, permissions_value)
+    return send_response(permissions_label, [], 200, **g.req_data)
