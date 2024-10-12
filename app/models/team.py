@@ -83,7 +83,7 @@ class Team:
         User.remove_from_team(member_id, team_id)
 
     @staticmethod
-    def get_team_settings(team_id, section):
+    def get_team_settings(team_id, section=None):
         projection = {'ceremonies', 'sprint_set_up', 'mandatory_story_fields', 'permits', 'members', 'estimation_method'}
         if section:
             projection = {section}

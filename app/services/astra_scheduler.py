@@ -76,50 +76,41 @@ def generate_sprints_for_quarter(selected_date, sprint_duration, team_id, latest
 
     return sprints
 
-# def generate_sprint_schedule(ceremonies, sprint_set_up, sprint_start_date=None):
-def generate_sprint_schedule(team_ceremonies_settings, sprint_set_up, sprint_start_date=None):
+def generate_ceremonies_for_sprint(team_ceremonies_settings, curr_sprint):
     schedule = []
 
-    # Determine sprint start date
-    if sprint_start_date:
-        sprint_start = datetime.strptime(sprint_start_date, "%Y-%m-%d")
-    else:
-        # Assuming the sprint starts on the next specified weekday from today
-        today = datetime.today()
-        sprint_start_weekday = get_weekday_number(sprint_set_up['sprint_begins_on'])
-        sprint_start = get_next_weekday(today, sprint_start_weekday)
-    
-    # Determine sprint end date
-    sprint_end = sprint_start + timedelta(weeks=sprint_set_up['sprint_duration']) - timedelta(days=1)
-
     # Schedule planning ceremony
-    planning = generate_planning_ceremony(team_ceremonies_settings['planning'], sprint_start, sprint_end)
+    planning = generate_planning_ceremony(team_ceremonies_settings['planning'], curr_sprint)
     schedule.append(planning)
 
     # Schedule standup ceremonies
-    standups = generate_standup_ceremonies(team_ceremonies_settings['standup'], sprint_start, sprint_end)
-    schedule.extend(standups)
+    # standups = generate_standup_ceremonies(team_ceremonies_settings['standup'], curr_sprint)
+    # schedule.extend(standups)
 
-    # Schedule retrospective ceremony
-    retro = generate_retrospective_ceremony(team_ceremonies_settings['retrospective'], sprint_start, sprint_end)
+    # # Schedule retrospective ceremony
+    retro = generate_retrospective_ceremony(team_ceremonies_settings['retrospective'], curr_sprint)
     schedule.append(retro)
 
     for ceremony in schedule: pprint.pprint(ceremony)
 
+    return schedule
       
-def generate_planning_ceremony(team_planning_settings, sprint_start_date, sprint_end_date):
+def generate_planning_ceremony(team_planning_settings, curr_sprint):
     planning_start_time = team_planning_settings['starts']
     planning_end_time = team_planning_settings['ends']
 
+    sprint_start_date_time = curr_sprint['start_date']['$date']
+    sprint_end_date_time = curr_sprint['start_date']['$date']
+
     if team_planning_settings['when'] == CeremonyStartOptions.BEGINNING.value:
         # Schedule on sprint_start date
-        start_date = sprint_start_date
+        planning_date = datetime.date(datetime.strptime(sprint_start_date_time, '%Y-%m-%dT%H:%M:%S%z'))
     else:
-        # Schedule on sprint_end date
-        start_date = sprint_end_date # TODO This is the planning for the next sprint
+        # Schedule on sprint_end date. This is the planning for the next sprint
+        planning_date = datetime.date(datetime.strptime(sprint_end_date_time, '%Y-%m-%dT%H:%M:%S%z'))
 
-    planning_datetime_start = datetime.combine(start_date, time(hour=int(planning_start_time.split(":")[0]), minute=int(planning_start_time.split(":")[1])))
-    planning_datetime_end = datetime.combine(start_date, time(hour=int(planning_end_time.split(":")[0]), minute=int(planning_end_time.split(":")[1])))
+    planning_datetime_start = datetime.combine(planning_date, time(hour=int(planning_start_time.split(":")[0]), minute=int(planning_start_time.split(":")[1])))
+    planning_datetime_end = datetime.combine(planning_date, time(hour=int(planning_end_time.split(":")[0]), minute=int(planning_end_time.split(":")[1])))
     
     return {
         'type': CeremonyType.PLANNING.value,
@@ -127,6 +118,9 @@ def generate_planning_ceremony(team_planning_settings, sprint_start_date, sprint
         'ends': planning_datetime_end,
         'google_meet_config': team_planning_settings['google_meet_config'],
         'status': CeremonyStatus.NOT_HAPPENED_YET.value,
+        'happens_on_sprint': ObjectId(curr_sprint['_id']['$oid']),
+        'team': ObjectId(curr_sprint['team']['$oid']),
+        # 'refers_to_sprint': 'TODO?', 
         # 'meeting_code': 'PlanningS32024',
         # 'date': 'Mon 05/03',
         # 'duration': '1 hr 30 mins',
@@ -164,19 +158,22 @@ def generate_standup_ceremonies(team_standup_settings, sprint_start_date, sprint
         current_date += timedelta(days=1)
     return schedule
 
-def generate_retrospective_ceremony(team_retro_settings, sprint_start_date, sprint_end_date):
+def generate_retrospective_ceremony(team_retro_settings, curr_sprint):
     retro_start_time = team_retro_settings['starts']
     retro_end_time = team_retro_settings['ends']
 
+    sprint_start_date_time = curr_sprint['start_date']['$date']
+    sprint_end_date_time = curr_sprint['start_date']['$date']
+
     if team_retro_settings['when'] == CeremonyStartOptions.BEGINNING.value:
         # Schedule on sprint_start date
-        start_date = sprint_start_date
+        retro_date = datetime.date(datetime.strptime(sprint_start_date_time, '%Y-%m-%dT%H:%M:%S%z'))
     else:
-        # Schedule on sprint_end date
-        start_date = sprint_end_date # TODO This is the planning for the next sprint
+        # Schedule on sprint_end date. This is the planning for the next sprint
+        retro_date = datetime.date(datetime.strptime(sprint_end_date_time, '%Y-%m-%dT%H:%M:%S%z'))
 
-    retro_datetime_start = datetime.combine(start_date, time(hour=int(retro_start_time.split(":")[0]), minute=int(retro_start_time.split(":")[1])))
-    retro_datetime_end = datetime.combine(start_date, time(hour=int(retro_end_time.split(":")[0]), minute=int(retro_end_time.split(":")[1])))
+    retro_datetime_start = datetime.combine(retro_date, time(hour=int(retro_start_time.split(":")[0]), minute=int(retro_start_time.split(":")[1])))
+    retro_datetime_end = datetime.combine(retro_date, time(hour=int(retro_end_time.split(":")[0]), minute=int(retro_end_time.split(":")[1])))
     
     return {
         'type': CeremonyType.RETRO.value,
@@ -184,6 +181,9 @@ def generate_retrospective_ceremony(team_retro_settings, sprint_start_date, spri
         'ends': retro_datetime_end,
         'google_meet_config': team_retro_settings['google_meet_config'],
         'status': CeremonyStatus.NOT_HAPPENED_YET.value,
+        'happens_on_sprint': ObjectId(curr_sprint['_id']['$oid']),
+        'team': ObjectId(curr_sprint['team']['$oid']),
+        # 'refers_to_sprint': 'TODO?', 
         # 'meeting_code': 'PlanningS32024',
         # 'date': 'Mon 05/03',
         # 'duration': '1 hr 30 mins',

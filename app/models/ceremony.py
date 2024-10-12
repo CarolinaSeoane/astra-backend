@@ -1,5 +1,14 @@
+from bson import ObjectId
+
 from app.models.team import Team
-from app.services.astra_scheduler import generate_sprint_schedule
+from app.services.astra_scheduler import generate_ceremonies_for_sprint
+from app.models.sprint import Sprint
+from app.services.mongoHelper import MongoHelper
+from app.models.configurations import CollectionNames
+
+
+CEREMONIES_COL = CollectionNames.CEREMONIES.value
+
 
 class Ceremony:
 
@@ -11,8 +20,15 @@ class Ceremony:
         self.attendees = attendees
         # google data
 
-    def create_sprint_ceremonies(team_id):
+    @staticmethod
+    def create_sprint_ceremonies(team_id, sprint):
         team_ceremonies_settings = Team.get_team_settings(team_id, 'ceremonies')['ceremonies']
-        sprint_set_up = Team.get_team_settings(team_id, 'sprint_set_up')['sprint_set_up']
-        generate_sprint_schedule(team_ceremonies_settings, sprint_set_up)
-        
+        curr_sprint = Sprint.get_sprint_by({'_id': ObjectId(sprint)})
+        ceremonies = generate_ceremonies_for_sprint(team_ceremonies_settings, curr_sprint)
+        return MongoHelper().create_documents(CEREMONIES_COL, ceremonies)
+    
+    @staticmethod
+    def get_sprint_ceremonies(sprint_id):
+        filter = {'happens_on_sprint': ObjectId(sprint_id)}
+        sort = {'start_date': 1}
+        return MongoHelper().get_documents_by(CEREMONIES_COL, filter = filter, sort = sort)

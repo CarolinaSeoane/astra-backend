@@ -131,8 +131,8 @@ def start_sprint(sprint_id):
     # Set following sprint as next
     Sprint.set_following_sprint(sprint_id)
     
-    # Create ceremonies for current sprint
-    Ceremony.create_sprint_ceremonies(g.team_id)
+    # Create and save ceremonies for current sprint
+    Ceremony.create_sprint_ceremonies(g.team_id, sprint_id)
     
     if update_res.modified_count == 1:
         return send_response([], [], 200, **g.req_data)
