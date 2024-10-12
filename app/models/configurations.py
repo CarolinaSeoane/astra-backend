@@ -70,6 +70,7 @@ class CollectionNames(Enum):
     STORIES = "stories"
     TEAMS = "teams"
     USERS = "users"
+    CEREMONIES = "ceremonies"
 
 class CeremonyStatus(Enum):
     DONE = 'Done'

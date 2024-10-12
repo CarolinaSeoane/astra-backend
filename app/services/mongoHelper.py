@@ -24,9 +24,6 @@ class MongoHelper:
         documents = json.loads(documents)
         return documents
 
-    def add_new_element_to_collection(self, collection_name, element):
-        return self.astra.db[collection_name].insert_one(element)
-
     def update_document(self, collection_name, filter, update):
         '''
         filter refers to the document to be updated
@@ -50,6 +47,9 @@ class MongoHelper:
 
     def create_document(self, collection_name, document):
         return self.astra.db[collection_name].insert_one(document)
+    
+    def create_documents(self, collection_name, documents):
+        return self.astra.db[collection_name].insert_many(documents)
 
     def aggregate(self, collection_name, match, group, unwind=None, **kwargs):
         '''

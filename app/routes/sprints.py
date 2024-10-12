@@ -12,7 +12,7 @@ from app.models.configurations import SprintStatus
 from app.models.story import Story
 from app.models.configurations import Status
 from app.models.ceremony import Ceremony
-from app.services.astra_scheduler import get_weekday_number
+from app.services.astra_scheduler import get_weekday_number, generate_sprints_for_quarter, get_quarter
 
 
 sprints = Blueprint('sprints', __name__)
@@ -131,8 +131,8 @@ def start_sprint(sprint_id):
     # Set following sprint as next
     Sprint.set_following_sprint(sprint_id)
     
-    # Create ceremonies for current sprint
-    Ceremony.create_sprint_ceremonies(g.team_id)
+    # Create and save ceremonies for current sprint
+    Ceremony.create_sprint_ceremonies(g.team_id, sprint_id)
     
     if update_res.modified_count == 1:
         return send_response([], [], 200, **g.req_data)
@@ -149,8 +149,8 @@ def get_sprint(args):
     sprint = Sprint.get_sprint_by(filter)
     return send_response(sprint, [], 200, **g.req_data)
 
-@sprints.route('/start/attempt', methods=['GET'])
-def attempt_to_start_sprint():   
+@sprints.route('/create/attempt', methods=['GET'])
+def attempt_to_create_sprint():   
     # Get sprint setup
     sprint_begins_on = Team.get_team_settings(g.team_id, 'sprint_set_up')['sprint_set_up']['sprint_begins_on']
     allowed_day = get_weekday_number(sprint_begins_on)
@@ -161,6 +161,17 @@ def attempt_to_start_sprint():
 
     # Return the possible start dates as a response
     return send_response({'allowed_day': allowed_day, 'latest_sprint': latest_end_date}, [], 200, **g.req_data)
+
+@sprints.route('/create', methods=['POST'])
+@use_args({'start_date': fields.DateTime(required=True, format="iso")}, location='json')
+def create_sprints(args):
+    sprint_duration = Team.get_team_settings(g.team_id, 'sprint_set_up')['sprint_set_up']['sprint_duration']
+    latest_sprint = Sprint.get_latest_sprint(g.team_id)
+    latest_sprint_number = latest_sprint['sprint_number'] if latest_sprint['quarter'] == get_quarter(args['start_date']) else 0
+    sprints = generate_sprints_for_quarter(args['start_date'], sprint_duration, g.team_id, latest_sprint_number)
+    Sprint.add_sprints(sprints)
+    # ToDo: handle errors
+    return send_response([], [], 200, **g.req_data)
 
 @sprints.route('/stories_status_rundown', methods=['GET'])
 @use_args({"sprint_name": fields.Str(required=True)}, location='query')
