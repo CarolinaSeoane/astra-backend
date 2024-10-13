@@ -31,6 +31,19 @@ def get_next_weekday(start_date, weekday):
         days_ahead += 7
     return start_date + timedelta(days=days_ahead)
 
+def get_previous_friday(date):
+    '''
+    If the date is a sunday or saturday, it returns the previous friday
+    '''    
+    day_of_week = date.weekday()
+    
+    # Calculate how many days back we need to go to get to the previous Friday
+    # If it's Sunday (6), subtract 2 days to get to Friday.
+    # Otherwise, subtract the number of days passed since Friday (4).
+    days_to_subtract = (day_of_week - 4) % 7
+    
+    return date - timedelta(days=days_to_subtract)
+
 def is_same_quarter(date1, date2):
     return get_quarter(date1) == get_quarter(date2) and date1.year == date2.year
 
@@ -96,19 +109,21 @@ def generate_ceremonies_for_sprint(team_ceremonies_settings, curr_sprint):
     return schedule
       
 def generate_planning_or_retro_ceremony(team_settings, curr_sprint, ceremony_type):
-    # TODO: planning o retro no deben ser un domingo
     meeting_start_time = team_settings['starts']
     meeting_end_time = team_settings['ends']
 
-    sprint_start_date_time = curr_sprint['start_date']['$date']
-    sprint_end_date_time = curr_sprint['end_date']['$date']
+    sprint_start_date_time = datetime.date(datetime.strptime(curr_sprint['start_date']['$date'], '%Y-%m-%dT%H:%M:%S%z'))
+    sprint_end_date_time = datetime.date(datetime.strptime(curr_sprint['end_date']['$date'], '%Y-%m-%dT%H:%M:%S%z'))
+
+    if sprint_end_date_time.weekday() == 6:
+        sprint_end_date_time = get_previous_friday(sprint_end_date_time)
 
     if team_settings['when'] == CeremonyStartOptions.BEGINNING.value:
         # Schedule on sprint_start date
-        meeting_date = datetime.date(datetime.strptime(sprint_start_date_time, '%Y-%m-%dT%H:%M:%S%z'))
+        meeting_date = sprint_start_date_time
     else:
         # Schedule on sprint_end date. This is the planning for the next sprint
-        meeting_date = datetime.date(datetime.strptime(sprint_end_date_time, '%Y-%m-%dT%H:%M:%S%z'))
+        meeting_date = sprint_end_date_time
 
     meeting_datetime_start = datetime.combine(meeting_date, time(hour=int(meeting_start_time.split(":")[0]), minute=int(meeting_start_time.split(":")[1])))
     meeting_datetime_end = datetime.combine(meeting_date, time(hour=int(meeting_end_time.split(":")[0]), minute=int(meeting_end_time.split(":")[1])))
