@@ -3,7 +3,7 @@ from webargs.flaskparser import use_args
 from webargs import fields
 from datetime import datetime
 
-from app.utils import send_response
+from app.utils import send_response, apply_banner_format
 from app.routes.utils import validate_user_is_active_member_of_team
 from app.models.ceremony import Ceremony
 from app.models.configurations import CeremonyType, CeremonyStatus
@@ -24,34 +24,11 @@ def apply_validate_user_is_active_member_of_team():
             return None
     return validate_user_is_active_member_of_team()
 
-@ceremonies.route('/sprint/algo/<sprint_id>', methods=['GET'])
-def team_ceremonies(sprint_id):
-    ceremonies = [
-        {
-            'name': 'Standup begins',
-            'date': '2024-08-01T20:28:30',
-            'in_progress': False
-        },
-        {
-            'name': 'Standup',
-            'date': '2024-08-01T20:28:35',
-            'in_progress': True
-        },
-        {
-            'name': 'Retro begins',
-            'date': '2024-08-01T20:28:50',
-            'in_progress': False
-        },
-        {
-            'name': 'Retro',
-            'date': '2024-08-01T20:28:55',
-            'in_progress': True
-        },
-    ]
-
-    Ceremony.get_sprint_ceremonies(sprint_id)
-
-    return send_response(ceremonies, [], 200, **g.req_data)
+@ceremonies.route('/banner', methods=['GET'])
+def team_ceremonies():
+    ceremonies = Ceremony.get_upcoming_ceremonies_by_team_id(g.team_id)
+    banner_formatted_ceremonies = apply_banner_format(ceremonies)
+    return send_response(banner_formatted_ceremonies, [], 200, **g.req_data)
 
 @ceremonies.route('', methods=['GET'])
 @use_args({

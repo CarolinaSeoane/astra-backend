@@ -1,4 +1,5 @@
 from bson import ObjectId
+from datetime import datetime
 
 from app.models.team import Team
 from app.services.astra_scheduler import generate_ceremonies_for_sprint
@@ -12,10 +13,10 @@ CEREMONIES_COL = CollectionNames.CEREMONIES.value
 
 class Ceremony:
 
-    def __init__(self, _id, name, start_date, google_meet_config, attendees, ceremony_type, ceremony_status):
+    def __init__(self, _id, name, starts, google_meet_config, attendees, ceremony_type, ceremony_status):
         self._id = _id
         self.name = name
-        self.start_date = start_date
+        self.starts = starts
         self.google_meet_config = google_meet_config
         self.attendees = attendees
         self.ceremony_type = ceremony_type
@@ -32,7 +33,7 @@ class Ceremony:
     @staticmethod
     def get_sprint_ceremonies(sprint_id):
         filter = {'happens_on_sprint': ObjectId(sprint_id)}
-        sort = {'start_date': 1}
+        sort = {'starts': 1}
         return MongoHelper().get_documents_by(CEREMONIES_COL, filter = filter, sort = sort)
 
     @staticmethod
@@ -40,8 +41,8 @@ class Ceremony:
         '''
         returns [] if no ceremonies are found for the given team_id
         '''
-        
         filter = { "team": ObjectId(team_id) }
+        sort = {'starts': 1}
 
         if 'sprint' in kwargs and kwargs['sprint']:
             filter["happens_on_sprint.name"] = kwargs['sprint']
@@ -50,5 +51,15 @@ class Ceremony:
         if 'ceremony_status' in kwargs and kwargs['ceremony_status']:
             filter["ceremony_status"] = kwargs['ceremony_status']
 
-        return MongoHelper().get_documents_by(CEREMONIES_COL, filter=filter)
+        return MongoHelper().get_documents_by(CEREMONIES_COL, filter=filter, sort=sort)
+    
+    @staticmethod
+    def get_upcoming_ceremonies_by_team_id(team_id, for_banner=True):
+        '''
+        returns [] if no ceremonies are found for the given team_id
+        '''
+        filter = { "team": ObjectId(team_id), "starts": {"$gt": datetime.today()} }
+        sort = {'starts': 1}
+        projection = {"ceremony_type", "starts", "ends"} if for_banner else {}
+        return MongoHelper().get_documents_by(CEREMONIES_COL, filter=filter, sort=sort, projection=projection)
 

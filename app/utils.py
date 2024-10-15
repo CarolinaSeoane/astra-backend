@@ -51,3 +51,20 @@ def list_format(stories_dict):
 
 def gantt_format(stories_dict):
     pass
+
+def apply_banner_format(ceremonies):
+    formatted_ceremonies = []
+    for ceremony in ceremonies:
+        formatted_ceremonies.extend([
+            {
+                'name': f"{ceremony['ceremony_type']} begins", # check timezones
+                'date': ceremony['starts']['$date'],
+                'in_progress': False
+            },
+            {
+                'name': f"{ceremony['ceremony_type']}",
+                'date': ceremony['ends']['$date'],
+                'in_progress': True
+            }
+        ])
+    return formatted_ceremonies
