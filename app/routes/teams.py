@@ -265,6 +265,6 @@ def get_permissions_based_on_role(args, role):
 def is_member_allowed(role, action):
     if role == Role.SCRUM_MASTER.value:
         return send_response(True, [], 200, **g.req_data) # scrum masters are allowed to perform all actions
-    
+
     allowed = Team.is_member_authorized(g.team_id, role, action)
     return send_response(allowed, [], 200, **g.req_data)
