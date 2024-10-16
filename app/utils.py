@@ -65,3 +65,21 @@ def list_format(stories_dict):
 
 def gantt_format(stories_dict):
     pass
+
+def apply_banner_format(ceremonies):
+    formatted_ceremonies = []
+    for ceremony in ceremonies:
+        formatted_ceremonies.extend([
+            {
+                'name': f"{ceremony['ceremony_type']} begins",
+                'date': ceremony['starts']['$date'][:-1],
+                'in_progress': False
+            },
+            {
+                'name': f"{ceremony['ceremony_type']}",
+                'date': ceremony['ends']['$date'],
+                'in_progress': True,
+                'google_meet_link': ceremony['google_meet_config']["meetingUri"]
+            }
+        ])
+    return formatted_ceremonies

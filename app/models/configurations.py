@@ -73,7 +73,7 @@ class CollectionNames(Enum):
     CEREMONIES = "ceremonies"
 
 class CeremonyStatus(Enum):
-    DONE = 'Done'
+    CONCLUDED = 'Concluded'
     NOT_HAPPENED_YET = 'Not happened yet'
     DIDNT_TAKE_PLACE = 'Did not take place'
 
