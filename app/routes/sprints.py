@@ -181,4 +181,14 @@ def get_stories_status_rundown(args):
     for res in results:
         res['name'] = res.pop('_id')
         stories_by_status.append(res)
-    return send_response(stories_by_status, [], 200, **g.req_data)
+    order = ["Not Started", "Doing", "Blocked", "Done"]
+    data_dict = {item['name']: item['value'] for item in stories_by_status}
+    stories_by_status_sorted = [{'name': name, 'value': data_dict.get(name, 0)} for name in order]
+    # stories_by_status_sorted = sorted(stories_by_status, key=lambda x: order.index(x["name"]))
+    return send_response(stories_by_status_sorted, [], 200, **g.req_data)
+
+@sprints.route('/total_stories', methods=['GET'])
+@use_args({"sprint_name": fields.Str(required=True)}, location='query')
+def get_total_stories(args):
+    total_count = Sprint.get_total_stories_count(args["sprint_name"], g.team_id)
+    return send_response(total_count, [], 200, **g.req_data)

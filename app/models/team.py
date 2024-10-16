@@ -199,3 +199,10 @@ class Team:
         return MongoHelper().get_document_by(
             TEAMS_COL, match, projection=projection
         )["permits"][0]["options"]
+
+    @staticmethod
+    def is_member_authorized(team_id, role, action):
+        available_actions = Team.get_permissions_value_based_on_role(
+            team_id, role
+        )
+        return action in available_actions
