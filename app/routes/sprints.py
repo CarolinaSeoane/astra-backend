@@ -182,3 +182,24 @@ def get_stories_status_rundown(args):
         res['name'] = res.pop('_id')
         stories_by_status.append(res)
     return send_response(stories_by_status, [], 200, **g.req_data)
+
+
+@sprints.route('/next_sprint', methods=['GET'])
+def next_sprint():
+    team_id = request.args.get('team_id') 
+
+    sprint = Sprint.get_next_sprint(team_id)
+
+    if sprint:
+
+        sprint_data = {
+            'key': str(sprint['_id']['$oid']),
+            'label': sprint['name'],
+            'status': sprint['status']
+        }
+      
+        return send_response({'sprint': sprint_data},False, 200, **g.req_data)
+
+    return send_response({}, True, 200,  **g.req_data)
+
+

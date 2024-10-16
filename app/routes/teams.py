@@ -260,3 +260,21 @@ def get_permissions_based_on_role(args, role):
         permissions_value = Team.get_permissions_value_based_on_role(team_id, role)
         permissions_label = Configurations.get_permissions_label(role, permissions_value)
     return send_response(permissions_label, [], 200, **g.req_data)
+
+
+##REVIEW, SIMILAR ROUTES ALREADY EXIST -REVISAR YA EXISTIRIAN RUTAS(FUNCIONES) SIMILARES
+@teams.route('/scrum_master/role_check/<user_id>', methods=['GET'])
+def return_is_scrum_master(user_id):
+    members=Team.get_team_members(g.team_id)
+    if user_is_scrum_master_of_team(members,user_id):
+        print("is scrum master")
+        return send_response(True, [], 200, **g.req_data)
+    else:
+        print("is not scrum master")
+        return send_response(False, [], 200, **g.req_data)
+
+def user_is_scrum_master_of_team(team_members,user_id):
+    for member in team_members:
+        if member['role'] == 'Scrum Master' and member['_id']['$oid'] == user_id:
+            return True
+    return False

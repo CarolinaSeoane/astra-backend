@@ -347,3 +347,18 @@ class Sprint:
     @staticmethod
     def add_sprints(sprints):
         return MongoHelper().create_documents(SPRINTS_COL, sprints)
+
+
+    @staticmethod
+    def get_next_sprint(team_id):
+        '''
+        Returns the next future sprint for a given team.
+        '''
+        filter = {
+            'team': ObjectId(team_id),
+            'status': SprintStatus.FUTURE.value
+        }
+        sort = {'start_date': 1}
+        future_sprints = MongoHelper().get_documents_by(SPRINTS_COL, filter, sort)
+
+        return future_sprints[0] if future_sprints else None
