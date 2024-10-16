@@ -347,3 +347,11 @@ class Sprint:
     @staticmethod
     def add_sprints(sprints):
         return MongoHelper().create_documents(SPRINTS_COL, sprints)
+
+    @staticmethod
+    def get_total_stories_count(sprint_name, team_id):
+        match = {
+            "sprint.name": sprint_name,
+            "team": team_id
+        }
+        return len(MongoHelper().get_documents_by(STORIES_COL, match))

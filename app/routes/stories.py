@@ -247,3 +247,13 @@ def edit_story():
         return send_response([response.acknowledged], [], 201, **g.req_data)
     except Exception as e:
         return send_response([], [f"Failed to update story: {e}"], 500, **g.req_data)
+
+@stories.route('/delete', methods=['DELETE'])
+@use_args({"story_id": fields.Str(required=True)}, location="query")
+def delete_story(args):
+    try:
+        Story.delete(g.team_id, args["story_id"])
+        return send_response([], [], 204, **g.req_data)
+    except Exception as e:
+        print(f"error deleting story: {e}")
+        return send_response([], [], 500, **g.req_data)

@@ -123,3 +123,11 @@ class Story:
         story["story_status"] = new_status
         match = {'story_id': story["story_id"]}
         return MongoHelper().replace_document(STORIES_COL, match, new_document=story)
+
+    @staticmethod
+    def delete(team_id, story_id):
+        match = {
+            "team": ObjectId(team_id),
+            "story_id": story_id
+        }
+        return MongoHelper().delete_element_from_collection(STORIES_COL, match)

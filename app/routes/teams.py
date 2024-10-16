@@ -260,3 +260,11 @@ def get_permissions_based_on_role(args, role):
         permissions_value = Team.get_permissions_value_based_on_role(team_id, role)
         permissions_label = Configurations.get_permissions_label(role, permissions_value)
     return send_response(permissions_label, [], 200, **g.req_data)
+
+@teams.route('/is_member_allowed/<role>/<action>')
+def is_member_allowed(role, action):
+    if role == Role.SCRUM_MASTER.value:
+        return send_response(True, [], 200, **g.req_data) # scrum masters are allowed to perform all actions
+
+    allowed = Team.is_member_authorized(g.team_id, role, action)
+    return send_response(allowed, [], 200, **g.req_data)
