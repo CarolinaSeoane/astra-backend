@@ -64,7 +64,8 @@ def apply_banner_format(ceremonies):
             {
                 'name': f"{ceremony['ceremony_type']}",
                 'date': ceremony['ends']['$date'],
-                'in_progress': True
+                'in_progress': True,
+                'google_meet_link': ceremony['google_meet_config']["meetingUri"]
             }
         ])
     return formatted_ceremonies

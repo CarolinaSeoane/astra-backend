@@ -60,6 +60,6 @@ class Ceremony:
         '''
         filter = { "team": ObjectId(team_id), "starts": {"$gt": datetime.today()} }
         sort = {'starts': 1}
-        projection = {"ceremony_type", "starts", "ends"} if for_banner else {}
+        projection = {"ceremony_type", "starts", "ends", "google_meet_config.meetingUri"} if for_banner else {}
         return MongoHelper().get_documents_by(CEREMONIES_COL, filter=filter, sort=sort, projection=projection)
 
