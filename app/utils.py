@@ -57,8 +57,8 @@ def apply_banner_format(ceremonies):
     for ceremony in ceremonies:
         formatted_ceremonies.extend([
             {
-                'name': f"{ceremony['ceremony_type']} begins", # check timezones
-                'date': ceremony['starts']['$date'],
+                'name': f"{ceremony['ceremony_type']} begins",
+                'date': ceremony['starts']['$date'][:-1],
                 'in_progress': False
             },
             {
