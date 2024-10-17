@@ -1,14 +1,18 @@
 from flask import request, g
+import os
 
 from app.services.token import validate_jwt
 from app.utils import send_response
 
 from app import create_app
 
+
+HOST = os.getenv('ASTRA_HOST')
+
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    app.run(HOST, debug=True)
 
 
 excluded_routes = [
