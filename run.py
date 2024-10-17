@@ -8,11 +8,13 @@ from app import create_app
 
 
 HOST = os.getenv('ASTRA_HOST')
+PORT = os.getenv('PORT')
 
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(host=HOST, port=5000, debug=True)
+    print(f"Astra runnning on host {HOST} and port {PORT}")
+    app.run(host=HOST, port=PORT, debug=True)
 
 
 excluded_routes = [
