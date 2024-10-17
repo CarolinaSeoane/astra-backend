@@ -262,8 +262,8 @@ class Populate:
                 "username": self.username8,
                 "email": self.email8,
                 "profile_picture": self.pfp8,
-                "access_token": "COMPLETAR",
-                "refresh_token": "",
+                "access_token": "ya29.a0AcM612x9iPmfxIiJPix05MWPgbMZErmt41hOCFg-jaESyqO6RrrJybuNPCeKQ7C42c_kqxwdj_p3IO_mGjJs0gZ7phTInpj68IqilGHCRkYoeF6yOzX1jaqzBoe5hEP-jYYOrBOTIDUTLvcBH_WKqiDzXBm77ApYlAumKXGlaCgYKAT0SARASFQHGX2MiNm7wqRu61h6oQW4C1gCNhg0175",
+                "refresh_token": "1//0hpvlkdX2QmeACgYIARAAGBESNwF-L9Irbmh5tWeNjVI5UxUy82EhFW-onsJv-7EyjZ2ci65-PzjtTco9OJxNmvVtg6GVe-xLhZY",
                 "teams": [
                     {
                         "_id": self.team1_id,
@@ -454,7 +454,7 @@ class Populate:
                         "username": self.username8,
                         "email": "matmass03@gmail.com",
                         "profile_picture": self.pfp8,
-                        "role": Role.DEV.value,
+                        "role": Role.SCRUM_MASTER.value,
                         "member_status": MemberStatus.ACTIVE.value,
                     },
                     {
@@ -547,7 +547,7 @@ class Populate:
                         "username": self.username8,
                         "email": "matmass03@gmail.com",
                         "profile_picture": self.pfp8,
-                        "role": "Developer",
+                        "role": Role.SCRUM_MASTER.value,
                         "member_status": MemberStatus.ACTIVE.value,
                     },
                     {
