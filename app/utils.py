@@ -62,7 +62,6 @@ def list_format(stories_dict):
         story['completeness'] = completness
     return stories_dict
 
-
 def gantt_format(stories_dict):
     pass
 
@@ -76,6 +75,7 @@ def apply_banner_format(ceremonies):
                 'in_progress': False
             },
             {
+                '_id': ceremony['_id'],
                 'name': f"{ceremony['ceremony_type']}",
                 'date': ceremony['ends']['$date'],
                 'in_progress': True,
