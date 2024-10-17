@@ -7,12 +7,14 @@ from app.utils import send_response
 from app import create_app
 
 
-HOST = os.getenv('ASTRA_HOST')
-PORT = os.getenv('PORT')
+# HOST = os.getenv('ASTRA_HOST')
+# PORT = os.getenv('PORT')
 
 app = create_app()
 
 if __name__ == "__main__":
+    HOST = '0.0.0.0'
+    PORT = '10000'
     print(f"Astra runnning on host {HOST} and port {PORT}")
     app.run(host=HOST, port=PORT, debug=True)
 
