@@ -12,7 +12,7 @@ HOST = os.getenv('ASTRA_HOST')
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(HOST, debug=True)
+    app.run(host=HOST, port=5000, debug=True)
 
 
 excluded_routes = [
