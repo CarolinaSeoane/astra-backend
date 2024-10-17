@@ -4,7 +4,7 @@ class PostIt:
         self.content = content
         self.team_id = team_id
         self.category = category
-        self.ceremony_id = ceremony_id  # Nuevo campo
+        self.ceremony_id = ceremony_id  
     
     @classmethod
     def from_dict(cls, data):
@@ -12,7 +12,7 @@ class PostIt:
             content=data.get("content"),
             team_id=data.get("team_id"),
             category=data.get("category"),
-            ceremony_id=data.get("ceremony_id"),  # Nuevo campo
+            ceremony_id=data.get("ceremony_id"),  
             _id=data.get("_id")
         )
     
@@ -21,7 +21,7 @@ class PostIt:
             "content": self.content,
             "team_id": self.team_id,
             "category": self.category,
-            "ceremony_id": self.ceremony_id  # Nuevo campo
+            "ceremony_id": self.ceremony_id  
         }
         if self._id:
             post_it_dict["_id"] = self._id
