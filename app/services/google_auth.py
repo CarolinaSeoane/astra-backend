@@ -4,7 +4,7 @@ import requests
 
 CLIENT_ID = os.getenv('CLIENT_ID')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
-
+REDIRECT_URL = os.getenv('ASTRA_REDIRECT_URL')
 
 def exchange_code_for_tokens(auth_code):
     url = 'https://oauth2.googleapis.com/token'
@@ -13,7 +13,7 @@ def exchange_code_for_tokens(auth_code):
         'code': auth_code,
         'client_id': CLIENT_ID,
         'client_secret': CLIENT_SECRET,
-        'redirect_uri': 'http://localhost:3000',  # Matches Google Cloud Console set up
+        'redirect_uri': REDIRECT_URL, # Matches Google Cloud Console set up
         'grant_type': 'authorization_code'
     }
 
