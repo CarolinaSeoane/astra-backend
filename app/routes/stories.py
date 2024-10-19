@@ -3,6 +3,7 @@ from datetime import datetime
 from flask import Blueprint, g, request
 from webargs.flaskparser import use_args
 from webargs import fields
+from bson import ObjectId
 
 from app.models.story import Story
 from app.utils import send_response
@@ -11,6 +12,7 @@ from app.models.team import Team
 from app.models.sprint import Sprint
 from app.models.epic import Epic
 from app.models.task import Task
+from app.models.card import Card
 from app.models.configurations import Priority, Type, Configurations, Status
 from app.services.astra_scheduler import get_quarter
 
@@ -205,8 +207,14 @@ def create_story():
 
     try:
         response = Story.create_story(story)
+        
+        card_data = Card.from_story_and_team(story, g.team_id)
+        print("estoy")
+        Card.create_card(card_data)
+        
         return send_response([response.acknowledged], [], 201, **g.req_data)
     except Exception as e:
+        print(f"Error en create_story: {e}")
         return send_response([], [f"Failed to create story: {e}"], 500, **g.req_data)
 
 @stories.route('/view', methods=['GET'])
@@ -224,6 +232,7 @@ def edit_story():
     story['team'] = g.team_id
     date_now = datetime.combine(datetime.now().date(), datetime.min.time())
     old_story = Story.get_story_by_id(story["story_id"])
+    print(f"Received story for editing: {old_story}")
     if "_id" in story:
         del story["_id"]
     if old_story["sprint"]["name"] != story["sprint"]["name"]:
@@ -231,10 +240,16 @@ def edit_story():
 
     tasks = Task.format(story)
     story["tasks"] = tasks
-
     if Story.is_done(story):
         try:
+            print("entro")
             response = Story.finalize_story(story, g.team_id)
+            print("sigo")
+            card_data = Card.from_story_and_team(story, g.team_id)
+            print("card_data",card_data)
+            story_id = str(old_story["_id"]["$oid"]) 
+            print(f"Story ID1: {story_id}")
+            Card.update_card(story_id, card_data)
             return send_response([response.acknowledged], [], 201, **g.req_data)
         except Exception as e:
             return send_response([], [f"Failed to update story: {e}"], 500, **g.req_data)
@@ -242,16 +257,28 @@ def edit_story():
     story_status = Task.get_story_status(story["tasks"])
     if story_status == DOING and "start_date" not in story:
         story["start_date"] = date_now
+        print(f"Start date added: {date_now}")
     try:
         response = Story.update(story, story_status)
+        card_data = Card.from_story_and_team(story, g.team_id)
+        story_id = old_story["_id"]["$oid"] 
+        assigned_id = str(card_data['assigned']['$oid']) if isinstance(card_data['assigned'], dict) else str(card_data['assigned'])
+        sprint_id = str(card_data['sprint_id']['$oid']) if isinstance(card_data['sprint_id'], dict) else str(card_data['sprint_id'])
+
+        print(f"Story ID2: {story_id}, Assigned ID: {assigned_id}, Sprint ID: {sprint_id}")
+        Card.update_card(story_id, card_data)
         return send_response([response.acknowledged], [], 201, **g.req_data)
     except Exception as e:
+        print(f"Error updating story: {e}")
         return send_response([], [f"Failed to update story: {e}"], 500, **g.req_data)
 
 @stories.route('/delete', methods=['DELETE'])
 @use_args({"story_id": fields.Str(required=True)}, location="query")
 def delete_story(args):
     try:
+        print("estoy")
+        Card.delete_card(args["story_id"])
+        print("pase")
         Story.delete(g.team_id, args["story_id"])
         return send_response([], [], 204, **g.req_data)
     except Exception as e:

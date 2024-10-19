@@ -7,7 +7,7 @@ from app.db_connection import mongo
 from app.routes.utils import validate_user_is_active_member_of_team  
 from bson import ObjectId
 import traceback
-from datetime import datetime, timezone
+from datetime import datetime, timedelta
 
 post_its = Blueprint("post_its", __name__)
 
@@ -20,50 +20,42 @@ def apply_validate_user_is_active_member_of_team():
     return validate_user_is_active_member_of_team()
 
 def is_retroboard_active(team_id):
-    upcoming_ceremonies = Ceremony.get_upcoming_ceremonies_by_team_id(team_id)
-    current_time = datetime.now().replace(tzinfo=timezone.utc)
 
-    print("Upcoming ceremonies data:", upcoming_ceremonies) 
-    print("Current time:", current_time)
+    ceremony = Ceremony.get_current_ceremony_by_team_id(team_id)
     
-    for ceremony in upcoming_ceremonies:
-
-        print("Ceremony data:", ceremony)  
-
-        starts = ceremony.get('starts', {}).get('$date') 
-        ends = ceremony.get('ends', {}).get('$date', datetime.max)
-
-        print("Starts type:", type(starts), "Value:", starts)
-        print("Ends type:", type(ends), "Value:", ends)
-
-
-        if isinstance(starts, str):
-            starts = datetime.fromisoformat(starts.replace('Z', '+00:00'))
-        elif isinstance(starts, dict):
-            starts = datetime.fromisoformat(starts['$date'].replace('Z', '+00:00'))
-        if isinstance(ends, str):
-            ends = datetime.fromisoformat(ends.replace('Z', '+00:00')) 
-        elif isinstance(ends, dict):
-            ends = datetime.fromisoformat(ends['$date'].replace('Z', '+00:00'))
-       
-        if isinstance(starts, dict):
-            print("Expected 'starts' to be a datetime or str, but got a dict:", starts)
+    if not ceremony:
+        upcoming_ceremonies = Ceremony.get_upcoming_ceremonies_by_team_id(team_id)
+        if upcoming_ceremonies:
+            ceremony = upcoming_ceremonies[0] 
+        else:
             return False  
 
-        if isinstance(ends, dict):
-            print("Expected 'ends' to be a datetime or str, but got a dict:", ends)
-            return False  
+    print(ceremony)
 
+    if isinstance(ceremony, list):
+        ceremony = ceremony[0]
 
+    starts = ceremony.get('starts')
+    ends = ceremony.get('ends')
 
-        if isinstance(starts, datetime) and isinstance(ends, datetime):
-            print("Converted Starts:", starts)
-            print("Converted Ends:", ends)
-            
-            if starts <= current_time <= ends:
-                return True  
-            
-    return False
+    if isinstance(starts, dict) and '$date' in starts:
+        starts = starts['$date']
+    if isinstance(ends, dict) and '$date' in ends:
+        ends = ends['$date']
+
+    if isinstance(starts, str):
+        starts = datetime.fromisoformat(starts)
+    if isinstance(ends, str):
+        ends = datetime.fromisoformat(ends)
+
+    if starts.tzinfo is not None:
+        starts = starts.replace(tzinfo=None)
+    if ends.tzinfo is not None:
+        ends = ends.replace(tzinfo=None)
+
+    start_time_with_buffer = starts - timedelta(minutes=10)
+
+    return start_time_with_buffer <= datetime.now() <= ends
 
 @post_its.route("/", methods=['GET'])
 @use_args({'team_id': fields.Str(required=True), 'ceremony_id': fields.Str(required=True)}, location='query')

@@ -63,3 +63,25 @@ class Ceremony:
         projection = {"_id","ceremony_type", "starts", "ends", "google_meet_config.meetingUri"} if for_banner else {}
 
         return MongoHelper().get_documents_by(CEREMONIES_COL, filter=filter, sort=sort, projection=projection)
+    
+    @staticmethod
+    def get_current_ceremony_by_team_id(team_id):
+        '''
+        Returns the current ceremony for the given team_id,
+        or None if no current ceremony is found.
+        '''
+        current_time = datetime.now()
+        filter = {
+            "team": ObjectId(team_id),
+            "starts": {"$lte": current_time},  # La ceremonia ha comenzado
+            "ends": {"$gte": current_time}     # La ceremonia no ha terminado
+        }
+        
+        # Intentar obtener la ceremonia actual
+        current_ceremony = MongoHelper().get_documents_by(
+            CEREMONIES_COL,
+            filter=filter,
+            sort={"starts": 1  # Opcional: ordenar por fecha de inicio
+        })
+        
+        return current_ceremony[0] if current_ceremony else None 
