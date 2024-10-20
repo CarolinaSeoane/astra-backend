@@ -284,3 +284,18 @@ def delete_story(args):
     except Exception as e:
         print(f"error deleting story: {e}")
         return send_response([], [], 500, **g.req_data)
+
+
+@stories.route('/backlog', methods=['GET'])
+@use_args({'team_id': fields.Str(required=True)}, location='query')
+def get_backlog(args):
+    team_id = args.get('team_id')
+    #team_id = args['team_id']  # Extraer team_id de los argumentos
+    #sprint = args['sprint'] 
+    try:
+        stories = Story.get_backlog_stories(team_id)  # Llamar a la función mejorada
+        print("stories", stories)
+        return send_response(stories, [], 200, **g.req_data)  # Retornar historias
+    except Exception as e:
+        print(f"Error retrieving backlog stories: {e}")
+        return send_response([], [f"Failed to retrieve backlog stories: {e}"], 200, **g.req_data)

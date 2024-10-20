@@ -131,3 +131,17 @@ class Story:
             "story_id": story_id
         }
         return MongoHelper().delete_element_from_collection(STORIES_COL, match)
+
+    @staticmethod
+    def get_backlog_stories(team_id):
+        '''
+        Returns active sprints (Finished and Current) for a given team. Excludes the Backlog sprint.
+        '''
+        filter = {
+            'team': ObjectId(team_id), 
+             'sprint.name': "Backlog" 
+        }
+        documents = MongoHelper().get_documents_by('stories', filter)
+
+        print("documents", documents)
+        return documents if documents else None
