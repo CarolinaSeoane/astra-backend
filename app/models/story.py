@@ -143,5 +143,25 @@ class Story:
         }
         documents = MongoHelper().get_documents_by('stories', filter)
 
-        print("documents", documents)
+        #print("documents", documents)
         return documents if documents else None
+
+    #HERE--------------------------------------
+    #want the story_status
+    @staticmethod
+    def get_list_stories_by_team_id_with_story_status(team_id, sprint):
+        '''
+        Returns all stories for the given team_id and sprint_name in list format.
+        If no stories are found, returns an empty list.
+        '''
+        #print("sprint.name", sprint)
+
+        filter = {
+        'team': ObjectId(team_id),  # Convert ObjectId to string for comparison
+        'sprint.name': sprint          # Directly use the sprint name
+        }
+
+        stories = MongoHelper().get_documents_by(STORIES_COL, filter=filter)
+        #print("stories", stories)
+        return list_format(stories)
+

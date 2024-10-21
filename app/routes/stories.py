@@ -299,3 +299,25 @@ def get_backlog(args):
     except Exception as e:
         print(f"Error retrieving backlog stories: {e}")
         return send_response([], [f"Failed to retrieve backlog stories: {e}"], 200, **g.req_data)
+
+
+#convine list with story status that doesnot exist in stories/<view>
+@stories.route('/list_with_story_status', methods=['GET'])
+@use_args({'team_id': fields.Str(required=True), 'sprint': fields.Str(required=True)}, location='query')
+def list_with_story_status(args):
+    team_id = args.get('team_id')
+    sprint =  args.get('sprint')
+
+    #print("    team_id",team_id )
+    
+    #print("    sprint ", sprint)
+    #team_id = args['team_id']  # Extraer team_id de los argumentos
+    #sprint = args['sprint'] 
+    try:
+        stories = Story.get_list_stories_by_team_id_with_story_status(team_id, sprint)  # Llamar a la función mejorada
+        #print("stories", stories)
+        return send_response(stories, [], 200, **g.req_data)  # Retornar historias
+    except Exception as e:
+        #print(f"Error retrieving backlog stories: {e}")
+        return send_response([], [f"Failed to retrieve backlog stories: {e}"], 200, **g.req_data)
+
