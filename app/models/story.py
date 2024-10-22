@@ -3,7 +3,7 @@ from bson import ObjectId
 
 from app.models.sprint import Sprint
 from app.models.task import Task
-from app.utils import kanban_format, list_format
+from app.utils import kanban_format, list_format, list_format_with_task_details
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import Configurations, CollectionNames, Status
 
@@ -132,6 +132,7 @@ class Story:
         }
         return MongoHelper().delete_element_from_collection(STORIES_COL, match)
 
+
     @staticmethod
     def get_backlog_stories(team_id):
         '''
@@ -142,12 +143,11 @@ class Story:
              'sprint.name': "Backlog" 
         }
         documents = MongoHelper().get_documents_by('stories', filter)
-
+        documents = list_format_with_task_details(documents)
         #print("documents", documents)
         return documents if documents else None
 
-    #HERE--------------------------------------
-    #want the story_status
+
     @staticmethod
     def get_list_stories_by_team_id_with_story_status(team_id, sprint):
         '''
@@ -163,5 +163,7 @@ class Story:
 
         stories = MongoHelper().get_documents_by(STORIES_COL, filter=filter)
         #print("stories", stories)
-        return list_format(stories)
+        listado = list_format_with_task_details(stories)
+        #print("listado", listado)
+        return listado
 
