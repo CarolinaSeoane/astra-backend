@@ -12,7 +12,6 @@ from app.models.team import Team
 from app.models.sprint import Sprint
 from app.models.epic import Epic
 from app.models.task import Task
-from app.models.card import Card
 from app.models.user import User
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import Priority, Type, Configurations, Status
@@ -210,10 +209,6 @@ def create_story():
     try:
         response = Story.create_story(story)
         
-        #card_data = Card.from_story_and_team(story, g.team_id)
-        #print("estoy")
-        #Card.create_card(card_data)
-        
         return send_response([response.acknowledged], [], 201, **g.req_data)
     except Exception as e:
         print(f"Error en create_story: {e}")
@@ -235,12 +230,12 @@ def edit_story():
     date_now = datetime.combine(datetime.now().date(), datetime.min.time())
     old_story = Story.get_story_by_id(story["story_id"])
     print(f"Received story for editing: {old_story}")
-    user = get_current_user()  # Esta función debe obtener el usuario actual
+    user = get_current_user() 
     username = user["username"]
     modified_story_info = {
         "story_id": story["story_id"],
         "title": story["title"],
-        #"description": old_story["description"],
+
         "modified_by": username,
         "modified_at": datetime.now().date().isoformat(),
         "sprint": story["sprint"]["name"],
@@ -255,15 +250,9 @@ def edit_story():
     story["tasks"] = tasks
     if Story.is_done(story):
         try:
-            #print("entro")
+            
             response = Story.finalize_story(story, g.team_id)
-            #print("sigo")
-            #card_data = Card.from_story_and_team(story, g.team_id)
-            #print("card_data",card_data)
-            #story_id = str(old_story["_id"]["$oid"]) 
-            #print(f"Story ID1: {story_id}")
-            #Card.update_card(story_id, card_data)
-        
+
             return send_response([response.acknowledged], [], 201, **g.req_data)
         except Exception as e:
             return send_response([], [f"Failed to update story: {e}"], 500, **g.req_data)
@@ -274,17 +263,9 @@ def edit_story():
         print(f"Start date added: {date_now}")
     try:
         response = Story.update(story, story_status)
-        #card_data = Card.from_story_and_team(story, g.team_id)
-        #story_id = old_story["_id"]["$oid"] 
-        #assigned_id = str(card_data['assigned']['$oid']) if isinstance(card_data['assigned'], dict) else str(card_data['assigned'])
-        #sprint_id = str(card_data['sprint_id']['$oid']) if isinstance(card_data['sprint_id'], dict) else str(card_data['sprint_id'])
-
-        #print(f"Story ID2: {story_id}, Assigned ID: {assigned_id}, Sprint ID: {sprint_id}")
-        #Card.update_card(story_id, card_data)
         save_modified_story(
                 modified_story_info["story_id"],
                 modified_story_info["title"],
-                #modified_story_info["description"],
                 modified_story_info["modified_by"],
                 modified_story_info["modified_at"],
                 modified_story_info["sprint"],
@@ -300,9 +281,6 @@ def edit_story():
 def delete_story(args):
     mongo_helper = MongoHelper()
     try:
-        #print("estoy")
-        #Card.delete_card(args["story_id"])
-        #print("pase")
         Story.delete(g.team_id, args["story_id"])
         result = mongo_helper.delete_many("modified_stories", {
             "team_id": g.team_id,
@@ -319,11 +297,10 @@ def delete_story(args):
 def get_modified_stories():
     mongo_helper = MongoHelper()
     team_id = request.args.get('team_id')
-    sprint_id = request.args.get('sprint')  # Asegúrate de que esto coincida con la clave en la URL
+    sprint_id = request.args.get('sprint')
     
     print(f"Received team_id: {team_id}, sprint: {sprint_id}")
 
-    # Crea el filtro basado en los parámetros recibidos
     filter_query = {'team_id': ObjectId(team_id)}
 
     if sprint_id:
@@ -350,10 +327,45 @@ def save_modified_story(story_id, title, username, modified_at,sprint,team_id):
     print(f"Result of save: {result}")
 
 def get_current_user():
-    user_id = g._id  # Supongo que g.user_id está disponible desde el token JWT
+    user_id = g._id  
     if user_id:
-    # Buscar al usuario en la base de datos
         user = User.get_user_by({"_id": ObjectId(user_id)})
         return user
     else:
         return None
+    
+@stories.route('/backlog', methods=['GET'])
+@use_args({'team_id': fields.Str(required=True), 'sprint': fields.Str(required=False)}, location='query')
+def get_backlog(args):
+    team_id = args.get('team_id')
+    #sprint =  args.get('sprint')
+    #team_id = args['team_id']  # Extraer team_id de los argumentos
+    #sprint = args['sprint'] 
+    try:
+        stories = Story.get_backlog_stories(team_id)  # Llamar a la función mejorada
+        #print("stories", stories)
+        return send_response(stories, [], 200, **g.req_data)  # Retornar historias
+    except Exception as e:
+        print(f"Error retrieving backlog stories: {e}")
+        return send_response([], [f"Failed to retrieve backlog storiess: {e}"], 200, **g.req_data)
+
+
+#convine list with story status that doesnot exist in stories/<view>
+@stories.route('/list_with_story_status', methods=['GET'])
+@use_args({'team_id': fields.Str(required=True), 'sprint': fields.Str(required=True)}, location='query')
+def list_with_story_status(args):
+    team_id = args.get('team_id')
+    sprint =  args.get('sprint')
+
+    #print("    team_id",team_id )
+    
+    #print("    sprint ", sprint)
+    #team_id = args['team_id']  # Extraer team_id de los argumentos
+    #sprint = args['sprint'] 
+    try:
+        stories = Story.get_list_stories_by_team_id_with_story_status(team_id, sprint)  # Llamar a la función mejorada
+        #print("stories", stories)
+        return send_response(stories, [], 200, **g.req_data)  # Retornar historias
+    except Exception as e:
+        #print(f"Error retrieving backlog stories: {e}")
+        return send_response([], [f"Failed to retrieve backlog stories: {e}"], 200, **g.req_data)

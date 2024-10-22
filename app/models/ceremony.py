@@ -73,15 +73,14 @@ class Ceremony:
         current_time = datetime.now()
         filter = {
             "team": ObjectId(team_id),
-            "starts": {"$lte": current_time},  # La ceremonia ha comenzado
-            "ends": {"$gte": current_time}     # La ceremonia no ha terminado
+            "starts": {"$lte": current_time}, 
+            "ends": {"$gte": current_time}   
         }
         
-        # Intentar obtener la ceremonia actual
         current_ceremony = MongoHelper().get_documents_by(
             CEREMONIES_COL,
             filter=filter,
-            sort={"starts": 1  # Opcional: ordenar por fecha de inicio
+            sort={"starts": 1  
         })
         
         return current_ceremony[0] if current_ceremony else None 
@@ -89,6 +88,6 @@ class Ceremony:
     @staticmethod
     def get_ceremony_by_id(ceremony_id):
         if not ObjectId.is_valid(ceremony_id):
-            return None  # O lanzar una excepción si prefieres
+            return None 
         
         return MongoHelper().get_document_by(CEREMONIES_COL, {'_id': ObjectId(ceremony_id)})

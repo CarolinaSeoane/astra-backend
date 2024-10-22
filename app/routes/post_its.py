@@ -172,7 +172,7 @@ def delete_post_it(post_it_id):
         return jsonify({"error": str(e)}), 500
 
 @post_its.route("/save_board", methods=['POST'])
-@use_args({'board_state': fields.Raw(required=True)}, location='json')  # Asegúrate de ajustar el esquema si es necesario
+@use_args({'board_state': fields.Raw(required=True)}, location='json')
 def save_board_state(args):
     team_id = request.args.get('team_id')
     ceremony_id = request.args.get('ceremony_id')
@@ -180,19 +180,19 @@ def save_board_state(args):
     if not team_id or not ceremony_id:
         return jsonify({"error": "team_id and ceremony_id are required"}), 400
 
-    # Verifica si la ceremonia está activa
+    
     if not is_retroboard_active(team_id):
         return jsonify({"error": "Board state can only be saved after the ceremony."}), 403
 
     board_state = args.get('board_state')
 
     try:
-        # Guarda el estado del tablero en la base de datos
+        
         mongo.db.boards.insert_one({
             'team_id': team_id,
             'ceremony_id': ceremony_id,
             'board_state': board_state,
-            'saved_at': datetime.utcnow()  # Puedes agregar una marca de tiempo
+            'saved_at': datetime.utcnow()
         })
         
         return jsonify({"message": "Board state saved successfully."}), 201
