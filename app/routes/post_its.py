@@ -170,3 +170,35 @@ def delete_post_it(post_it_id):
     except Exception as e:
         print(f"Error: {str(e)}")
         return jsonify({"error": str(e)}), 500
+
+@post_its.route("/save_board", methods=['POST'])
+@use_args({'board_state': fields.Raw(required=True)}, location='json')  # Asegúrate de ajustar el esquema si es necesario
+def save_board_state(args):
+    team_id = request.args.get('team_id')
+    ceremony_id = request.args.get('ceremony_id')
+
+    if not team_id or not ceremony_id:
+        return jsonify({"error": "team_id and ceremony_id are required"}), 400
+
+    # Verifica si la ceremonia está activa
+    if not is_retroboard_active(team_id):
+        return jsonify({"error": "Board state can only be saved after the ceremony."}), 403
+
+    board_state = args.get('board_state')
+
+    try:
+        # Guarda el estado del tablero en la base de datos
+        mongo.db.boards.insert_one({
+            'team_id': team_id,
+            'ceremony_id': ceremony_id,
+            'board_state': board_state,
+            'saved_at': datetime.utcnow()  # Puedes agregar una marca de tiempo
+        })
+        
+        return jsonify({"message": "Board state saved successfully."}), 201
+    except Exception as e:
+        error_message = str(e)
+        traceback_str = traceback.format_exc()
+        print(f"Error: {error_message}")
+        print(f"Traceback: {traceback_str}")
+        return jsonify({"error": error_message}), 500

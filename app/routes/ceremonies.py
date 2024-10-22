@@ -1,4 +1,4 @@
-from flask import Blueprint, request, g
+from flask import Blueprint, request, g,jsonify
 from webargs.flaskparser import use_args
 from webargs import fields
 from datetime import datetime
@@ -92,3 +92,14 @@ def filters(args):
         }
 
     return send_response(filters, [], 200, **g.req_data)
+
+@ceremonies.route('/<ceremony_id>', methods=['GET'])
+def get_ceremony(ceremony_id):
+    try:
+        ceremony = Ceremony.get_ceremony_by_id(ceremony_id)
+        if not ceremony:
+            return jsonify({'error': 'Ceremony not found'}), 404
+
+        return jsonify(ceremony), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500

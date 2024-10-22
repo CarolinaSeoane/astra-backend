@@ -85,3 +85,10 @@ class Ceremony:
         })
         
         return current_ceremony[0] if current_ceremony else None 
+    
+    @staticmethod
+    def get_ceremony_by_id(ceremony_id):
+        if not ObjectId.is_valid(ceremony_id):
+            return None  # O lanzar una excepción si prefieres
+        
+        return MongoHelper().get_document_by(CEREMONIES_COL, {'_id': ObjectId(ceremony_id)})

@@ -70,3 +70,8 @@ class MongoHelper:
 
     def replace_document(self, collection_name, filter, new_document):
         return self.astra.db[collection_name].replace_one(filter, new_document)
+
+    def delete_many(self, collection_name, filter):
+        """Elimina múltiples documentos de una colección basándose en un filtro."""
+        result = self.astra.db[collection_name].delete_many(filter)
+        return result
