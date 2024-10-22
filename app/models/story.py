@@ -3,7 +3,7 @@ from bson import ObjectId
 
 from app.models.sprint import Sprint
 from app.models.task import Task
-from app.utils import kanban_format, list_format
+from app.utils import kanban_format, list_format, list_format_with_task_details
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import Configurations, CollectionNames, Status
 
@@ -131,3 +131,39 @@ class Story:
             "story_id": story_id
         }
         return MongoHelper().delete_element_from_collection(STORIES_COL, match)
+
+
+    @staticmethod
+    def get_backlog_stories(team_id):
+        '''
+        Returns active sprints (Finished and Current) for a given team. Excludes the Backlog sprint.
+        '''
+        filter = {
+            'team': ObjectId(team_id), 
+             'sprint.name': "Backlog" 
+        }
+        documents = MongoHelper().get_documents_by('stories', filter)
+        documents = list_format_with_task_details(documents)
+        #print("documents", documents)
+        return documents if documents else None
+
+
+    @staticmethod
+    def get_list_stories_by_team_id_with_story_status(team_id, sprint):
+        '''
+        Returns all stories for the given team_id and sprint_name in list format.
+        If no stories are found, returns an empty list.
+        '''
+        #print("sprint.name", sprint)
+
+        filter = {
+        'team': ObjectId(team_id),  # Convert ObjectId to string for comparison
+        'sprint.name': sprint          # Directly use the sprint name
+        }
+
+        stories = MongoHelper().get_documents_by(STORIES_COL, filter=filter)
+        #print("stories", stories)
+        listado = list_format_with_task_details(stories)
+        #print("listado", listado)
+        return listado
+

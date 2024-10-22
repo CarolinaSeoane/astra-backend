@@ -85,3 +85,23 @@ def apply_banner_format(ceremonies):
             }
         ])
     return formatted_ceremonies
+
+def list_format_with_task_details(stories_dict):
+    for story in stories_dict:
+        total_tasks = 0
+        tasks_completed = 0
+
+        for task in story.get('tasks', []):
+            total_tasks += 1
+            if task['status'] == Status.DONE.value:
+                tasks_completed += 1
+
+        try:
+            completness = round(tasks_completed/total_tasks * 100)
+            story.pop('tasks')
+        except Exception:
+            completness = 0
+
+        story['completeness'] = completness
+        story['count_tasks'] = total_tasks
+    return stories_dict
