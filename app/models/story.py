@@ -6,7 +6,7 @@ from app.models.task import Task
 from app.utils import kanban_format, list_format, list_format_with_task_details
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import Configurations, CollectionNames, Status
-
+from app.db_connection import mongo
 
 STORIES_COL = CollectionNames.STORIES.value
 DONE_STATUS = Status.DONE.value
@@ -166,4 +166,79 @@ class Story:
         listado = list_format_with_task_details(stories)
         #print("listado", listado)
         return listado
+
+
+
+    @staticmethod
+    def put_new_status_to_story(team_id, story_id, new_status):
+        '''
+       
+        '''
+        print("team_id.name", team_id)
+        print("story_id.name", story_id)
+        print("new_status.name", new_status)
+        
+
+
+        result = mongo.db.stories.update_one(
+            {
+                'story_id': story_id, 
+                'team': ObjectId(team_id)
+            },  # Filtrar por story_id y team_id
+            {
+                '$set': {'story_status': new_status}
+            }  # Actualizar el campo story_status
+        )
+        print("result mongo",  result)
+
+        if result.modified_count > 0:
+           return True
+        else:
+          return False
+
+          
+    @staticmethod
+    def put_new_status_and_new_sprint_to_story(team_id, story_id, new_sprint_name, new_status):
+        '''
+        new sprint
+        '''
+        print("team_id.name", team_id)
+        print("story_id.name", story_id)
+        print("new_status.name", new_status)
+        print("new_sprint_name.name", new_sprint_name)
+
+        #Sprint.get_sprint_by()
+        res_sprint = Sprint.get_sprint_by({
+            "name": new_sprint_name,
+            "team": ObjectId(team_id)
+        })
+
+        print("rest sprint", res_sprint)
+
+        sprint_id = res_sprint["_id"]["$oid"]
+
+        print("Sprint ID:", sprint_id)
+
+        
+        result = mongo.db.stories.update_one(
+            {
+                'story_id': story_id,
+                'team': ObjectId(team_id)
+            },
+            {
+                '$set': {
+                    'story_status': new_status,
+                    'sprint': {
+                        '_id': sprint_id,  # Guardamos el ObjectId directamente
+                        'name': new_sprint_name
+                    }
+                }
+            }
+        )
+        print("result mongo",  result)
+       
+        if result.modified_count > 0:
+            return True
+        else:
+            return False
 
