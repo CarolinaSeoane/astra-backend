@@ -242,3 +242,26 @@ class Story:
         else:
             return False
 
+    @staticmethod
+    def put_new_priority_to_story_backlog(team_id, story_id, new_priority):
+        '''       
+        '''
+        print("team_id.name", team_id)
+        print("story_id.name", story_id)
+        print("new_priority.name", new_priority)
+        
+        result = mongo.db.stories.update_one(
+            {
+                'story_id': story_id, 
+                'team': ObjectId(team_id)
+            },  # Filtrar por story_id y team_id
+            {
+                '$set': {'priority': new_priority}
+            }  # Actualizar el campo story_status
+        )
+        print("result mongo",  result)
+
+        if result.modified_count > 0:
+           return True
+        else:
+          return False
