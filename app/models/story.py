@@ -149,16 +149,21 @@ class Story:
 
 
     @staticmethod
-    def get_list_stories_by_team_id_with_story_status(team_id, sprint):
+    def get_list_stories_in_team_id_by_sprint_current_and_selected(team_id, sprint_current, sprint_selected):
         '''
         Returns all stories for the given team_id and sprint_name in list format.
         If no stories are found, returns an empty list.
         '''
         #print("sprint.name", sprint)
-
+        '''
         filter = {
         'team': ObjectId(team_id),  # Convert ObjectId to string for comparison
         'sprint.name': sprint          # Directly use the sprint name
+        }
+        '''
+        filter = {
+            'team': ObjectId(team_id),
+            'sprint.name': {'$in': [sprint_selected, sprint_current, "Backlog"]}
         }
 
         stories = MongoHelper().get_documents_by(STORIES_COL, filter=filter)
@@ -166,6 +171,8 @@ class Story:
         listado = list_format_with_task_details(stories)
         #print("listado", listado)
         return listado
+
+
 
 
 
@@ -196,15 +203,14 @@ class Story:
         else:
           return False
 
-          
+             
     @staticmethod
-    def put_new_status_and_new_sprint_to_story(team_id, story_id, new_sprint_name, new_status):
+    def put_new_status_and_new_sprint_to_story(team_id, story_id, new_sprint_name):
         '''
         new sprint
         '''
         print("team_id.name", team_id)
         print("story_id.name", story_id)
-        print("new_status.name", new_status)
         print("new_sprint_name.name", new_sprint_name)
 
         #Sprint.get_sprint_by()
@@ -227,7 +233,7 @@ class Story:
             },
             {
                 '$set': {
-                    'story_status': new_status,
+                    #'story_status': new_status,
                     'sprint': {
                         '_id': sprint_id,  # Guardamos el ObjectId directamente
                         'name': new_sprint_name
@@ -235,7 +241,7 @@ class Story:
                 }
             }
         )
-        print("result mongo",  result)
+        #print("result mongo",  result)
        
         if result.modified_count > 0:
             return True

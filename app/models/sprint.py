@@ -355,3 +355,20 @@ class Sprint:
             "team": team_id
         }
         return len(MongoHelper().get_documents_by(STORIES_COL, match))
+
+
+    @staticmethod
+    def get_future_sprints(team_id):
+        '''
+        Returns future sprints (Future and Current) for a given team. Excludes the Backlog sprint.
+        '''
+        filter = {
+            'team': ObjectId(team_id),
+            '$or': [
+                {'status': SprintStatus.CURRENT.value},
+                {'status': SprintStatus.FUTURE.value}
+            ]
+        }
+
+        documents = MongoHelper().get_documents_by('sprints', filter)
+        return documents if documents else None
