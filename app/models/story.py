@@ -80,7 +80,52 @@ class Story:
             return list_format(stories)
         else:
             return stories
+    
+    @staticmethod
+    def get_standup_stories(team_id: ObjectId, view_type, **kwargs):
+        '''
+        Returns [] if no stories are found for the given team_id
+        '''
+        if view_type == 'kanban':
+            projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.title', 'tasks.status', 'creation_date'}
+        elif view_type == 'list':
+            projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.status', 'story_type', 'description', 'creation_date'}
+        else:
+            projection = None
 
+        filter = {
+            "team": {"$eq": team_id},
+        }
+
+        # Add optional filters if provided in kwargs
+        if 'assigned_to' in kwargs and kwargs['assigned_to']:
+            filter["assigned_to.username"] = kwargs['assigned_to']
+        if 'sprint' in kwargs and kwargs['sprint']:
+            filter["sprint.name"] = kwargs['sprint']
+        if 'epic' in kwargs and kwargs['epic']:
+            filter["epic.title"] = kwargs['epic']
+        if 'priority' in kwargs and kwargs['priority']:
+            filter["priority"] = kwargs['priority']
+        if 'story_type' in kwargs and kwargs['story_type']:
+            filter["story_type"] = kwargs['story_type']
+        if 'story_id' in kwargs and kwargs['story_id']:
+            filter["story_id"] = kwargs['story_id']
+        if 'story_status' in kwargs and kwargs['story_status']:
+            filter["story_status"] = kwargs['story_status']
+        
+        # Filtrar por fecha de creación si se proporciona ceremony_date
+        if 'ceremony_date' in kwargs and kwargs['ceremony_date']:
+            filter["creation_date"] = {"$lt": kwargs['ceremony_date']}
+
+        stories = MongoHelper().get_documents_by(STORIES_COL, filter=filter, projection=projection)
+
+        if view_type == 'kanban':
+            return kanban_format(stories)
+        elif view_type == 'list':
+            return list_format(stories)
+        else:
+            return stories
+        
     @staticmethod
     def get_story_fields(sections=False):
         story_fields = Configurations.get_all_possible_story_fields()['story_fields']

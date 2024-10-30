@@ -1,5 +1,5 @@
 import random
-from datetime import datetime
+from datetime import datetime, timedelta
 from flask import Blueprint, g, request,jsonify
 from webargs.flaskparser import use_args
 from webargs import fields
@@ -13,6 +13,8 @@ from app.models.sprint import Sprint
 from app.models.epic import Epic
 from app.models.task import Task
 from app.models.user import User
+from app.models.ceremony import Ceremony
+from app.models.standupStory import StandupStory
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import Priority, Type, Configurations, Status
 from app.services.astra_scheduler import get_quarter
@@ -45,6 +47,33 @@ def apply_validate_user_is_active_member_of_team():
     }, location='query')
 def stories_list(args, view_type):
     stories = Story.get_stories_by_team_id(g.team_id, view_type, **args)
+    return send_response(stories, [], 200, **g.req_data)
+
+@stories.route("/standup/<view_type>", methods=['GET'])
+@use_args({
+    'sprint': fields.Str(required=False),
+    'assigned_to': fields.Str(required=False),
+    'epic': fields.Str(required=False),
+    'priority': fields.Str(required=False),
+    'story_type': fields.Str(required=False),
+    'story_id': fields.Str(required=False),
+    'ceremony_id': fields.Str(required=False)  # Agregar ceremony_id como parámetro
+}, location='query')
+def stories_list(args, view_type):
+    # Si se proporciona ceremony_id, obtener la fecha de la ceremonia
+    ceremony_date = None
+    if 'ceremony_id' in args and args['ceremony_id']:
+        ceremony_date = get_ceremony_date(args['ceremony_id'])
+        if ceremony_date is None:
+            return send_response([], ["No se pudo obtener la fecha de la ceremonia."], 400)
+    
+    # Obtener las historias de acuerdo a los parámetros
+    stories = Story.get_standup_stories(g.team_id, view_type, **args)
+    
+    # Filtrar las historias por fecha de creación si ceremony_date está disponible
+    if ceremony_date:
+        stories = [story for story in stories if 'creation_date' in story and story['creation_date'] < ceremony_date]
+
     return send_response(stories, [], 200, **g.req_data)
 
 @stories.route("/fields", methods=['GET'])
@@ -205,7 +234,7 @@ def create_story():
     tasks = Task.format(story)
     story['tasks'] = tasks
     story['story_status'] = Status.NOT_STARTED.value
-
+    story["creation_date"] = datetime.combine(datetime.now().date(), datetime.min.time())
     try:
         response = Story.create_story(story)
         
@@ -237,7 +266,7 @@ def edit_story():
         "title": story["title"],
 
         "modified_by": username,
-        "modified_at": datetime.now().date().isoformat(),
+        "modified_at": date_now,#datetime.now().date().isoformat(),
         "sprint": story["sprint"]["name"],
         "team_id":story['team']
     }
@@ -298,10 +327,21 @@ def get_modified_stories():
     mongo_helper = MongoHelper()
     team_id = request.args.get('team_id')
     sprint_id = request.args.get('sprint')
+    ceremony_id = request.args.get('ceremony_id')
     
-    print(f"Received team_id: {team_id}, sprint: {sprint_id}")
-
-    filter_query = {'team_id': ObjectId(team_id)}
+    print(f"Received team_id: {team_id}, sprint: {sprint_id}, ceremony_id: {ceremony_id}")
+    
+    ceremony_date = get_ceremony_date(ceremony_id)
+    if not ceremony_date:
+        return jsonify({"error": "No upcoming ceremony found for the team"}), 404
+    #ceremony_date_str = ceremony_date.strftime("%Y-%m-%d")
+    #print("fecha",ceremony_date_str)
+    print("fecha2",ceremony_date)
+    filter_query = {
+        'team_id': ObjectId(team_id),
+        'modified_at': {'$lt': ceremony_date}
+        #'modified_at': {ceremony_date_str}
+        }
 
     if sprint_id:
         filter_query['sprint'] = sprint_id
@@ -333,6 +373,123 @@ def get_current_user():
         return user
     else:
         return None
+
+def get_ceremony_date(ceremony_id):
+    """Obtiene la fecha de la ceremonia especificada por su ID y retorna el día anterior."""
+    
+    ceremony = Ceremony.get_ceremony_by_id(ceremony_id)  # Asegúrate de tener esta función en tu modelo
+
+    print(f"Ceremony data: {ceremony}")  # Imprimir ceremonia
+
+    if not ceremony:
+        print("Error: No se encontró la ceremonia con el ID proporcionado.")
+        return None
+
+    # Comprobar si 'ends' está en ceremony y que no sea None o vacío
+    if 'ends' not in ceremony or not ceremony['ends']:
+        print("Error: No se encontró la fecha de fin ('ends') en la ceremonia.")
+        return None
+
+    # Asegúrate de que ceremony['ends'] sea un dict y contiene la clave '$date'
+    if isinstance(ceremony['ends'], dict) and '$date' in ceremony['ends']:
+        # Extraer la fecha de '$date' y convertirla a un objeto datetime
+        ends_date_str = ceremony['ends']['$date']  # Esto es un string en formato ISO
+        ceremony_date = datetime.fromisoformat(ends_date_str[:-1]) - timedelta(days=1)  # Convertir a datetime y restar un día
+        print(f"Using ceremony date for filtering: {ceremony_date}")
+        return ceremony_date
+    else:
+        print("Error: 'ends' no es un dict o no contiene '$date'.")
+        return None
+
+@stories.route('/standup_boards', methods=['POST'])
+def save_standup_board_stories():
+    try:
+        # Extrae `ceremony_id` y `current_stories` del cuerpo de la solicitud
+        data = request.json
+        team_id = request.args.get('team_id')
+        if not team_id:
+            return jsonify({"error": "team_id is required"}), 400
+        team_ids = ObjectId(team_id)
+        ceremony_id = data.get('ceremony_id')
+        current_stories = data.get('current_stories', [])
+        print("stories",current_stories)
+        # Verifica que `current_stories` sea una lista y tenga contenido
+        if not ceremony_id or not current_stories:
+            return jsonify({"error": "ceremony_id and current_stories are required"}), 400
+
+        # Guarda cada historia en `current_stories`, agregando `ceremony_id`
+        for story in current_stories:
+            # Llama a save_story pasando todos los datos directamente
+            for story in current_stories:
+                 print(f"Processing story: {story['story_id']}, Title: {story.get('title')}")
+            save_story(
+                story_id=story.get('story_id'),
+                title=story.get('title'),
+                assigned_to=story.get('assigned_to'),
+                estimation=story.get('estimation'),
+                ceremony_id=ceremony_id,  # Incluye `ceremony_id`
+                tasksBlocked=story.get('tasksBlocked', []),
+                tasksDoing=story.get('tasksDoing', []),
+                tasksDone=story.get('tasksDone', []),
+                tasksNotStarted=story.get('tasksNotStarted', []),
+                team_id= team_ids
+            )
+
+        return jsonify({"message": "Stories saved successfully"}), 201
+
+    except Exception as e:
+        print(f"Error occurred: {str(e)}")  # Agrega este print para obtener más detalles del error
+        return jsonify({"error": str(e)}), 500
+    
+def save_story(story_id, title, assigned_to, estimation, ceremony_id, tasksBlocked, tasksDoing, tasksDone, tasksNotStarted, team_id):
+    mongo_helper = MongoHelper()
+    
+        # Comprobar si la historia ya existe
+    if mongo_helper.document_exists('stories_standboard', {'story_id': story_id}):
+        print(f"Story with story_id {story_id} already exists. Skipping save.")
+        return
+        
+    stories_standboard = {
+        "story_id": story_id,
+        "title": title,
+        "assigned_to": assigned_to,
+        "estimation": estimation,
+        "ceremony_id": ceremony_id,
+        "tasksBlocked": tasksBlocked,
+        "tasksDoing": tasksDoing,
+        "tasksDone": tasksDone,
+        "tasksNotStarted": tasksNotStarted,
+        "team_id": team_id
+    }
+    print(f"Saving story: {stories_standboard}")  # Para debug
+    result = mongo_helper.create_document('stories_standboard', stories_standboard)
+    if result:  # Asegúrate de que result sea lo que esperas
+        print(f"Story saved successfully: {result},{story_id}")
+    else:
+        print(f"Failed to save story: {stories_standboard}")
+        
+@stories.route("/standup_stories", methods=['GET'])
+@use_args({
+        'ceremony_id': fields.Str(required=True),  # Nuevo parámetro requerido para `ceremony_id`
+        #'view_type': fields.Str(required=False),   # view_type para seleccionar la proyección
+        'sprint': fields.Str(required=False),
+        'assigned_to': fields.Str(required=False),
+        'epic': fields.Str(required=False),
+        'priority': fields.Str(required=False),
+        'story_type': fields.Str(required=False),
+        'story_id': fields.Str(required=False)
+        }, location='query')
+def get_standup_stories(args):
+        ceremony_id = args.pop('ceremony_id')
+        #view_type = args.get('view_type', 'kanban')  # `list` como valor predeterminado si no se proporciona
+        stories = StandupStory.get_standup_stories_by_ceremony_id_and_team_id(
+            ceremony_id=ceremony_id,
+            team_id=g.team_id,
+            #view_type=view_type,
+            **args
+        )
+        return send_response(stories, [], 200, **g.req_data)
+
     
 @stories.route('/backlog', methods=['GET'])
 @use_args({'team_id': fields.Str(required=True), 'sprint': fields.Str(required=False)}, location='query')
