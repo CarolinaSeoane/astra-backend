@@ -1,5 +1,6 @@
 import random
-from datetime import datetime
+import pytz
+from datetime import datetime, timedelta, timezone
 from flask import Blueprint, g, request,jsonify
 from webargs.flaskparser import use_args
 from webargs import fields
@@ -13,6 +14,7 @@ from app.models.sprint import Sprint
 from app.models.epic import Epic
 from app.models.task import Task
 from app.models.user import User
+from app.models.ceremony import Ceremony
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import Priority, Type, Configurations, Status
 from app.services.astra_scheduler import get_quarter
@@ -45,6 +47,55 @@ def apply_validate_user_is_active_member_of_team():
     }, location='query')
 def stories_list(args, view_type):
     stories = Story.get_stories_by_team_id(g.team_id, view_type, **args)
+    return send_response(stories, [], 200, **g.req_data)
+
+@stories.route("/standup/<view_type>", methods=['GET'])
+@use_args({
+    'sprint': fields.Str(required=False),
+    'assigned_to': fields.Str(required=False),
+    'epic': fields.Str(required=False),
+    'priority': fields.Str(required=False),
+    'story_type': fields.Str(required=False),
+    'story_id': fields.Str(required=False),
+    'ceremony_id': fields.Str(required=False)  
+}, location='query')
+def standup_stories_list(args, view_type):
+    
+    ceremony_date = None
+    if 'ceremony_id' in args and args['ceremony_id']:
+        ceremony_date = get_ceremony_date(args['ceremony_id'])
+        print("Ceremony ID:", args['ceremony_id'])
+        print("Fecha de ceremonia obtenida:", ceremony_date)
+        if ceremony_date is None:
+            return send_response([], ["No se pudo obtener la fecha de la ceremonia."], 400)
+    #if ceremony_date is not None and ceremony_date.tzinfo is None:
+    #    ceremony_date = ceremony_date.replace(tzinfo=timezone.utc)
+    #print("fecha de ceremonia",ceremony_date)
+    
+    stories = Story.get_standup_stories(g.team_id, view_type,ceremony_date=ceremony_date, **args)
+    print("Lista de historias obtenidas:",stories)
+    
+    #if ceremony_date:
+    #    print(f"Using ceremony date for filtering: {ceremony_date}")
+    #    filtered_stories = []
+    #    for story in stories['stories']:
+    #        print(f"Historia: {story}")
+    #        if 'creation_date' in story:
+    #            # Convertir la fecha de creación a datetime
+    #            print("Tipo de ceremony_date:", type(ceremony_date))
+    #            story_creation_date = datetime.fromisoformat(story['creation_date']['$date'].replace("Z", "+00:00"))
+    #            print(f"Comparando: historia '{story.get('title', 'sin título')}' con fecha de creación {story_creation_date} contra ceremonia {ceremony_date}")
+    #            if story_creation_date < ceremony_date:
+    #                print(f"La historia '{story.get('title', 'sin título')}' se incluye en la lista.")
+    #                filtered_stories.append(story)
+    #            else:
+    #                print(f"La historia '{story.get('title', 'sin título')}' NO se incluye en la lista.")
+
+        
+    #    stories = filtered_stories
+
+    #print(f"Historias filtradas:  {stories}")        
+# Enviar la respuesta
     return send_response(stories, [], 200, **g.req_data)
 
 @stories.route("/fields", methods=['GET'])
@@ -205,7 +256,7 @@ def create_story():
     tasks = Task.format(story)
     story['tasks'] = tasks
     story['story_status'] = Status.NOT_STARTED.value
-
+    story["creation_date"] = datetime.combine(datetime.now().date(), datetime.min.time())
     try:
         response = Story.create_story(story)
         
@@ -235,9 +286,8 @@ def edit_story():
     modified_story_info = {
         "story_id": story["story_id"],
         "title": story["title"],
-
         "modified_by": username,
-        "modified_at": datetime.now().date().isoformat(),
+        "modified_at": date_now, 
         "sprint": story["sprint"]["name"],
         "team_id":story['team']
     }
@@ -245,7 +295,9 @@ def edit_story():
         del story["_id"]
     if old_story["sprint"]["name"] != story["sprint"]["name"]:
         story["added_to_sprint"] = date_now
-
+    if "creation_date" in old_story:
+        story["creation_date"] = old_story["creation_date"]
+     
     tasks = Task.format(story)
     story["tasks"] = tasks
     if Story.is_done(story):
@@ -298,14 +350,23 @@ def get_modified_stories():
     mongo_helper = MongoHelper()
     team_id = request.args.get('team_id')
     sprint_id = request.args.get('sprint')
+    ceremony_id = request.args.get('ceremony_id')
     
-    print(f"Received team_id: {team_id}, sprint: {sprint_id}")
+    print(f"Received team_id: {team_id}, sprint: {sprint_id}, ceremony_id: {ceremony_id}")
+    
+    ceremony_date = get_ceremony_date(ceremony_id)
+    if not ceremony_date:
+        return jsonify({"error": "No upcoming ceremony found for the team"}), 404
+    print("fecha2",ceremony_date)
+    filter_query = {
+        'team_id': ObjectId(team_id),
+        'modified_at': {'$lt': ceremony_date}
+        }
 
-    filter_query = {'team_id': ObjectId(team_id)}
-
+    
     if sprint_id:
         filter_query['sprint'] = sprint_id
-        
+    
     modified_stories = mongo_helper.get_documents_by('modified_stories', filter_query)
     print(f"Filter query: {filter_query}")
     print(f"Modified stories found: {modified_stories}")
@@ -332,6 +393,29 @@ def get_current_user():
         user = User.get_user_by({"_id": ObjectId(user_id)})
         return user
     else:
+        return None
+
+def get_ceremony_date(ceremony_id):
+    """Obtiene la fecha de la ceremonia especificada por su ID y retorna el día anterior."""
+    
+    ceremony = Ceremony.get_ceremony_by_id(ceremony_id)  
+
+    print(f"Ceremony data: {ceremony}")  
+    if not ceremony:
+        print("Error: No se encontró la ceremonia con el ID proporcionado.")
+        return None
+
+    if 'ends' not in ceremony or not ceremony['ends']:
+        print("Error: No se encontró la fecha de fin ('ends') en la ceremonia.")
+        return None
+
+    if isinstance(ceremony['ends'], dict) and '$date' in ceremony['ends']:
+        ends_date_str = ceremony['ends']['$date']
+        ceremony_date = datetime.fromisoformat(ends_date_str[:-1]) - timedelta(days=1) 
+        print(f"Using ceremony date for filtering: {ceremony_date}")
+        return ceremony_date
+    else:
+        print("Error: 'ends' no es un dict o no contiene '$date'.")
         return None
     
 @stories.route('/backlog', methods=['GET'])
