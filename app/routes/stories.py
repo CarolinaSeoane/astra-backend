@@ -5,7 +5,7 @@ from flask import Blueprint, g, request,jsonify
 from webargs.flaskparser import use_args
 from webargs import fields
 from bson import ObjectId
-
+from dateutil import parser
 from app.models.story import Story
 from app.utils import send_response
 from app.routes.utils import validate_user_is_active_member_of_team
@@ -280,6 +280,9 @@ def edit_story():
     story['team'] = g.team_id
     date_now = datetime.combine(datetime.now().date(), datetime.min.time())
     old_story = Story.get_story_by_id(story["story_id"])
+    nueva_fecha=parser.isoparse(old_story["creation_date"]['$date'])
+    fecha_normalizada = datetime.combine(nueva_fecha.date(), datetime.min.time())
+    print(f"fecha cracion: {fecha_normalizada}")
     print(f"Received story for editing: {old_story}")
     user = get_current_user() 
     username = user["username"]
@@ -296,7 +299,7 @@ def edit_story():
     if old_story["sprint"]["name"] != story["sprint"]["name"]:
         story["added_to_sprint"] = date_now
     if "creation_date" in old_story:
-        story["creation_date"] = old_story["creation_date"]
+        story["creation_date"] = fecha_normalizada
      
     tasks = Task.format(story)
     story["tasks"] = tasks
