@@ -421,24 +421,7 @@ def get_ceremony_date(ceremony_id):
         print("Error: 'ends' no es un dict o no contiene '$date'.")
         return None
     
-@stories.route('/backlog', methods=['GET'])
-@use_args({'team_id': fields.Str(required=True), 'sprint': fields.Str(required=False)}, location='query')
-def get_backlog(args):
-    team_id = args.get('team_id')
-    #sprint =  args.get('sprint')
-    #team_id = args['team_id']  # Extraer team_id de los argumentos
-    #sprint = args['sprint'] 
-    try:
-        stories = Story.get_backlog_stories(team_id)  # Llamar a la función mejorada
-        #print("stories", stories)
-        return send_response(stories, [], 200, **g.req_data)  # Retornar historias
-    except Exception as e:
-        print(f"Error retrieving backlog stories: {e}")
-        return send_response([], [f"Failed to retrieve backlog storiess: {e}"], 200, **g.req_data)
 
-
-
-#convine list with story status that doesnot exist in stories/<view>
 @stories.route('/list_with_story_status', methods=['GET'])
 @use_args({'team_id': fields.Str(required=True), 'sprint_current': fields.Str(required=True), 'sprint_selected': fields.Str(required=True)}, location='query')
 def list_with_story_status(args):
@@ -472,74 +455,20 @@ def put_list_with_new_story_status(args):
     story_id = args.get('story_id')
     new_sprint_name = args.get('new_sprint_name')
 
-    print("team_id:", team_id)
-    print("story_id:", story_id)
-    print("new_sprint_name", new_sprint_name)
+    #print("team_id:", team_id)
+    #print("story_id:", story_id)
+    #print("new_sprint_name", new_sprint_name)
 
     #if(new_status=="Backlog")
     #{new_status=="Not Started"}
     
-    try:
-        #if new_sprint_name == act_sprint_name:
-        #    print("opt 1")
-        #    result = Story.put_new_status_to_story(team_id, story_id,new_status)
-        #      # Move inside Sprint 
-        #else:
-        print("opt 1")
+    try:       
         result = Story.put_new_status_and_new_sprint_to_story(team_id, story_id, new_sprint_name) #Move between sprints
-        
-
-        #print("result", result)
-        if result:  # Verificar si result es verdadero (true)
-            print("restutl", True)
-            return send_response(True, [], 200, **g.req_data)  # Retornar éxito
-        else:
-            print("restutl", False)
-            return send_response(False, [], 200, **g.req_data)  # Retornar fallo
-    except Exception as e:
-        return send_response(False, [f"Failed to put story status: {e}"], 200, **g.req_data)
-
-
-
-
-#----------------------
-
-@stories.route('/update_story_priority', methods=['PUT'])
-@use_args({
-    'team_id': fields.Str(required=True),
-    'story_id': fields.Str(required=True),
-    'actual_priority': fields.Str(required=True),
-    'new_priority': fields.Str(required=True)
-    },
-    location='query')
-def put_story_with_new_story_priority(args):
-    team_id = args.get('team_id')
-    story_id = args.get('story_id')
-    new_priority = args.get('new_priority')
-    actual_priority = args.get('actual_priority')
-
-    print("team_id:", team_id)
-    print("story_id:", story_id)
-    print("new_priority", new_priority)
-    print("actual_priority", actual_priority)
-    
-    try:
        
-        print("opt 1")
-        result = Story.put_new_priority_to_story_backlog(team_id, story_id, new_priority)
-              # Move inside Sprint 
-        #else:
-        #    print("opt 2")
-        #result = Story.put_new_status_and_new_sprint_to_story(team_id, story_id, new_sprint_name, new_status) #Move between sprints
-        
-
-        print("result", result)
-
         if result:  # Verificar si result es verdadero (true)
-            print("resutado", True)
             return send_response(True, [], 200, **g.req_data)  # Retornar éxito
-        else:
-            print("resultado", False)
+        else:        
             return send_response(False, [], 200, **g.req_data)  # Retornar fallo
     except Exception as e:
         return send_response(False, [f"Failed to put story status: {e}"], 200, **g.req_data)
+

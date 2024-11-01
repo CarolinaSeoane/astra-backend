@@ -177,22 +177,7 @@ class Story:
             "story_id": story_id
         }
         return MongoHelper().delete_element_from_collection(STORIES_COL, match)
-
-
-    @staticmethod
-    def get_backlog_stories(team_id):
-        '''
-        Returns active sprints (Finished and Current) for a given team. Excludes the Backlog sprint.
-        '''
-        filter = {
-            'team': ObjectId(team_id), 
-             'sprint.name': "Backlog" 
-        }
-        documents = MongoHelper().get_documents_by('stories', filter)
-        documents = list_format_with_task_details(documents)
-        #print("documents", documents)
-        return documents if documents else None
-
+  
 
     @staticmethod
     def get_list_stories_in_team_id_by_sprint_current_and_selected(team_id, sprint_current, sprint_selected):
@@ -219,45 +204,15 @@ class Story:
         return listado
 
 
-
-
-
-    @staticmethod
-    def put_new_status_to_story(team_id, story_id, new_status):
-        '''
-       
-        '''
-        print("team_id.name", team_id)
-        print("story_id.name", story_id)
-        print("new_status.name", new_status)
-        
-
-
-        result = mongo.db.stories.update_one(
-            {
-                'story_id': story_id, 
-                'team': ObjectId(team_id)
-            },  # Filtrar por story_id y team_id
-            {
-                '$set': {'story_status': new_status}
-            }  # Actualizar el campo story_status
-        )
-        print("result mongo",  result)
-
-        if result.modified_count > 0:
-           return True
-        else:
-          return False
-
              
     @staticmethod
     def put_new_status_and_new_sprint_to_story(team_id, story_id, new_sprint_name):
         '''
         new sprint
         '''
-        print("team_id.name", team_id)
-        print("story_id.name", story_id)
-        print("new_sprint_name.name", new_sprint_name)
+        #print("team_id.name", team_id)
+        #print("story_id.name", story_id)
+        #print("new_sprint_name.name", new_sprint_name)
 
         #Sprint.get_sprint_by()
         res_sprint = Sprint.get_sprint_by({
@@ -265,12 +220,11 @@ class Story:
             "team": ObjectId(team_id)
         })
 
-        print("rest sprint", res_sprint)
+        #print("rest sprint", res_sprint)
 
         sprint_id = res_sprint["_id"]["$oid"]
 
-        print("Sprint ID:", sprint_id)
-
+        #print("Sprint ID:", sprint_id)
         
         result = mongo.db.stories.update_one(
             {
@@ -281,7 +235,7 @@ class Story:
                 '$set': {
                     #'story_status': new_status,
                     'sprint': {
-                        '_id': sprint_id,  # Guardamos el ObjectId directamente
+                        '_id': ObjectId(sprint_id),  # Guardamos el ObjectId directamente
                         'name': new_sprint_name
                     }
                 }
@@ -293,27 +247,3 @@ class Story:
             return True
         else:
             return False
-
-    @staticmethod
-    def put_new_priority_to_story_backlog(team_id, story_id, new_priority):
-        '''       
-        '''
-        print("team_id.name", team_id)
-        print("story_id.name", story_id)
-        print("new_priority.name", new_priority)
-        
-        result = mongo.db.stories.update_one(
-            {
-                'story_id': story_id, 
-                'team': ObjectId(team_id)
-            },  # Filtrar por story_id y team_id
-            {
-                '$set': {'priority': new_priority}
-            }  # Actualizar el campo story_status
-        )
-        print("result mongo",  result)
-
-        if result.modified_count > 0:
-           return True
-        else:
-          return False
