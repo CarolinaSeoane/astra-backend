@@ -93,6 +93,12 @@ def filters(args):
 
     return send_response(filters, [], 200, **g.req_data)
 
+@ceremonies.route('/join/<ceremony_id>', methods=['GET'])
+def join_ceremony(ceremony_id):
+    print('joining ceremony ', ceremony_id)
+    # ceremonies = Ceremony.get_ceremonies_by_team_id(g.team_id, **args)
+    return send_response([], [], 200, **g.req_data)
+
 @ceremonies.route('/<ceremony_id>', methods=['GET'])
 def get_ceremony(ceremony_id):
     try:

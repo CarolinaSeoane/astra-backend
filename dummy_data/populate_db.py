@@ -19,6 +19,7 @@ class Populate:
     org1_id = ObjectId()
     org2_id = ObjectId()
     org3_id = ObjectId()
+    org4_id = ObjectId()
 
     user1_id = ObjectId("66f21cea9883e33c91269f76")
     user2_id = ObjectId("66f37a50e315dc85955a329b")
@@ -62,11 +63,21 @@ class Populate:
 
     team1_id = ObjectId("66f37a50e315dc85955a32a3")
     team2_id = ObjectId()
+    team3_id = ObjectId()
 
     epic1_id = ObjectId()
     epic2_id = ObjectId()
+    epic3_id = ObjectId()
+    epic4_id = ObjectId()
+    epic5_id = ObjectId()
+    epic6_id = ObjectId()
+
     epic1_title = "Mejoras del buscador"
     epic2_title = "Migracion de ordernes a base NoSql"
+    epic3_title = "Definición de la problemática"
+    epic4_title = "Gestión"
+    epic5_title = "Desarrollo"
+    epic6_title = "Cierre de proyecto"
 
     backlog_team1 = ObjectId()  # Backlog is handled as a sprint
     sprint1_q1_team1 = ObjectId()
@@ -98,6 +109,8 @@ class Populate:
     sprint6_q4_team1 = ObjectId()
 
     backlog_team2 = ObjectId()
+    
+    backlog_team3 = ObjectId()
 
     def __init__(self):
         self.helper = DBHelper()
@@ -146,6 +159,11 @@ class Populate:
                         "name": "Flyers",
                         "member_status": MemberStatus.ACTIVE.value,
                     },
+                    {
+                        "_id": self.team3_id,
+                        "name": "Proyecto final",
+                        "member_status": MemberStatus.ACTIVE.value,
+                    },
                 ],
             },
             {
@@ -166,6 +184,11 @@ class Populate:
                     {
                         "_id": self.team2_id,
                         "name": "Flyers",
+                        "member_status": MemberStatus.ACTIVE.value,
+                    },
+                    {
+                        "_id": self.team3_id,
+                        "name": "Proyecto final",
                         "member_status": MemberStatus.ACTIVE.value,
                     },
                 ],
@@ -275,6 +298,11 @@ class Populate:
                         "name": "Flyers",
                         "member_status": MemberStatus.ACTIVE.value,
                     },
+                    {
+                        "_id": self.team3_id,
+                        "name": "Proyecto final",
+                        "member_status": MemberStatus.ACTIVE.value,
+                    },
                 ],
             },
             {
@@ -295,6 +323,11 @@ class Populate:
                     {
                         "_id": self.team2_id,
                         "name": "Flyers",
+                        "member_status": MemberStatus.ACTIVE.value,
+                    },
+                    {
+                        "_id": self.team3_id,
+                        "name": "Proyecto final",
                         "member_status": MemberStatus.ACTIVE.value,
                     },
                 ],
@@ -560,6 +593,123 @@ class Populate:
                     },
                 ],
             },
+            {
+                "_id": self.team3_id,
+                "name": "Proyecto final",
+                "organization": self.org4_id,
+                "ceremonies": {
+                    "planning": {
+                        "when": CeremonyStartOptions.BEGINNING.value,
+                        "starts": "10:00",  # "HH:MM,
+                        "ends": "12:00",
+                        "google_meet_config": { # COMPLETAR
+                            "name": "",
+                            "meetingUri": "",
+                            "meetingCode": "",
+                            "config": {
+                                "accessType": "TRUSTED",
+                                "entryPointAccess": "ALL",
+                            },
+                        },
+                    },
+                    "standup": {
+                        "days": ["mon", "wed", "thu"],
+                        "starts": "09:30",  # "HH:MM
+                        "ends": "09:45",
+                        "google_meet_config": { # COMPLETAR
+                            "name": "",
+                            "meetingUri": "",
+                            "meetingCode": "",
+                            "config": {
+                                "accessType": "TRUSTED",
+                                "entryPointAccess": "ALL",
+                            },
+                        },
+                    },
+                    "retrospective": {
+                        "when": CeremonyStartOptions.END.value,
+                        "starts": "10:00",  # "HH:MM
+                        "ends": "11:00",
+                        "google_meet_config": { # COMPLETAR
+                            "name": "",
+                            "meetingUri": "",
+                            "meetingCode": "",
+                            "config": {
+                                "accessType": "TRUSTED",
+                                "entryPointAccess": "ALL",
+                            },
+                        },
+                    },
+                },
+                "estimation_method": ["fibonacci"],
+                "sprint_set_up": {
+                    "sprint_duration": 2,  # weeks
+                    "sprint_begins_on": "mon",
+                },
+                "mandatory_story_fields": [
+                    "title",
+                    "description",
+                    "creator",
+                    "assigned_to",
+                    "epic",
+                    "sprint",
+                    "estimation",
+                    "story_type",
+                    "estimation_method",
+                    "tasks",
+                ],
+                "permits": [
+                    {
+                        "role": Role.PRODUCT_OWNER.value,
+                        "options": [
+                            "edit_story",
+                            "add_team_members",
+                            "join_standup",
+                            "all_time_metrics",
+                        ],
+                    },
+                    {
+                        "role": Role.DEV.value,
+                        "options": ["create_story", "edit_story"]
+                    },
+                ],
+                "members": [
+                    {
+                        "_id": self.user1_id,
+                        "username": self.username1,
+                        "email": "carolina.b.seoane@gmail.com",
+                        "profile_picture": self.pfp1,
+                        "role": Role.SCRUM_MASTER.value,
+                        "member_status": MemberStatus.ACTIVE.value,
+                        # "date": self.user1_id.generation_time
+                    },
+                    {
+                        "_id": self.user2_id,
+                        "username": self.username2,
+                        "email": "seoane.m.b@gmail.com",
+                        "profile_picture": self.pfp2,
+                        "role": Role.PRODUCT_OWNER.value,
+                        "member_status": MemberStatus.ACTIVE.value,
+                        # "date": self.user2_id.generation_time
+                    },
+                    {
+                        "_id": self.user8_id,
+                        "username": self.username8,
+                        "email": "matmass03@gmail.com",
+                        "profile_picture": self.pfp8,
+                        "role": Role.DEV.value,
+                        "member_status": MemberStatus.ACTIVE.value,
+                    },
+                    {
+                        "_id": self.user9_id,
+                        "username": self.username9,
+                        "email": "guderianfront2000@gmail.com",
+                        "profile_picture": self.pfp9,
+                        "role": Role.DEV.value,
+                        "member_status": MemberStatus.ACTIVE.value,
+                    },
+                ],
+            },
         ]
         self.helper.post_to_collection(CollectionNames.TEAMS.value, teams)
         print("populated teams")
@@ -598,6 +748,74 @@ class Populate:
                 "business_value": "MongoDB permitirá reducir el tiempo de las consultas, haciendo la aplicación más rápida, lo que generará una mejor experiencia de los usuarios.",
                 "team": self.team2_id,
                 "organization": self.org3_id,
+                "status": Status.DOING.value,
+            },
+            {
+                "_id": self.epic3_id,
+                "title": self.epic3_title,
+                "description": "Etapa inicial del proyecto.",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                },
+                "priority": Priority.HIGH.value,
+                "epic_color": Color.YELLOW.value,
+                "acceptance_criteria": "El 100% de los documentos deben estar entregados.",
+                "business_value": "Comprender el alcance y factibilidad de nuestro proyecto nos permite sentar las bases para las etapas posteriores.",
+                "team": self.team3_id,
+                "organization": self.org4_id,
+                "status": Status.DOING.value,
+            },
+            {
+                "_id": self.epic4_id,
+                "title": self.epic4_title,
+                "description": "Etapa de elaboración de los documentos centrales del proyecto.",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                },
+                "priority": Priority.HIGH.value,
+                "epic_color": Color.YELLOW.value,
+                "acceptance_criteria": "El 100% de los documentos deben estar entregados.",
+                "business_value": "La etapa de gestión nos permitirá elaborar los documentos principales para llevar a cabo la realización del proyecto.",
+                "team": self.team3_id,
+                "organization": self.org4_id,
+                "status": Status.DOING.value,
+            },
+            {
+                "_id": self.epic5_id,
+                "title": self.epic5_title,
+                "description": "Etapa de desarrollo de la solución.",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                },
+                "priority": Priority.HIGH.value,
+                "epic_color": Color.YELLOW.value,
+                "acceptance_criteria": "Aplicación deployada y funcionando correctamente, con más del 90% de los casos de prueba positivos.",
+                "business_value": "El desarrollo de la aplicación.",
+                "team": self.team3_id,
+                "organization": self.org4_id,
+                "status": Status.DOING.value,
+            },
+            {
+                "_id": self.epic6_id,
+                "title": self.epic6_title,
+                "description": "Etapa de cierre y elaboración de documentos finales.",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                },
+                "priority": Priority.HIGH.value,
+                "epic_color": Color.YELLOW.value,
+                "acceptance_criteria": "El 100% de los documentos deben estar entregados.",
+                "business_value": "Presentación final del proyecto.",
+                "team": self.team3_id,
+                "organization": self.org4_id,
                 "status": Status.DOING.value,
             },
         ]
@@ -1005,6 +1223,130 @@ class Populate:
                     }
                 ],
                 "team": self.team1_id,
+            },
+            {
+                "story_id": "PROYECTO_FINAL-000001",
+                "title": "Presentación de propuestas",
+                "description": "Elaborar 3 propuestas y armar el documento de propuestas siguiendo los lineamientos de la cátedra.",
+                "acceptance_criteria": "Documento de propuestas elaborado y enviado",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "assigned_to": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "epic": {
+                    "_id": self.epic3_id,
+                    "title": self.epic3_title,
+                },
+                "sprint": {"_id": self.backlog_team3, "name": "Backlog"},
+                "estimation": 5,
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.FEATURE.value,
+                "estimation_method": "Fibonacci",
+                "story_status": Status.NOT_STARTED.value,
+                "creation_date": datetime.datetime(2024, 7, 20),
+                "tasks": [],
+                "team": self.team3_id,
+            },
+            {
+                "story_id": "PROYECTO_FINAL-000002",
+                "title": "Investigación y análisis de la problemática",
+                "description": "Una vez aprobada una de las propuestas, investigar en profundidad la problemática a resolver.",
+                "acceptance_criteria": "Documentos presentados.",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "assigned_to": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2,
+                    "email": self.email2
+                },
+                "epic": {
+                    "_id": self.epic3_id,
+                    "title": self.epic3_title,
+                },
+                "sprint": {"_id": self.backlog_team3, "name": "Backlog"},
+                "estimation": 3,
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.FEATURE.value,
+                "estimation_method": "Fibonacci",
+                "story_status": Status.NOT_STARTED.value,
+                "creation_date": datetime.datetime(2024, 7, 20),
+                "tasks": [],
+                "team": self.team3_id,
+            },
+            {
+                "story_id": "PROYECTO_FINAL-000003",
+                "title": "Estudio de factibilidad",
+                "description": "Realizar el estudio de factibilidad de la propuesta seleccionada para determinar si el proyecto es factible.",
+                "acceptance_criteria": "Documento de estudio de factibilidad enviado.",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "assigned_to": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2,
+                    "email": self.email2
+                },
+                "epic": {
+                    "_id": self.epic3_id,
+                    "title": self.epic3_title,
+                },
+                "sprint": {"_id": self.backlog_team3, "name": "Backlog"},
+                "estimation": 8,
+                "priority": Priority.CRITIC.value,
+                "story_type": Type.FEATURE.value,
+                "estimation_method": "Fibonacci",
+                "story_status": Status.NOT_STARTED.value,
+                "creation_date": datetime.datetime(2024, 7, 20),
+                "tasks": [],
+                "team": self.team3_id,
+            },
+            {
+                "story_id": "PROYECTO_FINAL-000004",
+                "title": "Business Canvas Model",
+                "description": "Realizar el Canvas para la propuesta seleccionada.",
+                "acceptance_criteria": "Diagrama elaborado y enviado.",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "assigned_to": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2,
+                    "email": self.email2
+                },
+                "epic": {
+                    "_id": self.epic3_id,
+                    "title": self.epic3_title,
+                },
+                "sprint": {"_id": self.backlog_team3, "name": "Backlog"},
+                "estimation": 2,
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.FEATURE.value,
+                "estimation_method": "Fibonacci",
+                "story_status": Status.NOT_STARTED.value,
+                "creation_date": datetime.datetime(2024, 7, 20),
+                "tasks": [],
+                "team": self.team3_id,
             },
         ]
         self.helper.post_to_collection(CollectionNames.STORIES.value, stories)
@@ -1422,6 +1764,12 @@ class Populate:
                 "name": "Backlog",
                 "status": SprintStatus.ACTIVE.value,
                 "team": self.team2_id,
+            },
+            {
+                "_id": self.backlog_team3,
+                "name": "Backlog",
+                "status": SprintStatus.ACTIVE.value,
+                "team": self.team3_id,
             },
         ]
         self.helper.post_to_collection(CollectionNames.SPRINTS.value, sprints)
