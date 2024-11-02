@@ -70,14 +70,12 @@ def apply_banner_format(ceremonies):
     for ceremony in ceremonies:
         formatted_ceremonies.extend([
             {
-                'id': str(ceremony['_id']['$oid']),
                 'name': f"{ceremony['ceremony_type']} begins",
                 'date': ceremony['starts']['$date'][:-1],
                 'in_progress': False
             },
             {
                 '_id': ceremony['_id'],
-                'id': str(ceremony['_id']['$oid']),
                 'name': f"{ceremony['ceremony_type']}",
                 'date': ceremony['ends']['$date'],
                 'in_progress': True,
