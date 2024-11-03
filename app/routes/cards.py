@@ -1,7 +1,6 @@
 from flask import Blueprint, request, g, jsonify
 from webargs.flaskparser import use_args
-from webargs import fields
-from app.models.card import Card  
+from webargs import fields  
 from app.db_connection import mongo
 from app.routes.utils import validate_user_is_active_member_of_team
 from bson import ObjectId
