@@ -20,43 +20,48 @@ def apply_validate_user_is_active_member_of_team():
         return None
     return validate_user_is_active_member_of_team()
 
-def is_retroboard_active(team_id):
+def is_planningboard_active(ceremony_id):
 
-    ceremony = Ceremony.get_current_ceremony_by_team_id(team_id)
-    
-    if not ceremony:
-        upcoming_ceremonies = Ceremony.get_upcoming_ceremonies_by_team_id(team_id)
-        if upcoming_ceremonies:
-            ceremony = upcoming_ceremonies[0] 
-        else:
-            return False  
+    ceremony = Ceremony.get_ceremony_by_id(ceremony_id) 
+    #print(ceremony)
+    if not ceremony:       
+        return False  
 
-    print(ceremony)
+    #print(ceremony)
 
     if isinstance(ceremony, list):
         ceremony = ceremony[0]
 
     starts = ceremony.get('starts')
+    #print("stars",starts)
     ends = ceremony.get('ends')
+    #print("ends", ends)
 
+    # Normaliza las fechas
     if isinstance(starts, dict) and '$date' in starts:
         starts = starts['$date']
     if isinstance(ends, dict) and '$date' in ends:
         ends = ends['$date']
 
+    # Convierte a datetime si es necesario
     if isinstance(starts, str):
         starts = datetime.fromisoformat(starts)
+    elif isinstance(starts, int):  # Si starts es un timestamp
+        starts = datetime.fromtimestamp(starts)
+
     if isinstance(ends, str):
         ends = datetime.fromisoformat(ends)
+    elif isinstance(ends, int):  # Si ends es un timestamp
+        ends = datetime.fromtimestamp(ends)
 
+    # Elimina la información de la zona horaria si es necesario
     if starts.tzinfo is not None:
         starts = starts.replace(tzinfo=None)
     if ends.tzinfo is not None:
         ends = ends.replace(tzinfo=None)
 
-    start_time_with_buffer = starts - timedelta(minutes=10)
 
-    return start_time_with_buffer <= datetime.now() <= ends
+    return starts <= datetime.now() <= ends
 
 @cards.route("/total_stories", methods=['GET'])
 @use_args({'sprint_name': fields.Str(required=True)}, location='query')
@@ -81,3 +86,13 @@ def get_cards(args):
         card['_id'] = str(card['_id'])
 
     return jsonify(cards_list)
+
+
+@cards.route("/is_active_ceremony", methods=['GET'])
+@use_args({'team_id': fields.Str(required=True),'ceremony_id': fields.Str(required=True)}, location='query')
+def get_is_active_ceremony_in_team(args):
+    #print("ceremony_id: ", args["ceremony_id"])
+    #print("team_id: ", args["team_id"])
+    response = is_planningboard_active(args["ceremony_id"])
+    #print("response", response); 
+    return send_response(response, [], 200, **g.req_data)

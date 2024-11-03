@@ -12,6 +12,7 @@ from app.routes.epics import epics
 from app.routes.sprints import sprints
 from app.routes.ceremonies import ceremonies
 from app.routes.post_its import post_its
+from app.routes.cards import cards
 # TODO create custom logger
 
 def create_app():
@@ -41,6 +42,7 @@ def create_app():
     app.register_blueprint(ceremonies, url_prefix='/ceremonies')
     app.register_blueprint(sprints, url_prefix='/sprints')
     app.register_blueprint(post_its, url_prefix='/post_its')
+    app.register_blueprint(cards, url_prefix='/cards')
 
     return app
 
