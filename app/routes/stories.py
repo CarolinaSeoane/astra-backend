@@ -5,7 +5,7 @@ from webargs.flaskparser import use_args
 from webargs import fields
 
 from app.models.story import Story
-from app.utils import send_response, get_current_quarter
+from app.utils import get_current_quarter, send_response
 from app.routes.utils import validate_user_is_active_member_of_team
 from app.models.team import Team
 from app.models.sprint import Sprint
@@ -14,6 +14,7 @@ from app.models.task import Task
 from app.models.configurations import Priority, Status, Type, Configurations
 from app.models.notification import Notification
 from app.services.notifications_services import notify_story_update
+
 
 stories = Blueprint("stories", __name__)
 
@@ -226,6 +227,7 @@ def create_story():
     tasks = Task.format(story)
     story["tasks"] = tasks
     story["subscribers"] = []
+    story['story_status'] = Status.NOT_STARTED.value
 
     try:
         response = Story.create_story(story)
@@ -321,3 +323,12 @@ def unsubscribe_to_story(story_id):
     return send_response(
         resp["message"], resp.get("error", []), resp["status"], **g.req_data
     )
+@stories.route('/delete', methods=['DELETE'])
+@use_args({"story_id": fields.Str(required=True)}, location="query")
+def delete_story(args):
+    try:
+        Story.delete(g.team_id, args["story_id"])
+        return send_response([], [], 204, **g.req_data)
+    except Exception as e:
+        print(f"error deleting story: {e}")
+        return send_response([], [], 500, **g.req_data)

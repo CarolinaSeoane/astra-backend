@@ -16,6 +16,14 @@ def send_response(data, errors, status_code, method, endpoint):
     return jsonify(payload), status_code
 
 def kanban_format(stories_dict):
+    kanban_columns = [
+        {"key": "stories", "quantity": 0},
+        {"key": "NotStarted", "quantity": 0},
+        {"key": "Doing", "quantity": 0},
+        {"key": "Done", "quantity": 0},
+        {"key": "Blocked", "quantity": 0}
+    ]
+    kanban_dict = {col['key']: col for col in kanban_columns}
     for story in stories_dict:
         story['tasksNotStarted'] = []
         story['tasksDoing'] = []
@@ -25,10 +33,16 @@ def kanban_format(stories_dict):
         for task in story['tasks']:
             status = task['status'].replace(" ", "")
             story[f'tasks{status}'].append(task['title'])
+            if status in kanban_dict:
+                kanban_dict[status]['quantity'] += 1
 
         story.pop('tasks')
 
-    return stories_dict
+    kanban_data = {
+        "stories": stories_dict,
+        "kanban_columns": kanban_columns
+    }
+    return kanban_data
 
 def list_format(stories_dict):
     for story in stories_dict:
@@ -49,9 +63,27 @@ def list_format(stories_dict):
         story['completeness'] = completness
     return stories_dict
 
-
 def gantt_format(stories_dict):
     pass
+
+def apply_banner_format(ceremonies):
+    formatted_ceremonies = []
+    for ceremony in ceremonies:
+        formatted_ceremonies.extend([
+            {
+                'name': f"{ceremony['ceremony_type']} begins",
+                'date': ceremony['starts']['$date'][:-1],
+                'in_progress': False
+            },
+            {
+                '_id': ceremony['_id'],
+                'name': f"{ceremony['ceremony_type']}",
+                'date': ceremony['ends']['$date'],
+                'in_progress': True,
+                'google_meet_link': ceremony['google_meet_config']["meetingUri"]
+            }
+        ])
+    return formatted_ceremonies
 
 def get_current_quarter(date):
     month = date.month

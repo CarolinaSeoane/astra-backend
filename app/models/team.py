@@ -1,6 +1,6 @@
+from datetime import datetime
 import pytz
 from bson import ObjectId
-from datetime import datetime
 
 from app.models.user import User
 from app.services.mongoHelper import MongoHelper
@@ -15,7 +15,8 @@ PRODUCT_OWNER = Role.PRODUCT_OWNER.value
 
 class Team:
 
-    def __init__(self, _id, name, organization, ceremonies, sprint_set_up, mandatory_story_fields, permits, members, estimation_method):
+    def __init__(self, _id, name, organization, ceremonies, sprint_set_up, 
+                 mandatory_story_fields, permits, members, estimation_method):
         self._id = _id
         self.name = name
         self.organization = organization
@@ -63,7 +64,7 @@ class Team:
 
         added_to_team = False
         try:
-            MongoHelper().update_collection(TEAMS_COL, filter, update)
+            MongoHelper().update_document(TEAMS_COL, filter, update)
             added_to_team = True
             team = cls.get_team(team_id)
             new_user.add_team(team, status)
@@ -80,11 +81,11 @@ class Team:
         user = User.get_user_by({'_id': ObjectId(member_id)})
         filter = {'_id': ObjectId(team_id)}
         update = {'$pull': {'members': {'email': user["email"]}}}
-        MongoHelper().update_collection(TEAMS_COL, filter, update)
+        MongoHelper().update_document(TEAMS_COL, filter, update)
         User.remove_from_team(member_id, team_id)
 
     @staticmethod
-    def get_team_settings(team_id, section):
+    def get_team_settings(team_id, section=None):
         projection = {'ceremonies', 'sprint_set_up', 'mandatory_story_fields', 'permits', 'members', 'estimation_method'}
         if section:
             projection = {section}
@@ -101,25 +102,25 @@ class Team:
     def update_mandatory_fields(team_id, settings):
         filter = {'_id': team_id}
         update = {'$set': {'mandatory_story_fields': settings}}
-        MongoHelper().update_collection(TEAMS_COL, filter, update)
+        MongoHelper().update_document(TEAMS_COL, filter, update)
 
     @staticmethod
     def update_sprint_set_up(team_id, set_up):
         filter = {'_id': team_id}
         update = {'$set': {'sprint_set_up': set_up}}
-        MongoHelper().update_collection(TEAMS_COL, filter, update)
+        MongoHelper().update_document(TEAMS_COL, filter, update)
 
     @staticmethod
     def update_ceremonies_settings(team_id, ceremonies_settings):
         filter = {'_id': team_id}
         update = {'$set': {'ceremonies': ceremonies_settings}}
-        MongoHelper().update_collection(TEAMS_COL, filter, update)
+        MongoHelper().update_document(TEAMS_COL, filter, update)
 
     @staticmethod
     def update_permissions(team_id, permits):
         filter = {'_id': team_id}
         update = {'$set': {'permits': permits}}
-        MongoHelper().update_collection(TEAMS_COL, filter, update)
+        MongoHelper().update_document(TEAMS_COL, filter, update)
 
     @staticmethod
     def get_organization(team_id):
@@ -130,6 +131,19 @@ class Team:
     @staticmethod
     def is_user_part_of_team(user_id, team_members):
         return user_id in [member['_id']['$oid'] for member in team_members]
+
+    @staticmethod
+    def is_user_SM_of_team(user_id, team_id):
+        filter = {
+            '_id': ObjectId(team_id),
+            'members': {
+                '$elemMatch': {
+                    '_id': ObjectId(user_id),
+                    'role': Role.SCRUM_MASTER.value
+                }
+            }
+        }
+        return MongoHelper().document_exists(TEAMS_COL, filter)
 
     @staticmethod
     def add_team(team_document):
@@ -151,7 +165,7 @@ class Team:
 
         filter = {'_id': ObjectId(team_id)}
         update = {'$set': default_settings}
-        res = MongoHelper().update_collection(TEAMS_COL, filter, update)
+        res = MongoHelper().update_document(TEAMS_COL, filter, update)
         print(res)
 
     @staticmethod
@@ -161,9 +175,9 @@ class Team:
         google_meet service
         '''
         space = create_space(access_token, refresh_token)
-        filter = {'_id':ObjectId(team_id)}
+        filter = {'_id': ObjectId(team_id)}
         update = {'$set': {f'ceremonies.{ceremony.lower()}.google_meet_config': space}}
-        return MongoHelper().update_collection(TEAMS_COL, filter, update)
+        return MongoHelper().update_document(TEAMS_COL, filter, update)
 
     @staticmethod
     def get_product_owner(team_id):
@@ -176,3 +190,32 @@ class Team:
                         return ObjectId(po_id["$oid"])
                     return po_id
         return None
+
+    @staticmethod
+    def get_member_role(team_id, user_id):
+        match = {
+            "_id": ObjectId(team_id),
+            "members": {"$elemMatch": {"_id": ObjectId(user_id)}}
+        }
+        projection = {"members.role.$": 1}
+        return MongoHelper().get_document_by(
+            TEAMS_COL, match, projection=projection
+        )["members"][0]["role"]
+
+    @staticmethod
+    def get_permissions_value_based_on_role(team_id, role):
+        match = {
+            '_id': ObjectId(team_id),
+            "permits": {"$elemMatch": {"role": role}}
+        }
+        projection = {"permits.options.$": 1}
+        return MongoHelper().get_document_by(
+            TEAMS_COL, match, projection=projection
+        )["permits"][0]["options"]
+
+    @staticmethod
+    def is_member_authorized(team_id, role, action):
+        available_actions = Team.get_permissions_value_based_on_role(
+            team_id, role
+        )
+        return action in available_actions

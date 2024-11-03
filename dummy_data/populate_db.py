@@ -19,6 +19,7 @@ class Populate:
     org1_id = ObjectId()
     org2_id = ObjectId()
     org3_id = ObjectId()
+    org4_id = ObjectId()
 
     user1_id = ObjectId("66f21cea9883e33c91269f76")
     user2_id = ObjectId("66f37a50e315dc85955a329b")
@@ -66,11 +67,21 @@ class Populate:
 
     team1_id = ObjectId("66f37a50e315dc85955a32a3")
     team2_id = ObjectId()
+    team3_id = ObjectId()
 
     epic1_id = ObjectId()
     epic2_id = ObjectId()
+    epic3_id = ObjectId()
+    epic4_id = ObjectId()
+    epic5_id = ObjectId()
+    epic6_id = ObjectId()
+
     epic1_title = "Mejoras del buscador"
     epic2_title = "Migracion de ordernes a base NoSql"
+    epic3_title = "Definición de la problemática"
+    epic4_title = "Gestión"
+    epic5_title = "Desarrollo"
+    epic6_title = "Cierre de proyecto"
 
     backlog_team1 = ObjectId()  # Backlog is handled as a sprint
     sprint1_q1_team1 = ObjectId()
@@ -94,7 +105,16 @@ class Populate:
     sprint5_q3_team1 = ObjectId()
     sprint6_q3_team1 = ObjectId()
 
+    sprint1_q4_team1 = ObjectId()
+    sprint2_q4_team1 = ObjectId()
+    sprint3_q4_team1 = ObjectId()
+    sprint4_q4_team1 = ObjectId()
+    sprint5_q4_team1 = ObjectId()
+    sprint6_q4_team1 = ObjectId()
+
     backlog_team2 = ObjectId()
+    
+    backlog_team3 = ObjectId()
 
     def __init__(self):
         self.helper = DBHelper()
@@ -143,6 +163,11 @@ class Populate:
                         "name": "Flyers",
                         "member_status": MemberStatus.ACTIVE.value,
                     },
+                    {
+                        "_id": self.team3_id,
+                        "name": "Proyecto final",
+                        "member_status": MemberStatus.ACTIVE.value,
+                    },
                 ],
             },
             {
@@ -158,6 +183,16 @@ class Populate:
                     {
                         "_id": self.team1_id,
                         "name": "Argo",
+                        "member_status": MemberStatus.ACTIVE.value,
+                    },
+                    {
+                        "_id": self.team2_id,
+                        "name": "Flyers",
+                        "member_status": MemberStatus.ACTIVE.value,
+                    },
+                    {
+                        "_id": self.team3_id,
+                        "name": "Proyecto final",
                         "member_status": MemberStatus.ACTIVE.value,
                     },
                 ],
@@ -267,6 +302,11 @@ class Populate:
                         "name": "Flyers",
                         "member_status": MemberStatus.ACTIVE.value,
                     },
+                    {
+                        "_id": self.team3_id,
+                        "name": "Proyecto final",
+                        "member_status": MemberStatus.ACTIVE.value,
+                    },
                 ],
             },
             {
@@ -287,6 +327,11 @@ class Populate:
                     {
                         "_id": self.team2_id,
                         "name": "Flyers",
+                        "member_status": MemberStatus.ACTIVE.value,
+                    },
+                    {
+                        "_id": self.team3_id,
+                        "name": "Proyecto final",
                         "member_status": MemberStatus.ACTIVE.value,
                     },
                 ],
@@ -321,7 +366,8 @@ class Populate:
                 "ceremonies": {
                     "planning": {
                         "when": CeremonyStartOptions.BEGINNING.value,
-                        "time": "10:00",  # "HH:MM,
+                        "starts": "10:00",  # "HH:MM,
+                        "ends": "12:00",
                         "google_meet_config": {
                             "name": "spaces/G3IVgQf5g1cB",
                             "meetingUri": "https://meet.google.com/dox-iazn-miy",
@@ -334,7 +380,8 @@ class Populate:
                     },
                     "standup": {
                         "days": ["mon", "wed", "thu"],
-                        "time": "09:30",  # "HH:MM
+                        "starts": "09:30",  # "HH:MM
+                        "ends": "09:45",
                         "google_meet_config": {
                             "name": "spaces/ATCX4-zHdhYB",
                             "meetingUri": "https://meet.google.com/dsr-aegc-hzc",
@@ -347,7 +394,8 @@ class Populate:
                     },
                     "retrospective": {
                         "when": CeremonyStartOptions.END.value,
-                        "time": "10:00",  # "HH:MM
+                        "starts": "10:00",  # "HH:MM
+                        "ends": "11:00",
                         "google_meet_config": {
                             "name": "spaces/wbnLUy_LK3QB",
                             "meetingUri": "https://meet.google.com/uis-ygog-rnn",
@@ -361,7 +409,7 @@ class Populate:
                 },
                 "estimation_method": ["fibonacci"],
                 "sprint_set_up": {
-                    "sprint_duration": "2",  # weeks
+                    "sprint_duration": 2,  # weeks
                     "sprint_begins_on": "mon",
                 },
                 "mandatory_story_fields": [
@@ -386,7 +434,10 @@ class Populate:
                             "all_time_metrics",
                         ],
                     },
-                    {"role": Role.DEV.value, "options": ["create_story", "edit_story"]},
+                    {
+                        "role": Role.DEV.value,
+                        "options": ["create_story", "edit_story"]
+                    },
                 ],
                 "members": [
                     {
@@ -486,23 +537,26 @@ class Populate:
                 "ceremonies": {
                     "planning": {
                         "when": CeremonyStartOptions.END.value,
-                        "time": "10:00",  # "HH:MM
+                        "starts": "10:00",  # "HH:MM
+                        "ends": "12:00",
                         "google_meet_config": {},
                     },
                     "standup": {
                         "days": ["mon", "wed", "thu"],
-                        "time": "09:30",  # "HH:MM
+                        "starts": "09:30",  # "HH:MM
+                        "ends": "10:00",
                         "google_meet_config": {},
                     },
                     "retrospective": {
                         "when": CeremonyStartOptions.END.value,
-                        "time": "10:00",  # "HH:MM
+                        "starts": "10:00",  # "HH:MM
+                        "ends": "12:00",
                         "google_meet_config": {},
                     },
                 },
                 "estimation_method": ["fibonacci"],
                 "sprint_set_up": {
-                    "sprint_duration": "3",  # weeks
+                    "sprint_duration": 3,  # weeks
                     "sprint_begins_on": "mon",
                 },
                 "mandatory_story_fields": [
@@ -535,8 +589,17 @@ class Populate:
                     {
                         "_id": self.user1_id,
                         "username": self.username1,
-                        "email": "carolina.b.seoane@gmail.com",
+                        "email": self.email1,
                         "profile_picture": self.pfp1,
+                        "role": Role.SCRUM_MASTER.value,
+                        "member_status": MemberStatus.ACTIVE.value,
+                        # "date": self.user1_id.generation_time
+                    },
+                    {
+                        "_id": self.user2_id,
+                        "username": self.username2,
+                        "email": self.email2,
+                        "profile_picture": self.pfp2,
                         "role": Role.SCRUM_MASTER.value,
                         "member_status": MemberStatus.ACTIVE.value,
                         # "date": self.user1_id.generation_time
@@ -555,6 +618,123 @@ class Populate:
                         "email": "guderianfront2000@gmail.com",
                         "profile_picture": self.pfp9,
                         "role": "Developer",
+                        "member_status": MemberStatus.ACTIVE.value,
+                    },
+                ],
+            },
+            {
+                "_id": self.team3_id,
+                "name": "Proyecto final",
+                "organization": self.org4_id,
+                "ceremonies": {
+                    "planning": {
+                        "when": CeremonyStartOptions.BEGINNING.value,
+                        "starts": "10:00",  # "HH:MM,
+                        "ends": "12:00",
+                        "google_meet_config": { # COMPLETAR
+                            "name": "",
+                            "meetingUri": "",
+                            "meetingCode": "",
+                            "config": {
+                                "accessType": "TRUSTED",
+                                "entryPointAccess": "ALL",
+                            },
+                        },
+                    },
+                    "standup": {
+                        "days": ["mon", "wed", "thu"],
+                        "starts": "09:30",  # "HH:MM
+                        "ends": "09:45",
+                        "google_meet_config": { # COMPLETAR
+                            "name": "",
+                            "meetingUri": "",
+                            "meetingCode": "",
+                            "config": {
+                                "accessType": "TRUSTED",
+                                "entryPointAccess": "ALL",
+                            },
+                        },
+                    },
+                    "retrospective": {
+                        "when": CeremonyStartOptions.END.value,
+                        "starts": "10:00",  # "HH:MM
+                        "ends": "11:00",
+                        "google_meet_config": { # COMPLETAR
+                            "name": "",
+                            "meetingUri": "",
+                            "meetingCode": "",
+                            "config": {
+                                "accessType": "TRUSTED",
+                                "entryPointAccess": "ALL",
+                            },
+                        },
+                    },
+                },
+                "estimation_method": ["fibonacci"],
+                "sprint_set_up": {
+                    "sprint_duration": 2,  # weeks
+                    "sprint_begins_on": "mon",
+                },
+                "mandatory_story_fields": [
+                    "title",
+                    "description",
+                    "creator",
+                    "assigned_to",
+                    "epic",
+                    "sprint",
+                    "estimation",
+                    "story_type",
+                    "estimation_method",
+                    "tasks",
+                ],
+                "permits": [
+                    {
+                        "role": Role.PRODUCT_OWNER.value,
+                        "options": [
+                            "edit_story",
+                            "add_team_members",
+                            "join_standup",
+                            "all_time_metrics",
+                        ],
+                    },
+                    {
+                        "role": Role.DEV.value,
+                        "options": ["create_story", "edit_story"]
+                    },
+                ],
+                "members": [
+                    {
+                        "_id": self.user1_id,
+                        "username": self.username1,
+                        "email": "carolina.b.seoane@gmail.com",
+                        "profile_picture": self.pfp1,
+                        "role": Role.SCRUM_MASTER.value,
+                        "member_status": MemberStatus.ACTIVE.value,
+                        # "date": self.user1_id.generation_time
+                    },
+                    {
+                        "_id": self.user2_id,
+                        "username": self.username2,
+                        "email": "seoane.m.b@gmail.com",
+                        "profile_picture": self.pfp2,
+                        "role": Role.PRODUCT_OWNER.value,
+                        "member_status": MemberStatus.ACTIVE.value,
+                        # "date": self.user2_id.generation_time
+                    },
+                    {
+                        "_id": self.user8_id,
+                        "username": self.username8,
+                        "email": "matmass03@gmail.com",
+                        "profile_picture": self.pfp8,
+                        "role": Role.DEV.value,
+                        "member_status": MemberStatus.ACTIVE.value,
+                    },
+                    {
+                        "_id": self.user9_id,
+                        "username": self.username9,
+                        "email": "guderianfront2000@gmail.com",
+                        "profile_picture": self.pfp9,
+                        "role": Role.DEV.value,
                         "member_status": MemberStatus.ACTIVE.value,
                     },
                 ],
@@ -599,6 +779,74 @@ class Populate:
                 "organization": self.org3_id,
                 "status": Status.DOING.value,
             },
+            {
+                "_id": self.epic3_id,
+                "title": self.epic3_title,
+                "description": "Etapa inicial del proyecto.",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                },
+                "priority": Priority.HIGH.value,
+                "epic_color": Color.YELLOW.value,
+                "acceptance_criteria": "El 100% de los documentos deben estar entregados.",
+                "business_value": "Comprender el alcance y factibilidad de nuestro proyecto nos permite sentar las bases para las etapas posteriores.",
+                "team": self.team3_id,
+                "organization": self.org4_id,
+                "status": Status.DOING.value,
+            },
+            {
+                "_id": self.epic4_id,
+                "title": self.epic4_title,
+                "description": "Etapa de elaboración de los documentos centrales del proyecto.",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                },
+                "priority": Priority.HIGH.value,
+                "epic_color": Color.YELLOW.value,
+                "acceptance_criteria": "El 100% de los documentos deben estar entregados.",
+                "business_value": "La etapa de gestión nos permitirá elaborar los documentos principales para llevar a cabo la realización del proyecto.",
+                "team": self.team3_id,
+                "organization": self.org4_id,
+                "status": Status.DOING.value,
+            },
+            {
+                "_id": self.epic5_id,
+                "title": self.epic5_title,
+                "description": "Etapa de desarrollo de la solución.",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                },
+                "priority": Priority.HIGH.value,
+                "epic_color": Color.YELLOW.value,
+                "acceptance_criteria": "Aplicación deployada y funcionando correctamente, con más del 90% de los casos de prueba positivos.",
+                "business_value": "El desarrollo de la aplicación.",
+                "team": self.team3_id,
+                "organization": self.org4_id,
+                "status": Status.DOING.value,
+            },
+            {
+                "_id": self.epic6_id,
+                "title": self.epic6_title,
+                "description": "Etapa de cierre y elaboración de documentos finales.",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                },
+                "priority": Priority.HIGH.value,
+                "epic_color": Color.YELLOW.value,
+                "acceptance_criteria": "El 100% de los documentos deben estar entregados.",
+                "business_value": "Presentación final del proyecto.",
+                "team": self.team3_id,
+                "organization": self.org4_id,
+                "status": Status.DOING.value,
+            },
         ]
         self.helper.post_to_collection(CollectionNames.EPICS.value, epics)
         print("populated epics")
@@ -632,6 +880,7 @@ class Populate:
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
+                "story_status": Status.DOING.value,
                 "creation_date": datetime.datetime(2024, 7, 20),
                 "added_to_sprint": datetime.datetime(2024, 8, 4),
                 "start_date": datetime.datetime(2024, 8, 5),
@@ -685,6 +934,7 @@ class Populate:
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
+                "story_status": Status.NOT_STARTED.value,
                 "creation_date": datetime.datetime(2024, 7, 20),
                 "added_to_sprint": datetime.datetime(2024, 8, 6),
                 "start_date": datetime.datetime(2024, 8, 7),
@@ -726,6 +976,7 @@ class Populate:
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
+                "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2023, 12, 28),
                 "added_to_sprint": datetime.datetime(2024, 1, 2),
                 "start_date": datetime.datetime(2024, 1, 2),
@@ -767,6 +1018,7 @@ class Populate:
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.DISCOVERY.value,
                 "estimation_method": "Fibonacci",
+                "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2023, 12, 21),
                 "added_to_sprint": datetime.datetime(2024, 1, 2),
                 "start_date": datetime.datetime(2024, 1, 3),
@@ -808,6 +1060,7 @@ class Populate:
                 "priority": Priority.LOW.value,
                 "story_type": Type.BUGFIX.value,
                 "estimation_method": "Fibonacci",
+                "story_status": Status.DOING.value,
                 "creation_date": datetime.datetime(2023, 8, 2),
                 "added_to_sprint": datetime.datetime(2024, 8, 12),
                 "start_date": datetime.datetime(2024, 8, 19),
@@ -848,6 +1101,7 @@ class Populate:
                 "priority": Priority.HIGH.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
+                "story_status": Status.DOING.value,
                 "creation_date": datetime.datetime(2023, 12, 27),
                 "added_to_sprint": datetime.datetime(2023, 12, 30),
                 "start_date": datetime.datetime(2024, 1, 3),
@@ -888,6 +1142,7 @@ class Populate:
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.BUGFIX.value,
                 "estimation_method": "Fibonacci",
+                "story_status": Status.DOING.value,
                 "creation_date": datetime.datetime(2023, 12, 27),
                 "added_to_sprint": datetime.datetime(2024, 1, 4),
                 "start_date": datetime.datetime(2024, 1, 5),
@@ -943,6 +1198,7 @@ class Populate:
                 "priority": Priority.LOW.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
+                "story_status": Status.DOING.value,
                 "creation_date": datetime.datetime(2023, 12, 15),
                 "added_to_sprint": datetime.datetime(2024, 1, 2),
                 "start_date": datetime.datetime(2024, 1, 2),
@@ -983,6 +1239,7 @@ class Populate:
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.BUGFIX.value,
                 "estimation_method": "Fibonacci",
+                "story_status": Status.DOING.value,
                 "creation_date": datetime.datetime(2023, 12, 29),
                 "added_to_sprint": datetime.datetime(2023, 12, 29),
                 "start_date": datetime.datetime(2024, 1, 4),
@@ -996,6 +1253,130 @@ class Populate:
                 ],
                 "team": self.team1_id,
             },
+            {
+                "story_id": "PROYECTO_FINAL-000001",
+                "title": "Presentación de propuestas",
+                "description": "Elaborar 3 propuestas y armar el documento de propuestas siguiendo los lineamientos de la cátedra.",
+                "acceptance_criteria": "Documento de propuestas elaborado y enviado",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "assigned_to": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "epic": {
+                    "_id": self.epic3_id,
+                    "title": self.epic3_title,
+                },
+                "sprint": {"_id": self.backlog_team3, "name": "Backlog"},
+                "estimation": 5,
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.FEATURE.value,
+                "estimation_method": "Fibonacci",
+                "story_status": Status.NOT_STARTED.value,
+                "creation_date": datetime.datetime(2024, 7, 20),
+                "tasks": [],
+                "team": self.team3_id,
+            },
+            {
+                "story_id": "PROYECTO_FINAL-000002",
+                "title": "Investigación y análisis de la problemática",
+                "description": "Una vez aprobada una de las propuestas, investigar en profundidad la problemática a resolver.",
+                "acceptance_criteria": "Documentos presentados.",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "assigned_to": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2,
+                    "email": self.email2
+                },
+                "epic": {
+                    "_id": self.epic3_id,
+                    "title": self.epic3_title,
+                },
+                "sprint": {"_id": self.backlog_team3, "name": "Backlog"},
+                "estimation": 3,
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.FEATURE.value,
+                "estimation_method": "Fibonacci",
+                "story_status": Status.NOT_STARTED.value,
+                "creation_date": datetime.datetime(2024, 7, 20),
+                "tasks": [],
+                "team": self.team3_id,
+            },
+            {
+                "story_id": "PROYECTO_FINAL-000003",
+                "title": "Estudio de factibilidad",
+                "description": "Realizar el estudio de factibilidad de la propuesta seleccionada para determinar si el proyecto es factible.",
+                "acceptance_criteria": "Documento de estudio de factibilidad enviado.",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "assigned_to": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2,
+                    "email": self.email2
+                },
+                "epic": {
+                    "_id": self.epic3_id,
+                    "title": self.epic3_title,
+                },
+                "sprint": {"_id": self.backlog_team3, "name": "Backlog"},
+                "estimation": 8,
+                "priority": Priority.CRITIC.value,
+                "story_type": Type.FEATURE.value,
+                "estimation_method": "Fibonacci",
+                "story_status": Status.NOT_STARTED.value,
+                "creation_date": datetime.datetime(2024, 7, 20),
+                "tasks": [],
+                "team": self.team3_id,
+            },
+            {
+                "story_id": "PROYECTO_FINAL-000004",
+                "title": "Business Canvas Model",
+                "description": "Realizar el Canvas para la propuesta seleccionada.",
+                "acceptance_criteria": "Diagrama elaborado y enviado.",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "assigned_to": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2,
+                    "email": self.email2
+                },
+                "epic": {
+                    "_id": self.epic3_id,
+                    "title": self.epic3_title,
+                },
+                "sprint": {"_id": self.backlog_team3, "name": "Backlog"},
+                "estimation": 2,
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.FEATURE.value,
+                "estimation_method": "Fibonacci",
+                "story_status": Status.NOT_STARTED.value,
+                "creation_date": datetime.datetime(2024, 7, 20),
+                "tasks": [],
+                "team": self.team3_id,
+            },
         ]
         self.helper.post_to_collection(CollectionNames.STORIES.value, stories)
         print("populated stories")
@@ -1007,28 +1388,89 @@ class Populate:
                     {
                         "role": Role.PRODUCT_OWNER.value,
                         "actions": [
-                            {"value": "edit_story", "label": "Edit story"},
-                            {"value": "delete_story", "label": "Delete story"},
-                            {"value": "add_team_members", "label": "Add team members"},
-                            {"value": "join_standup", "label": "Join standup"},
+                            {
+                                "value": "edit_story",
+                                "label": "Edit story",
+                                "description": "Modify the content and details of any story in the project."
+                            },
+                            {
+                                "value": "delete_story",
+                                "label": "Delete story",
+                                "description": "Permanently remove a story from the project."
+                            },
+                            {
+                                "value": "add_team_members",
+                                "label": "Add team members",
+                                "description": "Invite new members to join the project team."
+                            },
+                            {
+                                "value": "join_standup",
+                                "label": "Join standup",
+                                "description": "Participate in daily stand-up meetings."
+                            },
                             {
                                 "value": "all_time_metrics",
                                 "label": "Access to all time metrics",
+                                "description": "View metrics across all time periods for performance tracking."
                             },
                         ],
                     },
                     {
                         "role": Role.DEV.value,
                         "actions": [
-                            {"value": "create_story", "label": "Create story"},
-                            {"value": "edit_story", "label": "Edit story"},
-                            {"value": "delete_story", "label": "Delete story"},
                             {
-                                "value": "modify_sprint_schedule",
-                                "label": "Modify sprint schedule",
+                                "value": "create_story",
+                                "label": "Create story",
+                                "description": "Add a new story to the project backlog."
                             },
+                            {
+                                "value": "edit_story",
+                                "label": "Edit story",
+                                "description": "Modify the content and details of any story in the project."
+                            },
+                            {
+                                "value": "delete_story",
+                                "label": "Delete story",
+                                "description": "Permanently remove a story from the project."
+                            }
                         ],
                     },
+                    {
+                        "role": Role.SCRUM_MASTER.value,
+                        "actions": [
+                            {
+                                "value": "create_story",
+                                "label": "Create story",
+                                "description": "Add a new story to the project backlog."
+                            },
+                            {
+                                "value": "edit_story",
+                                "label": "Edit story",
+                                "description": "Modify the content and details of any story in the project."
+                            },
+                            {
+                                "value": "delete_story",
+                                "label": "Delete story",
+                                "description": "Permanently remove a story from the project."
+                            },
+
+                            {
+                                "value": "add_team_members",
+                                "label": "Add team members",
+                                "description": "Invite new members to join the project team."
+                            },
+                            {
+                                "value": "join_standup",
+                                "label": "Join standup",
+                                "description": "Participate in daily stand-up meetings."
+                            },
+                            {
+                                "value": "all_time_metrics",
+                                "label": "Access to all time metrics",
+                                "description": "View metrics across all time periods for performance tracking."
+                            },
+                        ],
+                    }
                 ]
             }
         ]
@@ -1046,9 +1488,9 @@ class Populate:
             {
                 "_id": self.sprint1_q1_team1,
                 "name": "S1-Q1-2024",
-                "sprint_number": "1",
-                "quarter": "1",
-                "year": "2024",
+                "sprint_number": 1,
+                "quarter": 1,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 1, 1),
                 "end_date": datetime.datetime(2024, 1, 14),
                 "status": SprintStatus.FINISHED.value,
@@ -1059,9 +1501,9 @@ class Populate:
             {
                 "_id": self.sprint2_q1_team1,
                 "name": "S2-Q1-2024",
-                "sprint_number": "2",
-                "quarter": "1",
-                "year": "2024",
+                "sprint_number": 2,
+                "quarter": 1,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 1, 15),
                 "end_date": datetime.datetime(2024, 1, 28),
                 "status": SprintStatus.FINISHED.value,
@@ -1072,9 +1514,9 @@ class Populate:
             {
                 "_id": self.sprint3_q1_team1,
                 "name": "S3-Q1-2024",
-                "sprint_number": "3",
-                "quarter": "1",
-                "year": "2024",
+                "sprint_number": 3,
+                "quarter": 1,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 1, 29),
                 "end_date": datetime.datetime(2024, 2, 11),
                 "status": SprintStatus.FINISHED.value,
@@ -1085,9 +1527,9 @@ class Populate:
             {
                 "_id": self.sprint4_q1_team1,
                 "name": "S4-Q1-2024",
-                "sprint_number": "4",
-                "quarter": "1",
-                "year": "2024",
+                "sprint_number": 4,
+                "quarter": 1,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 2, 12),
                 "end_date": datetime.datetime(2024, 2, 25),
                 "status": SprintStatus.FINISHED.value,
@@ -1098,9 +1540,9 @@ class Populate:
             {
                 "_id": self.sprint5_q1_team1,
                 "name": "S5-Q1-2024",
-                "sprint_number": "5",
-                "quarter": "1",
-                "year": "2024",
+                "sprint_number": 5,
+                "quarter": 1,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 2, 26),
                 "end_date": datetime.datetime(2024, 3, 10),
                 "status": SprintStatus.FINISHED.value,
@@ -1111,9 +1553,9 @@ class Populate:
             {
                 "_id": self.sprint6_q1_team1,
                 "name": "S6-Q1-2024",
-                "sprint_number": "6",
-                "quarter": "1",
-                "year": "2024",
+                "sprint_number": 6,
+                "quarter": 1,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 3, 11),
                 "end_date": datetime.datetime(2024, 3, 24),
                 "status": SprintStatus.FINISHED.value,
@@ -1124,9 +1566,9 @@ class Populate:
             {
                 "_id": self.sprint1_q2_team1,
                 "name": "S1-Q2-2024",
-                "sprint_number": "1",
-                "quarter": "2",
-                "year": "2024",
+                "sprint_number": 1,
+                "quarter": 2,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 3, 25),
                 "end_date": datetime.datetime(2024, 4, 7),
                 "status": SprintStatus.FINISHED.value,
@@ -1137,9 +1579,9 @@ class Populate:
             {
                 "_id": self.sprint2_q2_team1,
                 "name": "S2-Q2-2024",
-                "sprint_number": "2",
-                "quarter": "2",
-                "year": "2024",
+                "sprint_number": 2,
+                "quarter": 2,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 4, 15),
                 "end_date": datetime.datetime(2024, 4, 28),
                 "status": SprintStatus.FINISHED.value,
@@ -1150,9 +1592,9 @@ class Populate:
             {
                 "_id": self.sprint3_q2_team1,
                 "name": "S3-Q2-2024",
-                "sprint_number": "3",
-                "quarter": "2",
-                "year": "2024",
+                "sprint_number": 3,
+                "quarter": 2,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 4, 29),
                 "end_date": datetime.datetime(2024, 5, 12),
                 "status": SprintStatus.FINISHED.value,
@@ -1163,9 +1605,9 @@ class Populate:
             {
                 "_id": self.sprint4_q2_team1,
                 "name": "S4-Q2-2024",
-                "sprint_number": "4",
-                "quarter": "2",
-                "year": "2024",
+                "sprint_number": 4,
+                "quarter": 2,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 5, 13),
                 "end_date": datetime.datetime(2024, 5, 26),
                 "status": SprintStatus.FINISHED.value,
@@ -1176,9 +1618,9 @@ class Populate:
             {
                 "_id": self.sprint5_q2_team1,
                 "name": "S5-Q2-2024",
-                "sprint_number": "5",
-                "quarter": "2",
-                "year": "2024",
+                "sprint_number": 5,
+                "quarter": 2,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 5, 27),
                 "end_date": datetime.datetime(2024, 6, 9),
                 "status": SprintStatus.FINISHED.value,
@@ -1189,9 +1631,9 @@ class Populate:
             {
                 "_id": self.sprint6_q2_team1,
                 "name": "S6-Q2-2024",
-                "sprint_number": "6",
-                "quarter": "2",
-                "year": "2024",
+                "sprint_number": 6,
+                "quarter": 2,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 6, 10),
                 "end_date": datetime.datetime(2024, 6, 23),
                 "status": SprintStatus.FINISHED.value,
@@ -1202,9 +1644,9 @@ class Populate:
             {
                 "_id": self.sprint1_q3_team1,
                 "name": "S1-Q3-2024",
-                "sprint_number": "1",
-                "quarter": "3",
-                "year": "2024",
+                "sprint_number": 1,
+                "quarter": 3,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 6, 24),
                 "end_date": datetime.datetime(2024, 7, 7),
                 "status": SprintStatus.FINISHED.value,
@@ -1215,9 +1657,9 @@ class Populate:
             {
                 "_id": self.sprint2_q3_team1,
                 "name": "S2-Q3-2024",
-                "sprint_number": "2",
-                "quarter": "3",
-                "year": "2024",
+                "sprint_number": 2,
+                "quarter": 3,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 7, 8),
                 "end_date": datetime.datetime(2024, 7, 21),
                 "status": SprintStatus.FINISHED.value,
@@ -1228,9 +1670,9 @@ class Populate:
             {
                 "_id": self.sprint3_q3_team1,
                 "name": "S3-Q3-2024",
-                "sprint_number": "3",
-                "quarter": "3",
-                "year": "2024",
+                "sprint_number": 3,
+                "quarter": 3,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 7, 22),
                 "end_date": datetime.datetime(2024, 8, 4),
                 "status": SprintStatus.FINISHED.value,
@@ -1241,12 +1683,12 @@ class Populate:
             {
                 "_id": self.sprint4_q3_team1,
                 "name": "S4-Q3-2024",
-                "sprint_number": "4",
-                "quarter": "3",
-                "year": "2024",
+                "sprint_number": 4,
+                "quarter": 3,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 8, 5),
                 "end_date": datetime.datetime(2024, 8, 18),
-                "status": SprintStatus.CURRENT.value,
+                "status": SprintStatus.FINISHED.value,
                 "target": 85,
                 "completed": 80,
                 "team": self.team1_id,
@@ -1254,27 +1696,96 @@ class Populate:
             {
                 "_id": self.sprint5_q3_team1,
                 "name": "S5-Q3-2024",
-                "sprint_number": "5",
-                "quarter": "3",
-                "year": "2024",
+                "sprint_number": 5,
+                "quarter": 3,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 8, 19),
                 "end_date": datetime.datetime(2024, 9, 1),
-                "status": SprintStatus.FUTURE.value,
+                "status": SprintStatus.FINISHED.value,
                 "target": 97,
-                "completed": 109,
+                "completed": 74,
                 "team": self.team1_id,
             },
             {
                 "_id": self.sprint6_q3_team1,
                 "name": "S6-Q3-2024",
-                "sprint_number": "6",
-                "quarter": "3",
-                "year": "2024",
+                "sprint_number": 6,
+                "quarter": 3,
+                "year": 2024,
                 "start_date": datetime.datetime(2024, 9, 2),
                 "end_date": datetime.datetime(2024, 9, 15),
-                "status": SprintStatus.FUTURE.value,
+                "status": SprintStatus.FINISHED.value,
                 "target": 115,
-                "completed": 109,
+                "completed": 115,
+                "team": self.team1_id,
+            },
+            {
+                "_id": self.sprint1_q4_team1,
+                "name": "S1-Q4-2024",
+                "sprint_number": 1,
+                "quarter": 4,
+                "year": 2024,
+                "start_date": datetime.datetime(2024, 9, 16),
+                "end_date": datetime.datetime(2024, 9, 29),
+                "status": SprintStatus.CURRENT.value,
+                "target": 120,
+                "completed": 74,
+                "team": self.team1_id,
+            },
+            {
+                "_id": self.sprint2_q4_team1,
+                "name": "S2-Q4-2024",
+                "sprint_number": 2,
+                "quarter": 4,
+                "year": 2024,
+                "start_date": datetime.datetime(2024, 9, 30),
+                "end_date": datetime.datetime(2024, 10, 13),
+                "status": SprintStatus.FUTURE.value,
+                "next": True,
+                "team": self.team1_id,
+            },
+            {
+                "_id": self.sprint3_q4_team1,
+                "name": "S3-Q4-2024",
+                "sprint_number": 3,
+                "quarter": 4,
+                "year": 2024,
+                "start_date": datetime.datetime(2024, 10, 14),
+                "end_date": datetime.datetime(2024, 10, 27),
+                "status": SprintStatus.FUTURE.value,
+                "team": self.team1_id,
+            },
+            {
+                "_id": self.sprint4_q4_team1,
+                "name": "S4-Q4-2024",
+                "sprint_number": 4,
+                "quarter": 4,
+                "year": 2024,
+                "start_date": datetime.datetime(2024, 10, 28),
+                "end_date": datetime.datetime(2024, 11, 10),
+                "status": SprintStatus.FUTURE.value,
+                "team": self.team1_id,
+            },
+            {
+                "_id": self.sprint5_q4_team1,
+                "name": "S5-Q4-2024",
+                "sprint_number": 5,
+                "quarter": 4,
+                "year": 2024,
+                "start_date": datetime.datetime(2024, 11, 11),
+                "end_date": datetime.datetime(2024, 11, 24),
+                "status": SprintStatus.FUTURE.value,
+                "team": self.team1_id,
+            },
+            {
+                "_id": self.sprint6_q4_team1,
+                "name": "S6-Q4-2024",
+                "sprint_number": 6,
+                "quarter": 4,
+                "year": 2024,
+                "start_date": datetime.datetime(2024, 11, 25),
+                "end_date": datetime.datetime(2024, 12, 8),
+                "status": SprintStatus.FUTURE.value,
                 "team": self.team1_id,
             },
             {
@@ -1282,6 +1793,12 @@ class Populate:
                 "name": "Backlog",
                 "status": SprintStatus.ACTIVE.value,
                 "team": self.team2_id,
+            },
+            {
+                "_id": self.backlog_team3,
+                "name": "Backlog",
+                "status": SprintStatus.ACTIVE.value,
+                "team": self.team3_id,
             },
         ]
         self.helper.post_to_collection(CollectionNames.SPRINTS.value, sprints)
@@ -1295,17 +1812,20 @@ class Populate:
                 "ceremonies": {
                     "planning": {
                         "when": CeremonyStartOptions.BEGINNING.value,
-                        "time": "10:00",  # "HH:MM
+                        "starts": "10:00",  # "HH:MM
+                        "ends": "12:00",
                         "google_meet_config": {},
                     },
                     "standup": {
                         "days": ["mon", "tue", "wed", "thu", "fri"],
-                        "time": "12:00",  # "HH:MM
+                        "starts": "12:00",  # "HH:MM
+                        "ends": "12:15",
                         "google_meet_config": {},
                     },
                     "retrospective": {
                         "when": CeremonyStartOptions.END.value,
-                        "time": "16:00",  # "HH:MM
+                        "starts": "16:00",  # "HH:MM
+                        "ends": "17:00",
                         "google_meet_config": {},
                     },
                 },
@@ -1321,7 +1841,7 @@ class Populate:
                 "key": "default_settings",
                 "value": "sprint_set_up",
                 "sprint_set_up": {
-                    "sprint_duration": "2",  # weeks
+                    "sprint_duration": 2,  # weeks
                     "sprint_begins_on": "mon",
                 },
             },

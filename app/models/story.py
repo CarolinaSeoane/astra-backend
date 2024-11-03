@@ -46,7 +46,7 @@ class Story:
         if view_type == 'kanban':
             projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.title', 'tasks.status'}
         elif view_type == 'list':
-            projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.status', 'story_type', 'description'}
+            projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.status', 'story_type', 'description', 'epic.title'}
         else:
             projection = None
 
@@ -70,6 +70,8 @@ class Story:
             filter["story_type"] = kwargs['story_type']
         if 'story_id' in kwargs and kwargs['story_id']:
             filter["story_id"] = kwargs['story_id']
+        if 'story_status' in kwargs and kwargs['story_status']:
+            filter["story_status"] = kwargs['story_status']
 
         stories = MongoHelper().get_documents_by(STORIES_COL, filter=filter, projection=projection)
 
@@ -159,3 +161,11 @@ class Story:
                 "message": ["You have been successfully unsubscribed from story"],
                 "status": 200
             }
+
+    @staticmethod
+    def delete(team_id, story_id):
+        match = {
+            "team": ObjectId(team_id),
+            "story_id": story_id
+        }
+        return MongoHelper().delete_element_from_collection(STORIES_COL, match)
