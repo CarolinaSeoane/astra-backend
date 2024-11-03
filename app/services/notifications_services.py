@@ -1,172 +1,141 @@
-import requests
-from datetime import datetime
-from bson import ObjectId
 from app.models.notification import Notification
-from app.models.team import Team 
+from app.models.team import Team
 
 
-def notify_story_update(story, updated_fields, team_id):
+def notify_story_update(old_story, updated_fields, team_id):
     """
-    Enviar notificaciones sobre los cambios realizados a la historia, excluyendo cambios en `team`, `_id`, y `subscribers`.
-    Si se modifica el campo `comments`, enviará el contenido del comentario.
-    """
-    creator_id_str = Notification._extract_id_string(story.get('creator', {}).get('_id', ''))
+    Enviar notificaciones sobre los cambios realizados a la historia, excluyendo
+    cambios en `team`, `_id`, y `subscribers`.
+
+    Si se modifica el campo assigned to:
+        - el assigned to original va a recibir una sola notificacion indicandole que ya no
+        es mas el assigned to de la story.
+        - el nuevo assigned to va a recibir una sola notificacion indicandole que tiene una
+        nueva story asignada.
     
+    Si no se modifica el campo assigned to, el assigned to original recibira tantas notificaciones
+    como campor se hayan modificado.
+    
+    El creator, PO y subscribers de la story recibe tantas notificaciones como campos
+    se hayan modificado.
+    """
+    subscribers = old_story.get("subscribers", [])
+    story_title = old_story.get('title', 'No Title')
+    creator_id = old_story.get('creator', {}).get('_id', None)
+    po_id = Team.get_product_owner(team_id)
+    print("PO:", po_id)
+    original_assigned_to = old_story.get('assigned_to', {}).get('_id', None)
+    new_assigned_to = original_assigned_to
 
-    subscribers = story.get('subscribers', [])  
-    assigned_to = story.get('assigned_to', {})  
-    assigned_to_id_str = Notification._extract_id_string(assigned_to.get('_id', ''))  
+    original_assign_message = ""
+    new_assign_message = ""
 
     notifications = []
 
-    if 'title' in updated_fields:
-        old_title = story.get('title', 'Título antiguo no disponible')
+    if "title" in updated_fields:
+        old_title = old_story.get("title", "Título antiguo no disponible")
         title_message = f"El título de la historia '{old_title}' se ha cambiado a '{updated_fields['title']}'."
-        notifications.append((assigned_to_id_str, title_message))
+        notifications.append(title_message)
 
-    if 'acceptance_criteria' in updated_fields:
-        criteria_message = f"Se han actualizado los criterios de aceptación de la historia '{story.get('title', 'No Title')}'."
-        notifications.append((assigned_to_id_str, criteria_message))
+    if "acceptance_criteria" in updated_fields:
+        criteria_message = f"Se han actualizado los criterios de aceptación de la historia '{story_title}'."
+        notifications.append(criteria_message)
 
-    if 'assigned_to' in updated_fields:
-        new_assigned_user = updated_fields['assigned_to']
-        new_assigned_user_str = Notification._extract_id_string(new_assigned_user.get('_id', ''))
-        assign_message = f"Se ha cambiado el usuario asignado a la historia '{story.get('title', 'No Title')}'."
-        notifications.append((new_assigned_user_str, assign_message))
+    if "assigned_to" in updated_fields:
+        new_assigned_to = updated_fields["assigned_to"]["_id"]
+        original_assign_message = f"Te han desasignado la tarea '{story_title}'."
+        new_assign_message = f"Se te ha asignado la historia '{story_title}'."
+        assign_message = f"Se ha cambiado el usuario asignado a la historia '{story_title}'."
+        notifications.append(assign_message)
 
-    if 'epic' in updated_fields:
-        epic_message = f"Se ha actualizado la épica de la historia '{story.get('title', 'No Title')}'."
-        notifications.append((assigned_to_id_str, epic_message))
+    if "epic" in updated_fields:
+        epic_message = f"Se ha actualizado la épica de la historia '{story_title}'."
+        notifications.append(epic_message)
 
-    if 'sprint' in updated_fields:
-        sprint_message = f"Se ha cambiado el sprint de la historia '{story.get('title', 'No Title')}'."
-        notifications.append((assigned_to_id_str, sprint_message))
+    if "sprint" in updated_fields:
+        sprint_message = f"Se ha cambiado el sprint de la historia '{story_title}'."
+        notifications.append(sprint_message)
 
-    if 'estimation' in updated_fields:
-        estimation_message = f"Se ha cambiado la estimación de la historia '{story.get('title', 'No Title')}' a {updated_fields['estimation']} puntos."
-        notifications.append((assigned_to_id_str, estimation_message))
+    if "estimation" in updated_fields:
+        estimation_message = f"Se ha cambiado la estimación de la historia '{story_title}' a {updated_fields['estimation']} puntos."
+        notifications.append(estimation_message)
 
-    if 'tags' in updated_fields:
-        tags_message = f"Se han actualizado las etiquetas de la historia '{story.get('title', 'No Title')}'."
-        notifications.append((assigned_to_id_str, tags_message))
+    if "priority" in updated_fields:
+        priority_message = f"Se ha cambiado la prioridad de la historia '{story_title}' a {updated_fields['priority']}."
+        notifications.append(priority_message)
 
-    if 'priority' in updated_fields:
-        priority_message = f"Se ha cambiado la prioridad de la historia '{story.get('title', 'No Title')}' a {updated_fields['priority']}."
-        notifications.append((assigned_to_id_str, priority_message))
+    if "tasks" in updated_fields:
+        tasks_message = f"Se han actualizado las tareas de la historia '{story_title}'."
+        notifications.append(tasks_message)
 
-    if 'tasks' in updated_fields:
-        tasks_message = f"Se han actualizado las tareas de la historia '{story.get('title', 'No Title')}'."
-        notifications.append((assigned_to_id_str, tasks_message))
+    print(f"created the following notifications {notifications}")
 
-    if 'estimation_method' in updated_fields:
-        method_message = f"Se ha cambiado el método de estimación a '{updated_fields['estimation_method']}' para la historia '{story.get('title', 'No Title')}'."
-        notifications.append((assigned_to_id_str, method_message))
+    if original_assigned_to == new_assigned_to:
+        # se le envian todas las notificaciones al assigned to
+        print("the assigned to didnt change. sending all notifications to them")
+        send_multiple_notifications(
+            notifications=notifications,
+            story=old_story,
+            team_id=team_id,
+            to_notify=original_assigned_to,
+            assigned_to=original_assigned_to
+        )
+    else:
+        # se le envia una notificacion a cada uno
+        print("theres a new assigned to. sending two notifications, one for each")
+        Notification.create_notification(
+            owner_id=new_assigned_to,
+            msg=original_assign_message,
+            story=old_story,
+            assigned_to=original_assigned_to,
+            team_id=team_id
+        )
+        Notification.create_notification(
+            owner_id=new_assigned_to,
+            msg=new_assign_message,
+            story=old_story,
+            assigned_to=new_assigned_to,
+            team_id=team_id
+        )
 
-    for user_id_str, message in notifications:
-        if user_id_str and len(user_id_str) == 24:
-            try:
-                Notification.create_notification({
-                    'user_id': ObjectId(user_id_str),
-                    'message': message,
-                    'story_id': story.get('_id', 'No ID'),
-                    'creator': ObjectId(creator_id_str),
-                    'assigned_to': ObjectId(user_id_str) if user_id_str == assigned_to_id_str else None,
-                    'team_id': team_id,
-                    'created_at': datetime.now().isoformat(),
-                    'viewed_by': []
-                })
-                print(f"Notificación enviada al asignado {user_id_str}: {message}")
-            except Exception as e:
-                print("Error al crear notificación:", e)
+    # send all notifications to creator
+    if creator_id not in (original_assigned_to, new_assigned_to):
+        print("notifying creator")
+        send_multiple_notifications(
+            notifications=notifications,
+            story=old_story,
+            team_id=team_id,
+            to_notify=creator_id,
+        )
 
-    # Enviar notificaciones al creador
-    if creator_id_str and len(creator_id_str) == 24:
-        for user_id_str, message in notifications:
-            if user_id_str != creator_id_str:  
-                try:
-                    Notification.create_notification({
-                        'user_id': ObjectId(creator_id_str),
-                        'message': message,
-                        'story_id': story.get('_id', 'No ID'),
-                        'creator': ObjectId(creator_id_str),
-                        'assigned_to': ObjectId(user_id_str) if 'assigned_to' in updated_fields and new_assigned_user_str != creator_id_str else None,
-                        'team_id': team_id,
-                        'created_at': datetime.now().isoformat(),
-                        'viewed_by': []
-                    })
-                    print(f"Notificación enviada al creador {creator_id_str}: {message}")
-                except Exception as e:
-                    print("Error al crear notificación:", e)
+    # send all notifications to po
+    if po_id and po_id not in (creator_id, original_assigned_to, new_assigned_to):
+        print("notifying po")
+        send_multiple_notifications(
+            notifications=notifications,
+            story=old_story,
+            team_id=team_id,
+            to_notify=po_id,
+        )
 
-    # Enviar notificaciones a suscriptores
+    # send all notifications to all subscribers
     for subscriber in subscribers:
-            subscriber_id = subscriber.get('$oid')  
-            if subscriber_id and len(subscriber_id) == 24:  
-                for user_id_str, message in notifications:
-                    try:
-                        Notification.create_notification({
-                            'user_id': ObjectId(subscriber_id), 
-                            'message': message,
-                            'story_id': story.get('_id', 'No ID'),
-                            'creator': ObjectId(creator_id_str),
-                            'assigned_to': ObjectId(user_id_str) if 'assigned_to' in updated_fields else None,
-                            'team_id': team_id,
-                            'created_at': datetime.now().isoformat(),
-                            'viewed_by': []
-                        })
-                        print(f"Notificación enviada a subscriptor {subscriber_id}: {message}")
-                    except Exception as e:
-                        print("Error al crear notificación:", e)
+        print("notifying subscribers")
+        if subscriber in (po_id, creator_id, original_assigned_to, new_assigned_to):
+            continue
+        send_multiple_notifications(
+            notifications=notifications,
+            story=old_story,
+            team_id=team_id,
+            to_notify=subscriber,
+        )
 
-    # Enviar notificación al Product Owner 
-    po_id = get_product_owner_id(team_id)
-    print("PO:",po_id)
-    if po_id:
-        for message in notifications:
-            try:
-                Notification.create_notification({
-                    'user_id': ObjectId(po_id),
-                    'message': message,  
-                    'story_id': story.get('_id', 'No ID'),
-                    'creator': ObjectId(creator_id_str),  
-                    'assigned_to': ObjectId(user_id_str) if 'assigned_to' in updated_fields else None,
-                    'team_id': team_id,
-                    'created_at': datetime.now().isoformat(),
-                    'viewed_by': []
-                })
-                print(f"Notificación enviada al Product Owner {po_id}: {message}")
-            except Exception as e:
-                print("Error al crear notificación:", e)
-
-def is_product_owner(user_id, team_id):
-
-    endpoint_url = f"http://127.0.0.1:5000/teams/product_owner/role_check/{user_id}"
-    try:
-        params = {'team_id': team_id}
-        response = requests.get(endpoint_url, params=params) 
-        if response.status_code == 200:
-            result = response.json()
-            return result.get('data') 
-        else:
-            print(f"Error al solicitar el estado de Product Owner: {response.status_code}")
-            return False
-    except requests.exceptions.RequestException as e:
-        print(f"Error al conectar con el endpoint de Product Owner: {e}")
-        return False
-
-def get_product_owner_id(team_id):
-    
-    team = Team.get_team(ObjectId(team_id))
-    
-    if team:
-        
-        for member in team.get('members', []):
-            if member.get('role') == 'Product Owner':
-                
-                po_id = member.get('_id')
-                
-                if isinstance(po_id, dict) and '$oid' in po_id:
-                    return ObjectId(po_id['$oid']) 
-                return po_id 
-    
-    return None
+def send_multiple_notifications(notifications, story, team_id, to_notify, assigned_to=None):
+    for notification in notifications:
+        Notification.create_notification(
+            owner_id=to_notify,
+            msg=notification,
+            story=story,
+            assigned_to=assigned_to,
+            team_id=team_id
+        )

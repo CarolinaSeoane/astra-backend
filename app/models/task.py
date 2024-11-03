@@ -60,16 +60,27 @@ class Task:
         for task in tasks:
             if task['status'] == BLOCKED:
                 return BLOCKED
-
         for task in tasks:
             if task['status'] == DOING:
                 return DOING
-
         if all(task['status'] == DONE for task in tasks):
             return DONE
-
         return NOT_STARTED
 
     @staticmethod
     def get_statuses():
         return [NOT_STARTED, DOING, BLOCKED, DONE]
+
+    @staticmethod
+    def have_tasks_changed(old_tasks, new_tasks):
+        print(f"the old tasks are {old_tasks}")
+        print(f"the new tasks are {new_tasks} \n")
+        if len(old_tasks) != len(new_tasks):
+            return True
+        for index, old_task in enumerate(old_tasks):
+            if (
+                old_task["title"] != new_tasks[index]["title"]
+                or old_task["description"] != new_tasks[index]["description"]
+            ):
+                return True
+        return False

@@ -68,3 +68,6 @@ class MongoHelper:
 
     def replace_document(self, collection_name, filter, new_document):
         return self.astra.db[collection_name].replace_one(filter, new_document)
+
+    def count_documents(self, collection_name, filter_criteria):
+        return self.astra.db[collection_name].count_documents(filter_criteria)

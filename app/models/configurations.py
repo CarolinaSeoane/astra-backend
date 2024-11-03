@@ -70,6 +70,7 @@ class CollectionNames(Enum):
     STORIES = "stories"
     TEAMS = "teams"
     USERS = "users"
+    NOTIFICATIONS = "notifications"
 
 CONFIGURATIONS_COL = CollectionNames.CONFIGURATIONS.value
 class Configurations:

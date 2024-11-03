@@ -1468,6 +1468,15 @@ class Populate:
                         "order": 1,
                     },
                     {
+                        "value": "notifications",
+                        "label": "Notifications",
+                        "modifiable": 1,
+                        "description": "Toggle to subscribe to story.",
+                        "section": "estimation",
+                        "type": "toggle",
+                        "order": 1,
+                    },
+                    {
                         "value": "tags",
                         "label": "Tags",
                         "modifiable": 1,

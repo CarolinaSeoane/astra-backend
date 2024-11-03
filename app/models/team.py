@@ -6,10 +6,11 @@ from app.models.user import User
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import MemberStatus
 from app.services.google_meet import create_space
-from app.models.configurations import Configurations, CollectionNames
+from app.models.configurations import Configurations, CollectionNames, Role
 
 
 TEAMS_COL = CollectionNames.TEAMS.value
+PRODUCT_OWNER = Role.PRODUCT_OWNER.value
 
 
 class Team:
@@ -163,3 +164,15 @@ class Team:
         filter = {'_id':ObjectId(team_id)}
         update = {'$set': {f'ceremonies.{ceremony.lower()}.google_meet_config': space}}
         return MongoHelper().update_collection(TEAMS_COL, filter, update)
+
+    @staticmethod
+    def get_product_owner(team_id):
+        team = Team.get_team(ObjectId(team_id))
+        if team:
+            for member in team.get("members", []):
+                if member.get("role") == PRODUCT_OWNER:
+                    po_id = member.get("_id")
+                    if isinstance(po_id, dict) and "$oid" in po_id:
+                        return ObjectId(po_id["$oid"])
+                    return po_id
+        return None

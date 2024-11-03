@@ -3,7 +3,7 @@ from bson import ObjectId
 
 from app.models.sprint import Sprint
 from app.models.task import Task
-from app.utils import kanban_format, list_format
+from app.utils import kanban_format, list_format, mongo_query
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import Configurations, CollectionNames, Status
 
@@ -15,8 +15,8 @@ DONE_STATUS = Status.DONE.value
 class Story:
 
     def __init__(self, title, description, acceptance_criteria, creator, assigned_to,
-                 epic, sprint, estimation, tags, priority, attachments, comments,
-                 story_type, tasks, related_stories, story_id, team, _id=ObjectId(),subscribers=None):
+                 epic, sprint, estimation, tags, priority, attachments, comments, story_type,
+                 tasks, related_stories, story_id, team, _id=ObjectId(), subscribers=None):
         self.title = title
         self.description = description
         self.acceptance_criteria = acceptance_criteria
@@ -123,33 +123,39 @@ class Story:
         match = {'story_id': story["story_id"]}
         return MongoHelper().replace_document(STORIES_COL, match, new_document=story)
 
-    @classmethod
-    def subscribe_to_story(cls, story_id: str, user_id: str):
-        """
-        Suscribe un usuario a una historia específica.
-        """
-        try:
-            
-            user_id = ObjectId(user_id)
+    @staticmethod
+    @mongo_query
+    def subscribe_to_story(story_id, user_id):
+        mongo_helper = MongoHelper()
 
-            mongo_helper = MongoHelper()
+        story = mongo_helper.get_document_by(STORIES_COL, {'story_id': story_id})
+        if not story:
+            return {"message": "Story not found", "status": 404}
 
-            story = mongo_helper.get_document_by('stories', {'story_id': story_id})
-            if not story:
-                return {"message": "Story not found", "status": 404}
+        if {"$oid": user_id} in story.get('subscribers', []):
+            return {"message": "User is already subscribed", "status": 200}
 
-            
-            if user_id in story.get('subscribers', []):
-                return {"message": "User is already subscribed", "status": 400}
+        user_id = ObjectId(user_id)
+        update = {"$addToSet": {"subscribers": user_id}}
+        mongo_helper.update_collection(STORIES_COL, {'story_id': story_id}, update)
+        return {"message": "You have been successfully subscribed", "status": 200}
 
-            
-            update = {"$addToSet": {"subscribers": user_id}}
-            result = mongo_helper.update_collection('stories', {'story_id': story_id}, update)
-            if result.modified_count > 0:
-                return {"message": "User successfully subscribed", "status": 200}
-            else:
-                return {"message": "Failed to subscribe", "status": 500}
-
-        except Exception as e:
-            print("Error subscribing to story:", e)
-            return {"message": f"Failed to subscribe: {e}", "status": 500}
+    @staticmethod
+    @mongo_query
+    def unsubscribe_to_story(story_id, user_id):
+        mongo_helper = MongoHelper()
+        story = mongo_helper.get_document_by(STORIES_COL, {"story_id": story_id})
+        if story:
+            updated_subscribers = [
+                sub for sub in story.get("subscribers", []) if sub["$oid"] != user_id
+            ]
+            MongoHelper().update_collection(
+                collection_name=STORIES_COL,
+                filter={"story_id": story_id},
+                update={"$set": {"subscribers": updated_subscribers}}
+                # update={"$pull": {"subscribers": {"$oid": user_id}}}
+            )
+            return {
+                "message": ["You have been successfully unsubscribed from story"],
+                "status": 200
+            }
