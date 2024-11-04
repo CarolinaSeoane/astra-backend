@@ -69,8 +69,6 @@ def stories_list(args, view_type):
     stories = Story.get_stories_by_team_id(g.team_id, view_type, **args)
     return send_response(stories, [], 200, **g.req_data)
 
-@stories.route("/fields", methods=["GET"])
-@use_args({"sections": fields.Boolean(required=False, missing=False)}, location="query")
 @stories.route("/standup/<view_type>", methods=['GET'])
 @use_args({
     'sprint': fields.Str(required=False),
@@ -90,34 +88,9 @@ def standup_stories_list(args, view_type):
         print("Fecha de ceremonia obtenida:", ceremony_date)
         if ceremony_date is None:
             return send_response([], ["No se pudo obtener la fecha de la ceremonia."], 400)
-    #if ceremony_date is not None and ceremony_date.tzinfo is None:
-    #    ceremony_date = ceremony_date.replace(tzinfo=timezone.utc)
-    #print("fecha de ceremonia",ceremony_date)
-    
     stories = Story.get_standup_stories(g.team_id, view_type,ceremony_date=ceremony_date, **args)
     print("Lista de historias obtenidas:",stories)
-    
-    #if ceremony_date:
-    #    print(f"Using ceremony date for filtering: {ceremony_date}")
-    #    filtered_stories = []
-    #    for story in stories['stories']:
-    #        print(f"Historia: {story}")
-    #        if 'creation_date' in story:
-    #            # Convertir la fecha de creación a datetime
-    #            print("Tipo de ceremony_date:", type(ceremony_date))
-    #            story_creation_date = datetime.fromisoformat(story['creation_date']['$date'].replace("Z", "+00:00"))
-    #            print(f"Comparando: historia '{story.get('title', 'sin título')}' con fecha de creación {story_creation_date} contra ceremonia {ceremony_date}")
-    #            if story_creation_date < ceremony_date:
-    #                print(f"La historia '{story.get('title', 'sin título')}' se incluye en la lista.")
-    #                filtered_stories.append(story)
-    #            else:
-    #                print(f"La historia '{story.get('title', 'sin título')}' NO se incluye en la lista.")
 
-        
-    #    stories = filtered_stories
-
-    #print(f"Historias filtradas:  {stories}")        
-# Enviar la respuesta
     return send_response(stories, [], 200, **g.req_data)
 
 @stories.route("/fields", methods=['GET'])
