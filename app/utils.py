@@ -1,3 +1,4 @@
+from bson import ObjectId
 from flask import jsonify
 
 from app.models.task import Status
@@ -83,6 +84,37 @@ def apply_banner_format(ceremonies):
             }
         ])
     return formatted_ceremonies
+
+def get_current_quarter(date):
+    month = date.month
+    if month in [1, 2, 3]:
+        return 1
+    elif month in [4, 5, 6]:
+        return 2
+    elif month in [7, 8, 9]:
+        return 3
+    else:
+        return 4
+
+def mongo_query(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            print(f"mongo error {e}")
+            return {"message": [], "error": f"Unable to complete operation: {e}", "status": 500}
+    return wrapper
+
+def try_to_convert_to_object_id(to_convert):
+    if isinstance(to_convert, ObjectId):
+        return to_convert
+    if to_convert is None:
+        return ''
+    try:
+        to_convert = ObjectId(to_convert["$oid"])
+    except Exception as e:
+        print(f"error converting to object id: {e}")
+    return to_convert
 
 
 def list_format_with_task_details(stories_dict):
