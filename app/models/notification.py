@@ -26,11 +26,12 @@ class Notification:
         self.viewed_by = viewed_by or []
 
     @staticmethod
-    def create_notification(owner_id, msg, story, assigned_to, team_id):
+    def create_notification(owner_id, msg, story, assigned_to, team_id, title):
         owner_id = try_to_convert_to_object_id(owner_id)
         assigned_to = try_to_convert_to_object_id(assigned_to)
         notification_data = {
             'user_id': owner_id,
+            'title': title,
             'message': msg,
             'story_id': story['_id'],
             'creator': ObjectId(story['creator']['_id']['$oid']),
@@ -47,7 +48,8 @@ class Notification:
         assigned_to = story.get('assigned_to', {}).get('_id', {})
         Notification.create_notification(
             owner_id=assigned_to,
-            msg=f"Has sido asignado a la historia {story['title']}",
+            title=f'{story["story_id"]} - {story["title"]}',
+            msg="Has sido asignado a la historia",
             story=story,
             assigned_to=assigned_to,
             team_id=team_id
@@ -57,7 +59,8 @@ class Notification:
     def create_creator_notification(story, team_id):
         Notification.create_notification(
             owner_id=ObjectId(story['creator']['_id']['$oid']),
-            msg=f"Has creado la historia {story['title']}",
+            title=f'{story["story_id"]} - {story["title"]}',
+            msg="Has creado la historia",
             story=story,
             assigned_to=None,
             team_id=team_id

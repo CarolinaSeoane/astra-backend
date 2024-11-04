@@ -73,8 +73,6 @@ class Task:
 
     @staticmethod
     def have_tasks_changed(old_tasks, new_tasks):
-        print(f"the old tasks are {old_tasks}")
-        print(f"the new tasks are {new_tasks} \n")
         if len(old_tasks) != len(new_tasks):
             return True
         for index, old_task in enumerate(old_tasks):
