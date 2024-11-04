@@ -73,7 +73,6 @@ def add_team_member(args):
 
         # users in team have: user_id, username, email, profile_picture, role, date
         user_obj = User(**user)
-        # print(f"the user object: {user_obj.__dict__}")
         success = Team.add_member(g.team_id, user_obj, args['role'], MemberStatus.ACTIVE.value)
         if success:
             return send_response([], [], 200, **g.req_data)
@@ -194,7 +193,7 @@ def create_team(args):
 
     # Create team entity and add the user as Scrum Master
     org = Organization.get_organization_by({'name': 'UTN'})
-    new_team = {        
+    new_team = {
         "name": args['team_name'],
         "organization": org['_id'],
         "members": [

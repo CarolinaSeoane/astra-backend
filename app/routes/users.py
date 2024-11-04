@@ -26,7 +26,7 @@ def handle_login(args):
         tokens = exchange_code_for_tokens(args['auth_code'])
         id_info = validate_credentials(tokens['access_token'])
     except ValueError as err:
-        # Invalid token 
+        # Invalid token
         print(err)
         return send_response([], ["Unauthorized. Access is denied due to invalid credentials."], 401, **req_data)
 
