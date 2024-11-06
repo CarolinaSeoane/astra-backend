@@ -4,7 +4,7 @@ from dateutil import parser
 
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import SprintStatus, CollectionNames
-from app.utils import list_format
+from app.utils import list_format, mongo_query
 
 SPRINTS_COL = CollectionNames.SPRINTS.value
 STORIES_COL = CollectionNames.STORIES.value
@@ -217,6 +217,7 @@ class Sprint:
             MongoHelper().update_document(SPRINTS_COL, filter, update)
 
     @staticmethod
+    @mongo_query
     def add_completed_points(sprint, team_id, points):
         match = {
             "name": sprint,

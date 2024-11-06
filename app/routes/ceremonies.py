@@ -1,7 +1,7 @@
+from datetime import datetime
 from flask import Blueprint, request, g
 from webargs.flaskparser import use_args
 from webargs import fields
-from datetime import datetime
 
 from app.utils import send_response, apply_banner_format
 from app.routes.utils import validate_user_is_active_member_of_team
@@ -13,9 +13,7 @@ from app.services.astra_scheduler import get_quarter
 
 ceremonies = Blueprint("ceremonies", __name__)
 
-excluded_routes = [
-    
-]
+excluded_routes = []
 
 @ceremonies.before_request
 def apply_validate_user_is_active_member_of_team():
@@ -25,9 +23,9 @@ def apply_validate_user_is_active_member_of_team():
     return validate_user_is_active_member_of_team()
 
 @ceremonies.route('/banner', methods=['GET'])
-def team_ceremonies():
-    ceremonies = Ceremony.get_upcoming_ceremonies_by_team_id(g.team_id)
-    banner_formatted_ceremonies = apply_banner_format(ceremonies)
+def team_upcoming_ceremonies():
+    upcoming_ceremonies = Ceremony.get_upcoming_ceremonies_by_team_id(g.team_id)
+    banner_formatted_ceremonies = apply_banner_format(upcoming_ceremonies)
     return send_response(banner_formatted_ceremonies, [], 200, **g.req_data)
 
 @ceremonies.route('', methods=['GET'])
@@ -37,8 +35,8 @@ def team_ceremonies():
     'ceremony_status': fields.Str(required=False),
     }, location='query')
 def ceremonies_list(args):
-    ceremonies = Ceremony.get_ceremonies_by_team_id(g.team_id, **args)
-    return send_response(ceremonies, [], 200, **g.req_data)
+    team_ceremonies = Ceremony.get_ceremonies_by_team_id(g.team_id, **args)
+    return send_response(team_ceremonies, [], 200, **g.req_data)
 
 @ceremonies.route("/filters", methods=['GET'])
 @use_args({

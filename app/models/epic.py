@@ -2,6 +2,7 @@ from bson import ObjectId
 
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import Configurations, CollectionNames
+from app.utils import mongo_query
 
 
 EPICS_COL = CollectionNames.EPICS.value
@@ -10,7 +11,8 @@ STORIES_COL = CollectionNames.STORIES.value
 
 class Epic:
 
-    def __init__(self, title, description, team, organization, priority, epic_color, creator, acceptance_criteria, business_value, status):
+    def __init__(self, title, description, team, organization, priority, epic_color,
+                 creator, acceptance_criteria, business_value, status):
         self.title = title
         self.description = description
         self.creator = creator
@@ -28,7 +30,6 @@ class Epic:
         returns None if the organization has no epics
         '''
         filter = {'organization': ObjectId(org_id)}
-
         return MongoHelper().get_documents_by(EPICS_COL, filter)
 
     @staticmethod
@@ -37,12 +38,16 @@ class Epic:
         returns None if the team has no epics
         '''
         filter = {'team': ObjectId(org_id)}
-
         return MongoHelper().get_documents_by(EPICS_COL, filter)
 
     @staticmethod
+    @mongo_query
     def create_epic(epic_document):
-        return MongoHelper().create_document(EPICS_COL, epic_document)
+        resp = MongoHelper().create_document(EPICS_COL, epic_document)
+        return {
+            "message": [resp.acknowledged],
+            "status": 201
+        }
 
     @staticmethod
     def get_epic_fields(sections=False):

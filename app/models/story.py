@@ -99,8 +99,13 @@ class Story:
         return MongoHelper().document_exists(STORIES_COL, filter)
 
     @staticmethod
+    @mongo_query
     def create_story(story_document):
-        return MongoHelper().create_document(STORIES_COL, story_document)
+        resp = MongoHelper().create_document(STORIES_COL, story_document)
+        return {
+            "message": resp.acknowledged,
+            "status": 201
+        }
 
     @staticmethod
     def get_story_by_id(story_id):
@@ -120,10 +125,15 @@ class Story:
         return Story.update(story, new_status=DONE_STATUS)
 
     @staticmethod
+    @mongo_query
     def update(story, new_status):
         story["story_status"] = new_status
         match = {'story_id': story["story_id"]}
-        return MongoHelper().replace_document(STORIES_COL, match, new_document=story)
+        resp = MongoHelper().replace_document(STORIES_COL, match, new_document=story)
+        return {
+            "message": resp.acknowledged,
+            "status": 201
+        }
 
     @staticmethod
     @mongo_query
@@ -163,9 +173,11 @@ class Story:
             }
 
     @staticmethod
+    @mongo_query
     def delete(team_id, story_id):
         match = {
             "team": ObjectId(team_id),
             "story_id": story_id
         }
-        return MongoHelper().delete_element_from_collection(STORIES_COL, match)
+        MongoHelper().delete_element_from_collection(STORIES_COL, match)
+        return { "status": 204 }

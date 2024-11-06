@@ -14,6 +14,13 @@ from app.models.sprint import Sprint
 
 teams = Blueprint('teams', __name__)
 
+VALIDATE_SECTIONS = [
+    'ceremonies',
+    'sprint_set_up',
+    'mandatory_story_fields',
+    'permits',
+    'estimation_method'
+]
 excluded_routes = [
     {
         'route': '/teams/permissions',
@@ -32,7 +39,10 @@ excluded_routes = [
 @teams.before_request
 def apply_validate_user_is_active_member_of_team():
     for excluded_route in excluded_routes:
-        if request.path.startswith(excluded_route['route']) and (request.method in excluded_route['methods']):
+        if (
+            request.path.startswith(excluded_route['route'])
+            and (request.method in excluded_route['methods'])
+        ):
             return None
 
     return validate_user_is_active_member_of_team()
@@ -67,16 +77,22 @@ def add_team_member(args):
         user = User.get_user_by({'email': new_member_email})
         # print(f"adding user: {user}")
         if user is None:
-            return send_response([], [f"No user found with email {new_member_email}"], 404, **g.req_data)
+            return send_response(
+                [], [f"No user found with email {new_member_email}"], 404, **g.req_data
+            )
         if Team.is_user_part_of_team(user['_id']['$oid'], members):
-            return send_response([], [f"User {new_member_email} is already a member of the team"], 400, **g.req_data)
+            return send_response(
+                [], [f"User {new_member_email} is already a member of the team"], 400, **g.req_data
+            )
 
         # users in team have: user_id, username, email, profile_picture, role, date
         user_obj = User(**user)
         success = Team.add_member(g.team_id, user_obj, args['role'], MemberStatus.ACTIVE.value)
         if success:
             return send_response([], [], 200, **g.req_data)
-        return send_response([], [f"Error adding user {new_member_email} to team"], 500, **g.req_data)
+        return send_response(
+            [], [f"Error adding user {new_member_email} to team"], 500, **g.req_data
+        )
     else:
         return send_response([], ["User not authorized to complete operation"], 400, **g.req_data)
 
@@ -93,9 +109,8 @@ def remove_team_member(member_id):
 
 # Validate query param
 def validate_section(value):
-    validate_sections = ['ceremonies', 'sprint_set_up', 'mandatory_story_fields', 'permits', 'estimation_method']
-    if value not in validate_sections:
-        raise ValueError(f"Invalid section value. Must be one of: {', '.join(validate_sections)}")
+    if value not in VALIDATE_SECTIONS:
+        raise ValueError(f"Invalid section value. Must be one of: {', '.join(VALIDATE_SECTIONS)}")
 
 @teams.route('/settings', methods=['GET'])
 @use_args({'section': fields.Str(required=False, validate=validate_section)}, location='query')
@@ -153,8 +168,8 @@ def update_permissions(args):
 
 @teams.route('/permissions', methods=['GET'])
 def permissions():
-    permissions = Team.get_base_permissions()
-    return send_response(permissions, [], 200, **g.req_data)
+    base_permissions = Team.get_base_permissions()
+    return send_response(base_permissions, [], 200, **g.req_data)
 
 @teams.route('/join/<team_id>', methods=['GET'])
 def join_team_by_id(team_id):
@@ -168,21 +183,25 @@ def join_team_by_id(team_id):
     if not team_to_join:
         return send_response([], [f"Couldn't find a team with ID {team_id}"], 404, **g.req_data)
 
-    team_members = Team.get_team_members(team_id)
-
+    # team_members = Team.get_team_members(team_id)
     # if Team.is_user_part_of_team(g._id, team_members):
     if User.is_user_in_team(g._id, team_id):
-        return send_response([], [f"User {g.email} is already a member of the team"], 400, **g.req_data)
+        return send_response(
+            [], [f"User {g.email} is already a member of the team"], 400, **g.req_data
+        )
     elif User.is_user_in_team(g._id, team_id, status=MemberStatus.PENDING.value):
-        return send_response([f"You already sent a request to join {team_id}"], [], 200, **g.req_data)
+        return send_response(
+            [f"You already sent a request to join {team_id}"], [], 200, **g.req_data
+        )
 
     user = User.get_user_by({'email': g.email})
     user_obj = User(**user)
     success = Team.add_member(team_id, user_obj, None)
 
     if success:
-        return send_response([f"Your request to join {team_id} was sent successfully"], [], 202, **g.req_data)
-
+        return send_response(
+            [f"Your request to join {team_id} was sent successfully"], [], 202, **g.req_data
+        )
     return send_response([], [f"Error adding user {g.email} to team"], 500, **g.req_data)
 
 @teams.route('/create', methods=['POST'])
@@ -262,8 +281,11 @@ def get_permissions_based_on_role(args, role):
 
 @teams.route('/is_member_allowed/<role>/<action>')
 def is_member_allowed(role, action):
+    """
+    Scrum Masters are allowed to perform all actions
+    """
     if role == Role.SCRUM_MASTER.value:
-        return send_response(True, [], 200, **g.req_data) # scrum masters are allowed to perform all actions
+        return send_response(True, [], 200, **g.req_data)
 
     allowed = Team.is_member_authorized(g.team_id, role, action)
     return send_response(allowed, [], 200, **g.req_data)
