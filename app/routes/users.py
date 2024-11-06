@@ -26,9 +26,11 @@ def handle_login(args):
         tokens = exchange_code_for_tokens(args['auth_code'])
         id_info = validate_credentials(tokens['access_token'])
     except ValueError as err:
-        # Invalid token 
+        # Invalid token
         print(err)
-        return send_response([], ["Unauthorized. Access is denied due to invalid credentials."], 401, **req_data)
+        return send_response(
+            [], ["Unauthorized. Access is denied due to invalid credentials."], 401, **req_data
+        )
 
     # ID token is valid
     email = id_info['email']
@@ -47,7 +49,9 @@ def handle_login(args):
                 "access_token": tokens['access_token'],
                 "refresh_token": tokens['refresh_token'],
             }
-        return send_response(data, ["User not found. Please complete the sign-up process."], 404, **req_data)
+        return send_response(
+            data, ["User not found. Please complete the sign-up process."], 404, **req_data
+        )
     else:
         # User is signed up and we only need to log them in and update their access token
         User.update_access_token(user['_id']['$oid'], tokens['access_token'])
@@ -77,11 +81,12 @@ def sign_up(args):
     # Verify email doesn't exist
     user = User.get_user_by({'email': args['email']})
     if user is not None:
-        return send_response([], [f"Conflict. A user with the email {args['email']} already exists."], 409, **req_data)
+        return send_response(
+            [], [f"Conflict. A user with email {args['email']} already exists."], 409, **req_data
+        )
 
     # Email doesn't exist. Save user to mongo
     new_user = User(**args)
-
     new_user.save_user()
     session_token = generate_jwt(args['email'], str(new_user._id))
 

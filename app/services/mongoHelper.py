@@ -36,8 +36,11 @@ class MongoHelper:
         '''
         return self.astra.db[collection_name].update_one(filter, update)
 
+    def update_collection(self, collection_name, filter, update):
+        return self.astra.db[collection_name].update_many(filter, update)
+
     def delete_element_from_collection(self, collection_name, filter):
-        return self.astra.db[collection_name].delete_one(filter) # doing .deleted_count will return the number of documents deleted
+        return self.astra.db[collection_name].delete_one(filter)
 
     def document_exists(self, collection_name, filter):
         '''
@@ -47,7 +50,7 @@ class MongoHelper:
 
     def create_document(self, collection_name, document):
         return self.astra.db[collection_name].insert_one(document)
-    
+
     def create_documents(self, collection_name, documents):
         return self.astra.db[collection_name].insert_many(documents)
 
@@ -75,3 +78,6 @@ class MongoHelper:
         """Elimina múltiples documentos de una colección basándose en un filtro."""
         result = self.astra.db[collection_name].delete_many(filter)
         return result
+
+    def count_documents(self, collection_name, filter_criteria):
+        return self.astra.db[collection_name].count_documents(filter_criteria)

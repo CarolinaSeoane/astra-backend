@@ -10,6 +10,7 @@ from app.routes.users import users
 from app.routes.teams import teams
 from app.routes.epics import epics
 from app.routes.sprints import sprints
+from app.routes.notifications import notifications
 from app.routes.ceremonies import ceremonies
 from app.routes.post_its import post_its
 from app.routes.cards import cards
@@ -17,21 +18,22 @@ from app.routes.cards import cards
 
 def create_app():
     # Loading env vars
-    print(f'Loading environment variables...')
+    print('Loading environment variables...')
     dotenv_path = os.path.join(os.path.dirname(__file__), "..", "config", 'dev.env') # TODO dev.env shouldnt be hardcoded
     load_dotenv(dotenv_path)
 
 
     # Creating flask app and loading env vars
     print('Creating app...')
-    app = Flask(__name__)   
+    app = Flask(__name__)
     load_env_vars_onto_app(app, dotenv_path)
     CORS(app, expose_headers='Authorization', support_credentials=True, )
-  
+
     # Setup db connection
     print('Setting up db connection...')
     app.config['MONGO_URI'] = os.getenv('MONGO_URI')
-    mongo.init_app(app) 
+
+    mongo.init_app(app)
 
     # Register blueprints
     app.register_blueprint(stories, url_prefix='/stories')
@@ -43,6 +45,7 @@ def create_app():
     app.register_blueprint(sprints, url_prefix='/sprints')
     app.register_blueprint(post_its, url_prefix='/post_its')
     app.register_blueprint(cards, url_prefix='/cards')
+    app.register_blueprint(notifications, url_prefix='/notifications')
 
     return app
 
