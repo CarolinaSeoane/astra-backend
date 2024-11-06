@@ -59,14 +59,14 @@ def apply_validate_user_is_active_member_of_team():
     location="query",
 )
 def stories_list(args, view_type):
-    stories = Story.get_stories_by_team_id(g.team_id, view_type, **args)
-    return send_response(stories, [], 200, **g.req_data)
+    team_stories = Story.get_stories_by_team_id(g.team_id, view_type, **args)
+    return send_response(team_stories, [], 200, **g.req_data)
 
 @stories.route("/fields", methods=["GET"])
 @use_args({"sections": fields.Boolean(required=False, missing=False)}, location="query")
 def story_fields(args):
-    fields = Story.get_story_fields(args["sections"])
-    return send_response(fields, [], 200, **g.req_data)
+    all_fields = Story.get_story_fields(args["sections"])
+    return send_response(all_fields, [], 200, **g.req_data)
 
 @stories.route("/filters", methods=["GET"])
 @use_args(
@@ -101,6 +101,7 @@ def filters(args):
     estimation = []
     task_statuses = []
     filters = {}
+    team = []
 
     if args["sprints"]:
         sprints = Sprint.get_sprints(
@@ -126,7 +127,7 @@ def filters(args):
         team = Team.get_team(g.team_id)
 
     if args["members"]:
-        members = team["members"]
+        members = team.get("members")
         if members:
             for member in members:
                 member_option = {
@@ -146,7 +147,7 @@ def filters(args):
         }
 
     if args["epics"]:
-        if team["organization"]:
+        if team.get("organization"):
             org_id = team["organization"]["$oid"]
             epics = Epic.get_epics_from_organization(org_id)
         else:
@@ -182,7 +183,7 @@ def filters(args):
         }
 
     if args["estimation"]:
-        estimation_methods = team["estimation_method"]
+        estimation_methods = team.get("estimation_method")
         try:
             estimation_methods.remove("planning_poker")
         except Exception:
@@ -229,13 +230,12 @@ def create_story():
     story["subscribers"] = []
     story['story_status'] = Status.NOT_STARTED.value
 
-    try:
-        response = Story.create_story(story)
-        Notification.create_assigned_notification(story, g.team_id)
-        Notification.create_creator_notification(story, g.team_id)
-        return send_response([response.acknowledged], [], 201, **g.req_data)
-    except Exception as e:
-        return send_response([], [f"Failed to create story: {e}"], 500, **g.req_data)
+    resp = Story.create_story(story)
+    Notification.create_assigned_notification(story, g.team_id)
+    Notification.create_creator_notification(story, g.team_id)
+    return send_response(
+        [resp.get("message", [])], resp.get("error", []), resp["status"], **g.req_data
+    )
 
 @stories.route("/view", methods=["GET"])
 @use_args({"story_id": fields.Str(required=True)}, location="query")
@@ -297,18 +297,16 @@ def edit_story():
         notify_story_update(old_story, updated_fields, g.team_id)
 
     if Story.is_done(story):
-        try:
-            response = Story.finalize_story(story, g.team_id)
-            print("Finalizando historia:", response)
-            return send_response([response.acknowledged], [], 201, **g.req_data)
-        except Exception as e:
-            return send_response([], [f"Failed to update story: {e}"], 500, **g.req_data)
+        resp = Story.finalize_story(story, g.team_id)
+        print("Finalizando historia:", resp)
+        return send_response(
+            resp.get("message", []), resp.get("error", []), resp["status"], **g.req_data
+        )
 
-    try:
-        response = Story.update(story, story_status)
-        return send_response([response.acknowledged], [], 201, **g.req_data)
-    except Exception as e:
-        return send_response([], [f"Failed to update story: {e}"], 500, **g.req_data)
+    resp = Story.update(story, story_status)
+    return send_response(
+        resp.get("message", []), resp.get("error", []), resp["status"], **g.req_data
+    )
 
 @stories.route("/subscribe/<story_id>", methods=["POST"])
 def subscribe_to_story(story_id):
@@ -323,12 +321,11 @@ def unsubscribe_to_story(story_id):
     return send_response(
         resp["message"], resp.get("error", []), resp["status"], **g.req_data
     )
+
 @stories.route('/delete', methods=['DELETE'])
 @use_args({"story_id": fields.Str(required=True)}, location="query")
 def delete_story(args):
-    try:
-        Story.delete(g.team_id, args["story_id"])
-        return send_response([], [], 204, **g.req_data)
-    except Exception as e:
-        print(f"error deleting story: {e}")
-        return send_response([], [], 500, **g.req_data)
+    resp = Story.delete(g.team_id, args["story_id"])
+    return send_response(
+        resp.get("message"), resp.get("error", []), resp["status"], **g.req_data
+    )
