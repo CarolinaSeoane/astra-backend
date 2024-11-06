@@ -1,6 +1,5 @@
 import random
-import pytz
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timedelta
 from flask import Blueprint, g, request,jsonify
 from webargs.flaskparser import use_args
 from webargs import fields
@@ -18,7 +17,6 @@ from app.models.user import User
 from app.models.ceremony import Ceremony
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import Priority, Type, Configurations, Status
-from app.services.astra_scheduler import get_quarter
 from app.models.notification import Notification
 from app.services.notifications_services import notify_story_update
 
@@ -80,42 +78,17 @@ def stories_list(args, view_type):
     'ceremony_id': fields.Str(required=False)  
 }, location='query')
 def standup_stories_list(args, view_type):
-    
     ceremony_date = None
     if 'ceremony_id' in args and args['ceremony_id']:
         ceremony_date = get_ceremony_date(args['ceremony_id'])
         print("Ceremony ID:", args['ceremony_id'])
         print("Fecha de ceremonia obtenida:", ceremony_date)
         if ceremony_date is None:
-            return send_response([], ["No se pudo obtener la fecha de la ceremonia."], 400, **g.req_data)
-    #if ceremony_date is not None and ceremony_date.tzinfo is None:
-    #    ceremony_date = ceremony_date.replace(tzinfo=timezone.utc)
-    #print("fecha de ceremonia",ceremony_date)
-    
+            return send_response(
+                [], ["No se pudo obtener la fecha de la ceremonia."], 400, **g.req_data
+            )
     stories = Story.get_standup_stories(g.team_id, view_type,ceremony_date=ceremony_date, **args)
     print("Lista de historias obtenidas:",stories)
-    
-    #if ceremony_date:
-    #    print(f"Using ceremony date for filtering: {ceremony_date}")
-    #    filtered_stories = []
-    #    for story in stories['stories']:
-    #        print(f"Historia: {story}")
-    #        if 'creation_date' in story:
-    #            # Convertir la fecha de creación a datetime
-    #            print("Tipo de ceremony_date:", type(ceremony_date))
-    #            story_creation_date = datetime.fromisoformat(story['creation_date']['$date'].replace("Z", "+00:00"))
-    #            print(f"Comparando: historia '{story.get('title', 'sin título')}' con fecha de creación {story_creation_date} contra ceremonia {ceremony_date}")
-    #            if story_creation_date < ceremony_date:
-    #                print(f"La historia '{story.get('title', 'sin título')}' se incluye en la lista.")
-    #                filtered_stories.append(story)
-    #            else:
-    #                print(f"La historia '{story.get('title', 'sin título')}' NO se incluye en la lista.")
-
-        
-    #    stories = filtered_stories
-
-    #print(f"Historias filtradas:  {stories}")        
-# Enviar la respuesta
     return send_response(stories, [], 200, **g.req_data)
 
 @stories.route("/fields", methods=["GET"])
@@ -317,7 +290,7 @@ def edit_story():
     fecha_normalizada = datetime.combine(nueva_fecha.date(), datetime.min.time())
     print(f"fecha cracion: {fecha_normalizada}")
     print(f"Received story for editing: {old_story}")
-    user = get_current_user() 
+    user = get_current_user()
     username = user["username"]
     modified_story_info = {
         "story_id": story["story_id"],
@@ -414,9 +387,9 @@ def get_modified_stories():
     team_id = request.args.get('team_id')
     sprint_id = request.args.get('sprint')
     ceremony_id = request.args.get('ceremony_id')
-    
+
     print(f"Received team_id: {team_id}, sprint: {sprint_id}, ceremony_id: {ceremony_id}")
-    
+
     ceremony_date = get_ceremony_date(ceremony_id)
     if not ceremony_date:
         return jsonify({"error": "No upcoming ceremony found for the team"}), 404
@@ -426,10 +399,9 @@ def get_modified_stories():
         'modified_at': {'$lt': ceremony_date}
         }
 
-    
     if sprint_id:
         filter_query['sprint'] = sprint_id
-    
+
     modified_stories = mongo_helper.get_documents_by('modified_stories', filter_query)
     print(f"Filter query: {filter_query}")
     print(f"Modified stories found: {modified_stories}")
@@ -446,24 +418,22 @@ def save_modified_story(story_id, title, username, modified_at,sprint,team_id):
         "sprint": sprint,
         "team_id": team_id
     }
-    print(f"Saving modified story: {modified_story}") 
+    print(f"Saving modified story: {modified_story}")
     result = mongo_helper.create_document('modified_stories', modified_story)
     print(f"Result of save: {result}")
 
 def get_current_user():
-    user_id = g._id  
+    user_id = g._id
     if user_id:
         user = User.get_user_by({"_id": ObjectId(user_id)})
         return user
-    else:
-        return None
+    return None
 
 def get_ceremony_date(ceremony_id):
     """Obtiene la fecha de la ceremonia especificada por su ID y retorna el día anterior."""
-    
-    ceremony = Ceremony.get_ceremony_by_id(ceremony_id)  
+    ceremony = Ceremony.get_ceremony_by_id(ceremony_id)
 
-    print(f"Ceremony data: {ceremony}")  
+    print(f"Ceremony data: {ceremony}")
     if not ceremony:
         print("Error: No se encontró la ceremonia con el ID proporcionado.")
         return None
@@ -474,34 +444,36 @@ def get_ceremony_date(ceremony_id):
 
     if isinstance(ceremony['ends'], dict) and '$date' in ceremony['ends']:
         ends_date_str = ceremony['ends']['$date']
-        ceremony_date = datetime.fromisoformat(ends_date_str[:-1]) - timedelta(days=1) 
+        ceremony_date = datetime.fromisoformat(ends_date_str[:-1]) - timedelta(days=1)
         print(f"Using ceremony date for filtering: {ceremony_date}")
         return ceremony_date
     else:
         print("Error: 'ends' no es un dict o no contiene '$date'.")
         return None
-    
 
 @stories.route('/list_with_story_status', methods=['GET'])
-@use_args({'team_id': fields.Str(required=True), 'sprint_current': fields.Str(required=True), 'sprint_selected': fields.Str(required=True)}, location='query')
+@use_args({'team_id': fields.Str(required=True),
+           'sprint_current': fields.Str(required=True),
+           'sprint_selected': fields.Str(required=True)},
+          location='query')
 def list_with_story_status(args):
     team_id = args.get('team_id')
     sprint_current =  args.get('sprint_current')
     sprint_selected =  args.get('sprint_selected')
 
     #print("    team_id",team_id )
-    
     #print("    sprint ", sprint)
     #team_id = args['team_id']  # Extraer team_id de los argumentos
-    #sprint = args['sprint'] 
+    #sprint = args['sprint']
     try:
-        stories = Story.get_list_stories_in_team_id_by_sprint_current_and_selected(team_id, sprint_current, sprint_selected)  # Llamar a la función mejorada
+        stories = Story.get_list_stories_in_team_id_by_sprint_current_and_selected(
+            team_id, sprint_current, sprint_selected
+        )  # Llamar a la función mejorada
         #print("stories", stories)
         return send_response(stories, [], 200, **g.req_data)  # Retornar historias
     except Exception as e:
         #print(f"Error retrieving backlog stories: {e}")
         return send_response([], [f"Failed to retrieve backlog stories: {e}"], 200, **g.req_data)
-
 
 @stories.route('/update_story_sprint', methods=['PUT'])
 @use_args({
@@ -521,14 +493,15 @@ def put_list_with_new_story_status(args):
 
     #if(new_status=="Backlog")
     #{new_status=="Not Started"}
-    
-    try:       
-        result = Story.put_new_status_and_new_sprint_to_story(team_id, story_id, new_sprint_name) #Move between sprints
-       
+
+    try:
+        result = Story.put_new_status_and_new_sprint_to_story(
+            team_id, story_id, new_sprint_name
+        ) #Move between sprints
+
         if result:  # Verificar si result es verdadero (true)
             return send_response(True, [], 200, **g.req_data)  # Retornar éxito
-        else:        
-            return send_response(False, [], 200, **g.req_data)  # Retornar fallo
+        return send_response(False, [], 200, **g.req_data)  # Retornar fallo
     except Exception as e:
         return send_response(False, [f"Failed to put story status: {e}"], 200, **g.req_data)
 

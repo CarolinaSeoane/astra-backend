@@ -212,10 +212,9 @@ def get_total_stories(args):
     total_count = Sprint.get_total_stories_count(args["sprint_name"], g.team_id)
     return send_response(total_count, [], 200, **g.req_data)
 
-
 @sprints.route('/future_and_current', methods=['GET'])
 @use_args({"team_id": fields.Str(required=True)}, location='query')
 def get_future_and_current_sprints(args):
-    #print("team id", args["team_id"]); 
+    #print("team id", args["team_id"]);
     documents = Sprint.get_future_sprints(args["team_id"])
     return send_response(documents, [], 200, **g.req_data)

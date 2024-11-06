@@ -110,10 +110,12 @@ def refresh_context(user_id):
     return send_response(user, [], 200, **g.req_data)
 
 @users.route("/velocity", methods=['GET'])
-@use_args({'team_id': fields.Str(required=True), 'user_id': fields.Str(required=True)}, location='query')
+@use_args({'team_id': fields.Str(required=True), 'user_id': fields.Str(required=True)},
+          location='query'
+)
 def response_velocity(args):
     team_id =  args.get('team_id') #g.team_id NO
-    user_id =  args.get('user_id') #g._id 
+    user_id =  args.get('user_id') #g._id
 
     velocity_data, average_velocity = data_velocity(team_id, user_id)
     data = {

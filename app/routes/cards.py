@@ -1,13 +1,12 @@
+from datetime import datetime
 from flask import Blueprint, request, g, jsonify
 from webargs.flaskparser import use_args
-from webargs import fields  
+from webargs import fields
+
 from app.db_connection import mongo
-from app.routes.utils import validate_user_is_active_member_of_team
-from bson import ObjectId
+from app.routes.utils import validate_user_is_active_member_of_team, send_response
 from app.models.ceremony import Ceremony
 from app.models.sprint import Sprint
-from datetime import datetime, timedelta
-from app.utils import send_response
 
 cards = Blueprint("cards", __name__)
 
@@ -21,10 +20,10 @@ def apply_validate_user_is_active_member_of_team():
 
 def is_planningboard_active(ceremony_id):
 
-    ceremony = Ceremony.get_ceremony_by_id(ceremony_id) 
+    ceremony = Ceremony.get_ceremony_by_id(ceremony_id)
     #print(ceremony)
-    if not ceremony:       
-        return False  
+    if not ceremony:
+        return False
 
     #print(ceremony)
 
@@ -59,7 +58,6 @@ def is_planningboard_active(ceremony_id):
     if ends.tzinfo is not None:
         ends = ends.replace(tzinfo=None)
 
-
     return starts <= datetime.now() <= ends
 
 @cards.route("/total_stories", methods=['GET'])
@@ -69,7 +67,10 @@ def get_total_stories(args):
     return send_response(total_count, [], 200, **g.req_data)
 
 @cards.route("/", methods=['GET'])
-@use_args({'team_id': fields.Str(required=True), 'sprint_name': fields.Str(required=True)}, location='query')
+@use_args(
+    {'team_id': fields.Str(required=True), 'sprint_name': fields.Str(required=True)},
+    location='query'
+)
 def get_cards(args):
     team_id = args.get('team_id')
     sprint_name = args.get('sprint_name')
@@ -78,7 +79,6 @@ def get_cards(args):
         return jsonify({"error": "team_id and sprint_name are required"}), 400
 
     cards_cursor = mongo.db.cards.find({"team_id": team_id, "sprint_name": sprint_name})
-    
     cards_list = list(cards_cursor)
 
     for card in cards_list:
@@ -88,10 +88,13 @@ def get_cards(args):
 
 
 @cards.route("/is_active_ceremony", methods=['GET'])
-@use_args({'team_id': fields.Str(required=True),'ceremony_id': fields.Str(required=True)}, location='query')
+@use_args(
+    {"team_id": fields.Str(required=True), "ceremony_id": fields.Str(required=True)},
+    location="query",
+)
 def get_is_active_ceremony_in_team(args):
     #print("ceremony_id: ", args["ceremony_id"])
     #print("team_id: ", args["team_id"])
     response = is_planningboard_active(args["ceremony_id"])
-    #print("response", response); 
+    #print("response", response);
     return send_response(response, [], 200, **g.req_data)

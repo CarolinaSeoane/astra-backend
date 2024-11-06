@@ -81,7 +81,7 @@ class Story:
             return list_format(stories)
         else:
             return stories
-    
+
     @staticmethod
     def get_standup_stories(team_id: ObjectId, view_type, **kwargs):
         '''
@@ -99,7 +99,6 @@ class Story:
             "team": {"$eq": team_id},
         }
 
-        
         if 'assigned_to' in kwargs and kwargs['assigned_to']:
             filter["assigned_to.username"] = kwargs['assigned_to']
         if 'sprint' in kwargs and kwargs['sprint']:
@@ -114,20 +113,18 @@ class Story:
             filter["story_id"] = kwargs['story_id']
         if 'story_status' in kwargs and kwargs['story_status']:
             filter["story_status"] = kwargs['story_status']
-        
+
         if 'ceremony_date' in kwargs and kwargs['ceremony_date']:
-            
             filter["creation_date"] = {"$lt": kwargs['ceremony_date']}
 
         stories = MongoHelper().get_documents_by(STORIES_COL, filter=filter, projection=projection)
 
         if view_type == 'kanban':
             return kanban_format(stories)
-        elif view_type == 'list':
+        if view_type == 'list':
             return list_format(stories)
-        else:
-            return stories
-        
+        return stories
+
     @staticmethod
     def get_story_fields(sections=False):
         story_fields = Configurations.get_all_possible_story_fields()['story_fields']
@@ -229,13 +226,13 @@ class Story:
         return { "status": 204 }
 
     @staticmethod
-    def get_list_stories_in_team_id_by_sprint_current_and_selected(team_id, sprint_current, sprint_selected):
+    def get_list_stories_in_team_id_by_sprint_current_and_selected(
+        team_id, sprint_current, sprint_selected
+    ):
         '''
         Returns all stories for the given team_id and sprint_name in list format.
         If no stories are found, returns an empty list.
-        '''
-        #print("sprint.name", sprint)
-        '''
+
         filter = {
         'team': ObjectId(team_id),  # Convert ObjectId to string for comparison
         'sprint.name': sprint          # Directly use the sprint name
@@ -272,7 +269,7 @@ class Story:
         sprint_id = res_sprint["_id"]["$oid"]
 
         #print("Sprint ID:", sprint_id)
-        
+
         result = mongo.db.stories.update_one(
             {
                 'story_id': story_id,
@@ -289,8 +286,5 @@ class Story:
             }
         )
         #print("result mongo",  result)
-       
-        if result.modified_count > 0:
-            return True
-        else:
-            return False
+
+        return result.modified_count > 0

@@ -1,5 +1,5 @@
-from bson import ObjectId
 from datetime import datetime
+from bson import ObjectId
 
 from app.models.team import Team
 from app.services.astra_scheduler import generate_ceremonies_for_sprint
@@ -13,7 +13,8 @@ CEREMONIES_COL = CollectionNames.CEREMONIES.value
 
 class Ceremony:
 
-    def __init__(self, _id, name, starts, google_meet_config, attendees, ceremony_type, ceremony_status):
+    def __init__(self, _id, name, starts, google_meet_config,
+                 attendees, ceremony_type, ceremony_status):
         self._id = _id
         self.name = name
         self.starts = starts
@@ -29,7 +30,7 @@ class Ceremony:
         curr_sprint = Sprint.get_sprint_by({'_id': ObjectId(sprint)})
         ceremonies = generate_ceremonies_for_sprint(team_ceremonies_settings, curr_sprint)
         return MongoHelper().create_documents(CEREMONIES_COL, ceremonies)
-    
+
     @staticmethod
     def get_sprint_ceremonies(sprint_id):
         filter = {'happens_on_sprint': ObjectId(sprint_id)}
@@ -52,7 +53,7 @@ class Ceremony:
             filter["ceremony_status"] = kwargs['ceremony_status']
 
         return MongoHelper().get_documents_by(CEREMONIES_COL, filter=filter, sort=sort)
-    
+
     @staticmethod
     def get_upcoming_ceremonies_by_team_id(team_id, for_banner=True):
         '''
@@ -60,10 +61,16 @@ class Ceremony:
         '''
         filter = { "team": ObjectId(team_id), "starts": {"$gt": datetime.today()} }
         sort = {'starts': 1}
-        projection = {"_id","ceremony_type", "starts", "ends", "google_meet_config.meetingUri"} if for_banner else {}
+        projection = (
+            {"_id", "ceremony_type", "starts", "ends", "google_meet_config.meetingUri"}
+            if for_banner
+            else {}
+        )
 
-        return MongoHelper().get_documents_by(CEREMONIES_COL, filter=filter, sort=sort, projection=projection)
-    
+        return MongoHelper().get_documents_by(
+            CEREMONIES_COL, filter=filter, sort=sort, projection=projection
+        )
+
     @staticmethod
     def get_current_ceremony_by_team_id(team_id):
         '''
@@ -76,18 +83,18 @@ class Ceremony:
             "starts": {"$lte": current_time}, 
             "ends": {"$gte": current_time}   
         }
-        
+
         current_ceremony = MongoHelper().get_documents_by(
             CEREMONIES_COL,
             filter=filter,
-            sort={"starts": 1  
+            sort={"starts": 1
         })
-        
-        return current_ceremony[0] if current_ceremony else None 
-    
+
+        return current_ceremony[0] if current_ceremony else None
+
     @staticmethod
     def get_ceremony_by_id(ceremony_id):
         if not ObjectId.is_valid(ceremony_id):
-            return None 
-        
+            return None
+
         return MongoHelper().get_document_by(CEREMONIES_COL, {'_id': ObjectId(ceremony_id)})
