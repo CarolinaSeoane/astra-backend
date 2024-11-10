@@ -127,7 +127,8 @@ def filters(args):
                 epic_option = {
                     'key': epic['_id']['$oid'],
                     'label': epic['title'],
-                    'team': epic['team']
+                    'team': epic['team'],
+                    'epic_color': epic['epic_color']
                 }
                 epics_filter.append(epic_option)
 

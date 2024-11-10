@@ -9,7 +9,8 @@ from app.models.ceremony import Ceremony
 from app.models.configurations import CeremonyType, CeremonyStatus
 from app.models.sprint import Sprint
 from app.services.astra_scheduler import get_quarter
-
+from app.models.user import User
+from app.services.google_meet import list_conference_records
 
 ceremonies = Blueprint("ceremonies", __name__)
 
@@ -39,6 +40,16 @@ def team_ceremonies():
 def ceremonies_list(args):
     ceremonies = Ceremony.get_ceremonies_by_team_id(g.team_id, **args)
     return send_response(ceremonies, [], 200, **g.req_data)
+
+@ceremonies.route('/meet/data/<ceremony_id>', methods=['GET'])
+def get_ceremonies_meet_data(ceremony_id):
+    print('getting meet data for ceremony_id: ', ceremony_id)
+    user_doc = User.get_user_by({'email': g.email}, True)
+    user_obj = User(**user_doc)
+    ceremony = Ceremony.get_ceremonies_by_team_id(g.team_id, ceremony_id=ceremony_id)[0]
+    print(ceremony)
+    list_conference_records(user_obj.access_token, user_obj.refresh_token, ceremony)
+    return send_response([], [], 200, **g.req_data)
 
 @ceremonies.route("/filters", methods=['GET'])
 @use_args({

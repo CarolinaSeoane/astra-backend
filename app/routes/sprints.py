@@ -167,7 +167,10 @@ def attempt_to_create_sprint():
 def create_sprints(args):
     sprint_duration = Team.get_team_settings(g.team_id, 'sprint_set_up')['sprint_set_up']['sprint_duration']
     latest_sprint = Sprint.get_latest_sprint(g.team_id)
-    latest_sprint_number = latest_sprint['sprint_number'] if latest_sprint['quarter'] == get_quarter(args['start_date']) else 0
+    if not latest_sprint:
+        latest_sprint_number = 0
+    else:
+        latest_sprint_number = latest_sprint['sprint_number'] if latest_sprint['quarter'] == get_quarter(args['start_date']) else 0
     sprints = generate_sprints_for_quarter(args['start_date'], sprint_duration, g.team_id, latest_sprint_number)
     Sprint.add_sprints(sprints)
     # ToDo: handle errors
