@@ -167,6 +167,7 @@ def attempt_to_create_sprint():
 def create_sprints(args):
     sprint_duration = Team.get_team_settings(g.team_id, 'sprint_set_up')['sprint_set_up']['sprint_duration']
     latest_sprint = Sprint.get_latest_sprint(g.team_id)
+    print(latest_sprint)
     if not latest_sprint:
         latest_sprint_number = 0
     else:

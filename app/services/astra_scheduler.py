@@ -68,7 +68,7 @@ def generate_sprints_for_quarter(selected_date, sprint_duration, team_id, latest
         # Create sprint document
         sprint = {
             'name': f"S{latest_sprint_number + sprint_number}-Q{selected_quarter}-{year}",
-            'sprint_number': sprint_number,
+            'sprint_number': latest_sprint_number + sprint_number,
             'quarter': selected_quarter,
             'year': year,
             'start_date': sprint_start_date,
