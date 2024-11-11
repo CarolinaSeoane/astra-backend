@@ -58,7 +58,7 @@ class Sprint:
                 '$or': [
                     {
                         'team': ObjectId(team_id),
-                        'quarter': quarter, 
+                        # 'quarter': quarter, 
                         'year': year
                     },
                     {
@@ -199,14 +199,14 @@ class Sprint:
         return MongoHelper().update_document(SPRINTS_COL, filter, update)
 
     @staticmethod
-    def set_following_sprint(sprint_id):
+    def set_following_sprint(team_id):
         '''
-        Adds the next attribute to the sprint that follows the given sprint (if it exists)
+        Adds the next attribute to the first sprint found with a FUTURE status.
         '''
-        curr_sprint = Sprint.get_sprint_by({'_id': ObjectId(sprint_id)})
+        # curr_sprint = Sprint.get_sprint_by({'_id': ObjectId(sprint_id)})
 
         # Find the next sprint
-        filter = {'team': ObjectId(curr_sprint['team']['$oid']), 'status': SprintStatus.FUTURE.value}
+        filter = {'team': ObjectId(team_id), 'status': SprintStatus.FUTURE.value}
         sort = {'start_date': 1}
         next_sprint = MongoHelper().get_document_by(SPRINTS_COL, filter, sort)
 
@@ -216,6 +216,15 @@ class Sprint:
             update = {'$set': {'next': True}}
             MongoHelper().update_document(SPRINTS_COL, filter, update)
 
+    @staticmethod
+    def there_is_a_next_sprint(team_id):
+        '''
+        Checks if there is a sprint with the flag "next"
+        '''
+        # Find a sprint with the next flag
+        filter = {'team': ObjectId(team_id), 'next': {'$exists': True}}
+        return  MongoHelper().get_document_by(SPRINTS_COL, filter)
+        
     @staticmethod
     def add_completed_points(sprint, team_id, points):
         match = {

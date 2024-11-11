@@ -71,6 +71,9 @@ class Populate:
     epic4_id = ObjectId()
     epic5_id = ObjectId()
     epic6_id = ObjectId()
+    epic7_id = ObjectId()
+    epic8_id = ObjectId()
+    epic9_id = ObjectId()
 
     epic1_title = "Mejoras del buscador"
     epic2_title = "Migracion de ordernes a base NoSql"
@@ -78,13 +81,19 @@ class Populate:
     epic4_title = "Gestión"
     epic5_title = "Desarrollo"
     epic6_title = "Cierre de proyecto"
+    epic7_title = "Fixes"
+    epic8_title = "Mejoras y nuevas features"
+    epic9_title = "Nuevas ideas"
 
     epic1_color = Color.LIME.value
     epic2_color = Color.GREEN.value
     epic3_color = Color.ORANGE.value
     epic4_color = Color.BLUE.value
-    epic5_color = Color.RED.value
+    epic5_color = Color.GREEN.value
     epic6_color = Color.PURPLE.value
+    epic7_color = Color.RED.value
+    epic8_color = Color.PINK.value
+    epic9_color = Color.YELLOW.value
 
     backlog_team1 = ObjectId()  # Backlog is handled as a sprint
     sprint1_q1_team1 = ObjectId()
@@ -185,7 +194,7 @@ class Populate:
                     },
                     {
                         "_id": self.team3_id,
-                        "name": "Proyecto final",
+                        "name": "Proyecto",
                         "member_status": MemberStatus.ACTIVE.value,
                     },
                 ],
@@ -212,7 +221,7 @@ class Populate:
                     },
                     {
                         "_id": self.team3_id,
-                        "name": "Proyecto final",
+                        "name": "Proyecto",
                         "member_status": MemberStatus.ACTIVE.value,
                     },
                 ],
@@ -324,7 +333,7 @@ class Populate:
                     },
                     {
                         "_id": self.team3_id,
-                        "name": "Proyecto final",
+                        "name": "Proyecto",
                         "member_status": MemberStatus.ACTIVE.value,
                     },
                 ],
@@ -351,7 +360,7 @@ class Populate:
                     },
                     {
                         "_id": self.team3_id,
-                        "name": "Proyecto final",
+                        "name": "Proyecto",
                         "member_status": MemberStatus.ACTIVE.value,
                     },
                 ],
@@ -619,7 +628,7 @@ class Populate:
             },
             {
                 "_id": self.team3_id,
-                "name": "Proyecto final",
+                "name": "Proyecto",
                 "organization": self.org4_id,
                 "ceremonies": {
                     "planning": {
@@ -838,6 +847,57 @@ class Populate:
                 "epic_color": self.epic6_color,
                 "acceptance_criteria": "El 100% de los documentos deben estar entregados.",
                 "business_value": "Presentación final del proyecto.",
+                "team": self.team3_id,
+                "organization": self.org4_id,
+                "status": Status.DOING.value,
+            },
+            {
+                "_id": self.epic7_id,
+                "title": self.epic7_title,
+                "description": "Arreglo de bugs detectados en la aplicación.",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                },
+                "priority": Priority.HIGH.value,
+                "epic_color": self.epic7_color,
+                "acceptance_criteria": "La aplicación se encuentra libre de fallas.",
+                "business_value": "Mejora evolutiva.",
+                "team": self.team3_id,
+                "organization": self.org4_id,
+                "status": Status.DOING.value,
+            },
+            {
+                "_id": self.epic8_id,
+                "title": self.epic8_title,
+                "description": "Nuevas features implementadas que exceden al release plan establecido.",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                },
+                "priority": Priority.HIGH.value,
+                "epic_color": self.epic8_color,
+                "acceptance_criteria": "Nuevas features implementadas.",
+                "business_value": "Mejora continua.",
+                "team": self.team3_id,
+                "organization": self.org4_id,
+                "status": Status.DOING.value,
+            },
+            {
+                "_id": self.epic9_id,
+                "title": self.epic9_title,
+                "description": "Nuevas ideas para las cuales hay que investigar su factibilidad técnica y otras cuestiones relevantes para saber si es factible llevarlas a cabo.",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                },
+                "priority": Priority.MEDIUM.value,
+                "epic_color": self.epic8_color,
+                "acceptance_criteria": "Factibilidad determinada.",
+                "business_value": "Mejora continua.",
                 "team": self.team3_id,
                 "organization": self.org4_id,
                 "status": Status.DOING.value,
@@ -1258,7 +1318,7 @@ class Populate:
                 "team": self.team1_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000001",
+                "story_id": "PROYECTO-000001",
                 "title": "Presentación de propuestas",
                 "description": "Elaborar 3 propuestas y armar el documento de propuestas siguiendo los lineamientos de la cátedra.",
                 "creator": {
@@ -1305,7 +1365,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000002",
+                "story_id": "PROYECTO-000002",
                 "title": "Investigación y análisis de la problemática",
                 "description": "Una vez aprobada una de las propuestas, investigar en profundidad la problemática a resolver.",
                 "creator": {
@@ -1349,7 +1409,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000003",
+                "story_id": "PROYECTO-000003",
                 "title": "Estudio de factibilidad",
                 "description": "Realizar el estudio de factibilidad de la propuesta seleccionada para determinar si el proyecto es factible.",
                 "creator": {
@@ -1398,7 +1458,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000004",
+                "story_id": "PROYECTO-000004",
                 "title": "Business Canvas Model",
                 "description": "Realizar el Canvas para la propuesta seleccionada.",
                 "creator": {
@@ -1435,7 +1495,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000005",
+                "story_id": "PROYECTO-000005",
                 "title": "Acta de proyecto",
                 "description": "Elaborar documento de acta de proyecto",
                 "creator": {
@@ -1475,7 +1535,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000006",
+                "story_id": "PROYECTO-000006",
                 "title": "WBS",
                 "description": "Elaborar diagrama de WBS",
                 "creator": {
@@ -1515,7 +1575,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000007",
+                "story_id": "PROYECTO-000007",
                 "title": "Matriz de roles y responsabilidades",
                 "description": "Elaborar matriz de roles y responsabilidades",
                 "creator": {
@@ -1555,7 +1615,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000008",
+                "story_id": "PROYECTO-000008",
                 "title": "Matriz de gestión de riesgos",
                 "description": "Elaborar matriz de riesgos del proyecto en base a los riesgos identificados",
                 "creator": {
@@ -1591,7 +1651,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000009",
+                "story_id": "PROYECTO-000009",
                 "title": "Matriz de habilidades y competencias",
                 "description": "Elaborar matriz de habilidades de los distintos roles",
                 "creator": {
@@ -1627,7 +1687,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000010",
+                "story_id": "PROYECTO-000010",
                 "title": "Matriz de comunicaciones",
                 "description": "Elaborar matriz de comunicaciones",
                 "creator": {
@@ -1663,7 +1723,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000011",
+                "story_id": "PROYECTO-000011",
                 "title": "Estimación de costos",
                 "description": "Completar planilla de Excel con los costos del proyecto",
                 "creator": {
@@ -1699,7 +1759,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000012",
+                "story_id": "PROYECTO-000012",
                 "title": "Diagrama de Gantt",
                 "description": "En base a las tareas definidas en el WBS y sus dependencias, construir el Gantt del proyecto",
                 "creator": {
@@ -1739,7 +1799,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000013",
+                "story_id": "PROYECTO-000013",
                 "title": "Release plan",
                 "description": "Establecer el plan de releases de las funcionalidades",
                 "creator": {
@@ -1783,7 +1843,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000014",
+                "story_id": "PROYECTO-000014",
                 "title": "Tablero de control I",
                 "description": "Completar y enviar el primer tablero de control a la cátedra",
                 "creator": {
@@ -1819,7 +1879,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000015",
+                "story_id": "PROYECTO-000015",
                 "title": "Tablero de control II",
                 "description": "Completar y enviar el segundo tablero de control a la cátedra",
                 "creator": {
@@ -1855,7 +1915,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000016",
+                "story_id": "PROYECTO-000016",
                 "title": "Tablero de control III",
                 "description": "Completar y enviar el tercer tablero de control a la cátedra",
                 "creator": {
@@ -1891,7 +1951,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000017",
+                "story_id": "PROYECTO-000017",
                 "title": "Tablero de control IV",
                 "description": "Completar y enviar el cuarto tablero de control a la cátedra",
                 "creator": {
@@ -1927,7 +1987,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000018",
+                "story_id": "PROYECTO-000018",
                 "title": "Story mapping",
                 "description": "Elaborar el story mapping en base al release plan",
                 "creator": {
@@ -1963,7 +2023,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000019",
+                "story_id": "PROYECTO-000019",
                 "title": "Plan de pruebas",
                 "description": "Elaborar el plan de pruebas",
                 "creator": {
@@ -2003,7 +2063,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000020",
+                "story_id": "PROYECTO-000020",
                 "title": "Casos de prueba",
                 "description": "Elaborar los casos de prueba",
                 "creator": {
@@ -2043,7 +2103,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000021",
+                "story_id": "PROYECTO-000021",
                 "title": "Documento de arquitectura",
                 "description": "Elaborar el documento de arquitectura",
                 "creator": {
@@ -2079,7 +2139,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000022",
+                "story_id": "PROYECTO-000022",
                 "title": "Diagrama de clases",
                 "description": "Elaborar el diagrama de clases",
                 "creator": {
@@ -2115,7 +2175,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000023",
+                "story_id": "PROYECTO-000023",
                 "title": "Ejecución de los casos de prueba",
                 "description": "Ejecutar los casos de pruebas confeccionados",
                 "creator": {
@@ -2159,7 +2219,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000024",
+                "story_id": "PROYECTO-000024",
                 "title": "Login",
                 "description": "Como usuario quiero loguearme en la aplicación para administrar mis proyectos.",
                 "creator": {
@@ -2211,7 +2271,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000025",
+                "story_id": "PROYECTO-000025",
                 "title": "Conexión con base de datos",
                 "description": "Como administrador quiero realizar la conexión del backend con la base de datos para poder realizar acciones CRUD desde el backend.",
                 "creator": {
@@ -2247,7 +2307,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000026",
+                "story_id": "PROYECTO-000026",
                 "title": "Crear pantallas iniciales del frontend",
                 "description": "Como usuario quiero acceder a las secciones principales de la aplicación para interactuar con las funcionalidades del sistema.",
                 "creator": {
@@ -2304,7 +2364,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000027",
+                "story_id": "PROYECTO-000027",
                 "title": "Filtrar stories",
                 "description": "Como usuario quiero filtrar mis stories para encontrarlas más fácilmente.",
                 "creator": {
@@ -2346,7 +2406,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000028",
+                "story_id": "PROYECTO-000028",
                 "title": "Editar stories",
                 "description": "Como usuario quiero editar mis stories para agregar o modificar su contenido.",
                 "creator": {
@@ -2388,7 +2448,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000029",
+                "story_id": "PROYECTO-000029",
                 "title": "Formatos lista, kanban y gantt",
                 "description": "Como usuario quiero poder contar con diferentes modos de visualización de mis sprints para ver mis datos de la forma más conveniente.",
                 "creator": {
@@ -2435,7 +2495,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000030",
+                "story_id": "PROYECTO-000030",
                 "title": "Ver banner con aviso de próxima ceremonia Scrum ",
                 "description": "Como usuario quiero ver un banner que indique la próxima ceremonia de mi equipo.",
                 "creator": {
@@ -2477,7 +2537,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000031",
+                "story_id": "PROYECTO-000031",
                 "title": "Crear nueva story/épica/task",
                 "description": "Como usuario quiero crear una nueva story/épica/task para administrar mis elementos Scrum.",
                 "creator": {
@@ -2519,7 +2579,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000032",
+                "story_id": "PROYECTO-000032",
                 "title": "Configuraciones del scrum master",
                 "description": "Como scrum master quiero administrar la configuración del board de mi equipo.",
                 "creator": {
@@ -2576,7 +2636,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000033",
+                "story_id": "PROYECTO-000033",
                 "title": "Conexión Google Meet API",
                 "description": "Como administrador quiero establecer una conexión con Meet para obtener los datos de las ceremonias de los usuarios.",
                 "creator": {
@@ -2620,7 +2680,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000034",
+                "story_id": "PROYECTO-000034",
                 "title": "Pantalla de ceremonias",
                 "description": "Como usuario quiero ver todas las ceremonias del sprint para tener visibilidad del calendario de próximas ceremonias.",
                 "creator": {
@@ -2657,7 +2717,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000035",
+                "story_id": "PROYECTO-000035",
                 "title": "Pantalla de métricas",
                 "description": "Como usuario quiero ver las métricas del sprint actual para extraer datos relevantes sobre la performance del equipo.",
                 "creator": {
@@ -2701,7 +2761,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000036",
+                "story_id": "PROYECTO-000036",
                 "title": "Retro board",
                 "description": "Como usuario quiero cargar un post it durante la retro para expresar qué salió bien, mal, etc.",
                 "creator": {
@@ -2743,7 +2803,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000037",
+                "story_id": "PROYECTO-000037",
                 "title": "Mi perfil",
                 "description": "Como usuario quiero ver las stories en las que trabajé para poder sacar conclusiones de mi carga de trabajo.",
                 "creator": {
@@ -2790,7 +2850,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000038",
+                "story_id": "PROYECTO-000038",
                 "title": "Notificaciones",
                 "description": "Como usuario quiero ver las notificaciones de las historias relevantes en la sección de notificaciones.",
                 "creator": {
@@ -2837,7 +2897,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000039",
+                "story_id": "PROYECTO-000039",
                 "title": "Presentación comercial",
                 "description": "Preparar la presentacion comercial para exponer",
                 "creator": {
@@ -2877,7 +2937,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000040",
+                "story_id": "PROYECTO-000040",
                 "title": "Poster del proyecto",
                 "description": "Elaborar el poster del proyecto para presentar a la cátedra",
                 "creator": {
@@ -2921,7 +2981,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000041",
+                "story_id": "PROYECTO-000041",
                 "title": "Presentacion final",
                 "description": "Elaborar una presentación final del proyecto para exponer frente a los profesores de la cátedra",
                 "creator": {
@@ -2965,7 +3025,7 @@ class Populate:
                 "team": self.team3_id,
             },
             {
-                "story_id": "PROYECTO_FINAL-000042",
+                "story_id": "PROYECTO-000042",
                 "title": "Documento de lecciones aprendidas",
                 "description": "Confeccionar el documento final de lecciones aprendidas como cierre del proyecto",
                 "creator": {
@@ -2996,6 +3056,382 @@ class Populate:
                     {
                         "title": "Confeccionar el documento",
                         "status": Status.DONE.value,
+                    },
+                ],
+                "team": self.team3_id,
+            },
+            {
+                "story_id": "PROYECTO-000043",
+                "title": "Implementar segundo idioma",
+                "description": "Como usuario quiero que la aplicación esté disponible tanto en inglés como en español",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "assigned_to": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "epic": {
+                    "_id": self.epic8_id,
+                    "title": self.epic8_title,
+                    "epic_color": self.epic8_color,
+                },
+                "sprint": {"_id": self.sprint2_q4_team3, "name": "S2-Q4-2024"},
+                "estimation": 3,
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.FEATURE.value,
+                "estimation_method": "Fibonacci",
+                "story_status": Status.DONE.value,
+                "creation_date": datetime.datetime(2024, 7, 20),
+                "tasks": [
+                    {
+                        "title": "Implementar react-i18",
+                        "status": Status.DONE.value,
+                    },
+                    {
+                        "title": "Generar documento en.json",
+                        "status": Status.DONE.value,
+                    },
+                    {
+                        "title": "Generar documento es.json",
+                        "status": Status.DONE.value,
+                    },
+                ],
+                "team": self.team3_id,
+            },
+            {
+                "story_id": "PROYECTO-000044",
+                "title": "Implementar colores para las épicas",
+                "description": "Como usuario quiero que cada épica tenga asociado un color",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "assigned_to": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "epic": {
+                    "_id": self.epic8_id,
+                    "title": self.epic8_title,
+                    "epic_color": self.epic8_color,
+                },
+                "sprint": {"_id": self.sprint3_q4_team3, "name": "S3-Q4-2024"},
+                "estimation": 5,
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.FEATURE.value,
+                "estimation_method": "Fibonacci",
+                "story_status": Status.DONE.value,
+                "creation_date": datetime.datetime(2024, 7, 20),
+                "tasks": [
+                    {
+                        "title": "Implementar selección de color al crear una épica",
+                        "status": Status.DONE.value,
+                    },
+                    {
+                        "title": "Mostrar épica con fondo de color en vista List",
+                        "status": Status.DONE.value,
+                    },
+                    {
+                        "title": "Mostrar color en filtros de la Home",
+                        "status": Status.DONE.value,
+                    },
+                    {
+                        "title": "Mostrar color en filtros del Crear Story",
+                        "status": Status.DONE.value,
+                    },
+                ],
+                "team": self.team3_id,
+            },
+            {
+                "story_id": "PROYECTO-000045",
+                "title": "Error al suscribirse a story",
+                "description": "No se están mandando las notificaciones a los usuarios que se suscribieron a una story",
+                "creator": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2,
+                    "email": self.email2
+                },
+                "assigned_to": {
+                    "_id": self.user8_id,
+                    "username": self.username8,
+                    "profile_picture": self.pfp8,
+                    "email": self.email8
+                },
+                "epic": {
+                    "_id": self.epic7_id,
+                    "title": self.epic7_title,
+                    "epic_color": self.epic7_color,
+                },
+                "sprint": {"_id": self.sprint3_q4_team3, "name": "S3-Q4-2024"},
+                "estimation": 2,
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.BUGFIX.value,
+                "estimation_method": "Fibonacci",
+                "story_status": Status.DONE.value,
+                "creation_date": datetime.datetime(2024, 7, 20),
+                "tasks": [
+                    {
+                        "title": "Fix bug",
+                        "status": Status.DONE.value,
+                    },
+                    {
+                        "title": "Correr casos de prueba",
+                        "status": Status.DONE.value,
+                    },
+                ],
+                "team": self.team3_id,
+            },
+            {
+                "story_id": "PROYECTO-000046",
+                "title": "Implementar nueva librería Gantt",
+                "description": "Se debe implementar la libería https://www.npmjs.com/package/@syncfusion/ej2-react-gantt para la vista Gantt de la Home",
+                "creator": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2,
+                    "email": self.email2
+                },
+                "assigned_to": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "epic": {
+                    "_id": self.epic8_id,
+                    "title": self.epic8_title,
+                    "epic_color": self.epic8_color,
+                },
+                "sprint": {"_id": self.sprint3_q4_team3, "name": "S3-Q4-2024"},
+                "estimation": 2,
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.FEATURE.value,
+                "estimation_method": "Fibonacci",
+                "story_status": Status.DONE.value,
+                "creation_date": datetime.datetime(2024, 7, 20),
+                "tasks": [
+                    {
+                        "title": "Conseguir licencia",
+                        "status": Status.DONE.value,
+                    },
+                    {
+                        "title": "Implementar librería",
+                        "status": Status.DONE.value,
+                    },
+                    {
+                        "title": "(Backend) Modificaciones a GET /stories/gantt",
+                        "status": Status.DONE.value,
+                    },
+                ],
+                "team": self.team3_id,
+            },
+            {
+                "story_id": "PROYECTO-000047",
+                "title": "Implementar sockets para notificaciones",
+                "description": "Implementar manejo de sockets para que el usuario reciba notificaciones en la aplicación en tiempo real",
+                "creator": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2,
+                    "email": self.email2
+                },
+                "assigned_to": {
+                    "_id": self.user8_id,
+                    "username": self.username8,
+                    "profile_picture": self.pfp8,
+                    "email": self.email8
+                },
+                "epic": {
+                    "_id": self.epic7_id,
+                    "title": self.epic7_title,
+                    "epic_color": self.epic7_color,
+                },
+                "sprint": {"_id": self.sprint4_q4_team3, "name": "S4-Q4-2024"},
+                "estimation": 2,
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.BUGFIX.value,
+                "estimation_method": "Fibonacci",
+                "story_status": Status.NOT_STARTED.value,
+                "creation_date": datetime.datetime(2024, 7, 20),
+                "tasks": [
+                    {
+                        "title": "Conseguir licencia",
+                        "status": Status.NOT_STARTED.value,
+                    },
+                    {
+                        "title": "Implementar librería",
+                        "status": Status.NOT_STARTED.value,
+                    },
+                    {
+                        "title": "(Backend) Modificaciones a GET /stories/gantt",
+                        "status": Status.NOT_STARTED.value,
+                    },
+                ],
+                "team": self.team3_id,
+            },
+            {
+                "story_id": "PROYECTO-000048",
+                "title": "Adjuntar archivos al crear story",
+                "description": "Como usuario quiero poder adjuntar archivos a una story",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "assigned_to": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2,
+                    "email": self.email2
+                },
+                "epic": {
+                    "_id": self.epic8_id,
+                    "title": self.epic8_title,
+                    "epic_color": self.epic8_color,
+                },
+                "sprint": {"_id": self.sprint4_q4_team3, "name": "S4-Q4-2024"},
+                "estimation": 5,
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.FEATURE.value,
+                "estimation_method": "Fibonacci",
+                "story_status": Status.NOT_STARTED.value,
+                "creation_date": datetime.datetime(2024, 7, 20),
+                "tasks": [
+                    {
+                        "title": "Modificaciones frontend",
+                        "status": Status.NOT_STARTED.value,
+                    },
+                    {
+                        "title": "Modificaciones backend",
+                        "status": Status.NOT_STARTED.value,
+                    },
+                    {
+                        "title": "Guardado de los archivos en base de datos",
+                        "status": Status.NOT_STARTED.value,
+                    },
+                ],
+                "team": self.team3_id,
+            },
+            {
+                "story_id": "PROYECTO-000049",
+                "title": "Bug botón de Start no aparece al crear nuevos sprints",
+                "description": "En la pantalla de Sprint del SM, no aparece el botón de Start cuando creo nuevos sprints y todos los demás están finalizados o es un nuevo equipo y no tiene más sprints",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "assigned_to": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "epic": {
+                    "_id": self.epic7_id,
+                    "title": self.epic7_title,
+                    "epic_color": self.epic7_color,
+                },
+                "sprint": {"_id": self.sprint3_q4_team3, "name": "S3-Q4-2024"},
+                "estimation": 3,
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.BUGFIX.value,
+                "estimation_method": "Fibonacci",
+                "story_status": Status.NOT_STARTED.value,
+                "creation_date": datetime.datetime(2024, 7, 20),
+                "tasks": [
+                    {
+                        "title": "Fix backend",
+                        "status": Status.NOT_STARTED.value,
+                    },
+                    {
+                        "title": "Correr casos de prueba",
+                        "status": Status.NOT_STARTED.value,
+                    },
+                ],
+                "team": self.team3_id,
+            },
+            {
+                "story_id": "PROYECTO-000100",
+                "title": "Planning poker (discovery)",
+                "description": "Como usuario quiero poder votar las estimaciones de las stories en tiempo real durante la planning",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "assigned_to": {
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2,
+                    "email": self.email2
+                },
+                "epic": {
+                    "_id": self.epic9_id,
+                    "title": self.epic9_title,
+                    "epic_color": self.epic9_color,
+                },
+                "sprint": {"_id": self.backlog_team3, "name": "Backlog"},
+                "estimation": 5,
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.DISCOVERY.value,
+                "estimation_method": "Fibonacci",
+                "story_status": Status.NOT_STARTED.value,
+                "creation_date": datetime.datetime(2024, 7, 20),
+                "tasks": [
+                    {
+                        "title": "Investigar factibilidad técnica",
+                        "status": Status.NOT_STARTED.value,
+                    },
+                ],
+                "team": self.team3_id,
+            },
+            {
+                "story_id": "PROYECTO-000101",
+                "title": "Implementar assets/aplicaciones asociados a una story",
+                "description": "Como miembro del equipo quiero que cada story quede vinculada a los activos/aplicaciones que afecta.",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "assigned_to": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "epic": {
+                    "_id": self.epic9_id,
+                    "title": self.epic9_title,
+                    "epic_color": self.epic9_color,
+                },
+                "sprint": {"_id": self.backlog_team3, "name": "Backlog"},
+                "estimation": 5,
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.DISCOVERY.value,
+                "estimation_method": "Fibonacci",
+                "story_status": Status.NOT_STARTED.value,
+                "creation_date": datetime.datetime(2024, 7, 20),
+                "tasks": [
+                    {
+                        "title": "Investigar factibilidad técnica",
+                        "status": Status.NOT_STARTED.value,
                     },
                 ],
                 "team": self.team3_id,
@@ -3574,8 +4010,8 @@ class Populate:
                 "year": 2024,
                 "start_date": datetime.datetime(2024, 10, 29),
                 "end_date": datetime.datetime(2024, 11, 18),
-                "target": 1,
-                "completed": 1,
+                "target": 3,
+                "completed": 3,
                 "status": SprintStatus.FINISHED.value,
                 "team": self.team3_id
             },

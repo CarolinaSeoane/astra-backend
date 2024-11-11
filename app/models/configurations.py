@@ -18,6 +18,7 @@ class Color(Enum):
     RED = "astra-red"
     ORANGE = "astra-orange"
     YELLOW = "astra-yellow"
+    PINK = "astra-pink"
 
 class Role(Enum):
     SCRUM_MASTER = "Scrum Master"

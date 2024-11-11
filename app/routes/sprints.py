@@ -129,7 +129,7 @@ def start_sprint(sprint_id):
     update_res = Sprint.start_sprint(sprint_id)
 
     # Set following sprint as next
-    Sprint.set_following_sprint(sprint_id)
+    Sprint.set_following_sprint(g.team_id)
     
     # Create and save ceremonies for current sprint
     Ceremony.create_sprint_ceremonies(g.team_id, sprint_id)
@@ -167,13 +167,18 @@ def attempt_to_create_sprint():
 def create_sprints(args):
     sprint_duration = Team.get_team_settings(g.team_id, 'sprint_set_up')['sprint_set_up']['sprint_duration']
     latest_sprint = Sprint.get_latest_sprint(g.team_id)
-    print(latest_sprint)
+
     if not latest_sprint:
         latest_sprint_number = 0
     else:
         latest_sprint_number = latest_sprint['sprint_number'] if latest_sprint['quarter'] == get_quarter(args['start_date']) else 0
     sprints = generate_sprints_for_quarter(args['start_date'], sprint_duration, g.team_id, latest_sprint_number)
     Sprint.add_sprints(sprints)
+
+    there_is_a_next_sprint = Sprint.there_is_a_next_sprint(g.team_id)
+    if not there_is_a_next_sprint:
+        Sprint.set_following_sprint(g.team_id)
+   
     # ToDo: handle errors
     return send_response([], [], 200, **g.req_data)
 
