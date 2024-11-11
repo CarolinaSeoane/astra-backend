@@ -374,7 +374,6 @@ class Sprint:
         }
         return len(MongoHelper().get_documents_by(STORIES_COL, match))
 
-
     @staticmethod
     def get_future_sprints(team_id):
         '''
@@ -388,5 +387,5 @@ class Sprint:
             ]
         }
 
-        documents = MongoHelper().get_documents_by('sprints', filter)
+        documents = MongoHelper().get_documents_by(SPRINTS_COL, filter)
         return documents if documents else None

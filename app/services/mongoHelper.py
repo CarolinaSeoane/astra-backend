@@ -42,6 +42,10 @@ class MongoHelper:
     def delete_element_from_collection(self, collection_name, filter):
         return self.astra.db[collection_name].delete_one(filter)
 
+    def delete_many(self, collection_name, filter):
+        """Elimina múltiples documentos de una colección basándose en un filtro."""
+        return self.astra.db[collection_name].delete_many(filter)
+
     def document_exists(self, collection_name, filter):
         '''
         returns False if no documents match the query
@@ -73,11 +77,6 @@ class MongoHelper:
 
     def replace_document(self, collection_name, filter, new_document):
         return self.astra.db[collection_name].replace_one(filter, new_document)
-
-    def delete_many(self, collection_name, filter):
-        """Elimina múltiples documentos de una colección basándose en un filtro."""
-        result = self.astra.db[collection_name].delete_many(filter)
-        return result
 
     def count_documents(self, collection_name, filter_criteria):
         return self.astra.db[collection_name].count_documents(filter_criteria)

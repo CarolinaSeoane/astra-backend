@@ -6,9 +6,11 @@ from app.services.astra_scheduler import generate_ceremonies_for_sprint
 from app.models.sprint import Sprint
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import CollectionNames
+from app.utils import mongo_query
 
 
 CEREMONIES_COL = CollectionNames.CEREMONIES.value
+BOARDS_COL = CollectionNames.BOARDS.value
 
 
 class Ceremony:
@@ -87,8 +89,8 @@ class Ceremony:
         current_ceremony = MongoHelper().get_documents_by(
             CEREMONIES_COL,
             filter=filter,
-            sort={"starts": 1
-        })
+            sort={"starts": 1}
+        )
 
         return current_ceremony[0] if current_ceremony else None
 
@@ -98,3 +100,13 @@ class Ceremony:
             return None
 
         return MongoHelper().get_document_by(CEREMONIES_COL, {'_id': ObjectId(ceremony_id)})
+
+    @staticmethod
+    def save_board(team_id, ceremony_id, board_state):
+        new_board = {
+            "team_id": team_id,
+            "ceremony_id": ceremony_id,
+            "board_state": board_state,
+            "saved_at": datetime.utcnow()
+        }
+        MongoHelper().create_document(BOARDS_COL, new_board)

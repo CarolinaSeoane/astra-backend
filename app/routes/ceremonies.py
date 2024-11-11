@@ -103,7 +103,6 @@ def get_ceremony(ceremony_id):
         ceremony = Ceremony.get_ceremony_by_id(ceremony_id)
         if not ceremony:
             return jsonify({'error': 'Ceremony not found'}), 404
-
         return jsonify(ceremony), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
