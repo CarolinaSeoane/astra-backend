@@ -56,7 +56,6 @@ def validate_user_token():
 
     # Validate token
     decoded = validate_jwt(token)
-    print(token)
 
     if not decoded:
         return send_response(
