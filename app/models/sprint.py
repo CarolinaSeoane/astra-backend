@@ -389,3 +389,16 @@ class Sprint:
 
         documents = MongoHelper().get_documents_by(SPRINTS_COL, filter)
         return documents if documents else None
+
+    @staticmethod
+    def get_current_sprint(team_id):
+        '''
+        Returns current sprint for a given team. Excludes the Backlog sprint.
+        '''
+        match = {
+            'team': ObjectId(team_id),
+            'status': SprintStatus.CURRENT.value,
+        }
+
+        documents = MongoHelper().get_document_by(SPRINTS_COL, match)
+        return documents if documents else None

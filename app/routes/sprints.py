@@ -217,3 +217,9 @@ def get_total_stories(args):
 def get_future_and_current_sprints(args):
     documents = Sprint.get_future_sprints(args["team_id"])
     return send_response(documents, [], 200, **g.req_data)
+
+@sprints.route('/current', methods=['GET'])
+@use_args({"team_id": fields.Str(required=True)}, location='query')
+def get_current_sprint(args):
+    documents = Sprint.get_current_sprint(args["team_id"])
+    return send_response(documents, [], 200, **g.req_data)

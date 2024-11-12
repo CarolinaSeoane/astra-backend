@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timedelta
 from bson import ObjectId
 
 from app.models.team import Team
@@ -110,3 +110,25 @@ class Ceremony:
             "saved_at": datetime.utcnow()
         }
         MongoHelper().create_document(BOARDS_COL, new_board)
+
+    @staticmethod
+    def get_ceremony_date(ceremony_id):
+        """Obtiene la fecha de la ceremonia especificada por su ID y retorna el día anterior."""
+        ceremony = Ceremony.get_ceremony_by_id(ceremony_id)
+
+        print(f"Ceremony data: {ceremony}")
+        if not ceremony:
+            print("Error: No se encontró la ceremonia con el ID proporcionado.")
+            return None
+
+        if 'ends' not in ceremony or not ceremony['ends']:
+            print("Error: No se encontró la fecha de fin ('ends') en la ceremonia.")
+            return None
+
+        if isinstance(ceremony['ends'], dict) and '$date' in ceremony['ends']:
+            ends_date_str = ceremony['ends']['$date']
+            ceremony_date = datetime.fromisoformat(ends_date_str[:-1]) - timedelta(days=1)
+            print(f"Using ceremony date for filtering: {ceremony_date}")
+            return ceremony_date
+        print("Error: 'ends' no es un dict o no contiene '$date'.")
+        return None

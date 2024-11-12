@@ -10,6 +10,7 @@ from app.db_connection import mongo
 
 STORIES_COL = CollectionNames.STORIES.value
 DONE_STATUS = Status.DONE.value
+MODIFIED_STORIES_COL = CollectionNames.MODIFIED_STORIES.value
 
 
 class Story:
@@ -81,49 +82,6 @@ class Story:
             return list_format(stories)
         else:
             return stories
-
-    @staticmethod
-    def get_standup_stories(team_id: ObjectId, view_type, **kwargs):
-        '''
-        Returns [] if no stories are found for the given team_id
-        '''
-        print("Ceremony date being passed to filter:",kwargs.get('ceremony_date'))
-        if view_type == 'kanban':
-            projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.title', 'tasks.status', 'creation_date'}
-        elif view_type == 'list':
-            projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.status', 'story_type', 'description', 'creation_date'}
-        else:
-            projection = None
-
-        filter = {
-            "team": {"$eq": team_id},
-        }
-
-        if 'assigned_to' in kwargs and kwargs['assigned_to']:
-            filter["assigned_to.username"] = kwargs['assigned_to']
-        if 'sprint' in kwargs and kwargs['sprint']:
-            filter["sprint.name"] = kwargs['sprint']
-        if 'epic' in kwargs and kwargs['epic']:
-            filter["epic.title"] = kwargs['epic']
-        if 'priority' in kwargs and kwargs['priority']:
-            filter["priority"] = kwargs['priority']
-        if 'story_type' in kwargs and kwargs['story_type']:
-            filter["story_type"] = kwargs['story_type']
-        if 'story_id' in kwargs and kwargs['story_id']:
-            filter["story_id"] = kwargs['story_id']
-        if 'story_status' in kwargs and kwargs['story_status']:
-            filter["story_status"] = kwargs['story_status']
-
-        if 'ceremony_date' in kwargs and kwargs['ceremony_date']:
-            filter["creation_date"] = {"$lt": kwargs['ceremony_date']}
-
-        stories = MongoHelper().get_documents_by(STORIES_COL, filter=filter, projection=projection)
-
-        if view_type == 'kanban':
-            return kanban_format(stories)
-        if view_type == 'list':
-            return list_format(stories)
-        return stories
 
     @staticmethod
     def get_story_fields(sections=False):
@@ -223,6 +181,11 @@ class Story:
             "story_id": story_id
         }
         MongoHelper().delete_element_from_collection(STORIES_COL, match)
+        match = {
+            "team_id": ObjectId(team_id),
+            "story_id": story_id
+        }
+        MongoHelper().delete_many(MODIFIED_STORIES_COL, match)
         return { "status": 204 }
 
     @staticmethod
@@ -288,3 +251,29 @@ class Story:
         #print("result mongo",  result)
 
         return result.modified_count > 0
+
+    @staticmethod
+    def save_modified_story(story_id, title, username, modified_at, sprint, team_id):
+        # TODO o guardar una descripcion de lo que se cambio, o verificar que
+        # una historia con ese id no haya sido modificada ya, para no tener
+        # en la timeline lo mismo repetido dos veces.
+        modified_story = {
+            "story_id": story_id,
+            "title": title,
+            "username": username,
+            "modified_at": modified_at,
+            "sprint": sprint,
+            "team_id": team_id
+        }
+        print(f"Saving modified story: {modified_story}")
+        result = MongoHelper().create_document(MODIFIED_STORIES_COL, modified_story)
+        print(f"Result of save: {result}")
+
+    @staticmethod
+    def get_modified_stories_up_to(date, team_id, sprint):
+        filter_query = {
+            'team_id': ObjectId(team_id),
+            'modified_at': {'$lte': date},
+            'sprint': sprint
+        }
+        return MongoHelper().get_documents_by(MODIFIED_STORIES_COL, filter_query)

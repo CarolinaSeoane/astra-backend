@@ -1,10 +1,9 @@
+from datetime import datetime
 import random
-from datetime import datetime, timedelta
 from flask import Blueprint, g, request,jsonify
 from webargs.flaskparser import use_args
 from webargs import fields
 from bson import ObjectId
-from dateutil import parser
 
 from app.models.story import Story
 from app.utils import get_current_quarter, send_response
@@ -14,8 +13,6 @@ from app.models.sprint import Sprint
 from app.models.epic import Epic
 from app.models.task import Task
 from app.models.user import User
-from app.models.ceremony import Ceremony
-from app.services.mongoHelper import MongoHelper
 from app.models.configurations import Priority, Type, Configurations, Status
 from app.models.notification import Notification
 from app.services.notifications_services import notify_story_update
@@ -66,30 +63,6 @@ def apply_validate_user_is_active_member_of_team():
 def stories_list(args, view_type):
     team_stories = Story.get_stories_by_team_id(g.team_id, view_type, **args)
     return send_response(team_stories, [], 200, **g.req_data)
-
-@stories.route("/standup/<view_type>", methods=['GET'])
-@use_args({
-    'sprint': fields.Str(required=False),
-    'assigned_to': fields.Str(required=False),
-    'epic': fields.Str(required=False),
-    'priority': fields.Str(required=False),
-    'story_type': fields.Str(required=False),
-    'story_id': fields.Str(required=False),
-    'ceremony_id': fields.Str(required=False)  
-}, location='query')
-def standup_stories_list(args, view_type):
-    ceremony_date = None
-    if 'ceremony_id' in args and args['ceremony_id']:
-        ceremony_date = get_ceremony_date(args['ceremony_id'])
-        print("Ceremony ID:", args['ceremony_id'])
-        print("Fecha de ceremonia obtenida:", ceremony_date)
-        if ceremony_date is None:
-            return send_response(
-                [], ["No se pudo obtener la fecha de la ceremonia."], 400, **g.req_data
-            )
-    stories = Story.get_standup_stories(g.team_id, view_type,ceremony_date=ceremony_date, **args)
-    print("Lista de historias obtenidas:",stories)
-    return send_response(stories, [], 200, **g.req_data)
 
 @stories.route("/fields", methods=["GET"])
 @use_args({"sections": fields.Boolean(required=False, missing=False)}, location="query")
@@ -286,26 +259,9 @@ def edit_story():
     if not old_story:
         return send_response([], ["Old story not found"], 404, **g.req_data)
 
-    nueva_fecha = parser.isoparse(old_story["creation_date"]['$date'])
-    fecha_normalizada = datetime.combine(nueva_fecha.date(), datetime.min.time())
-    print(f"fecha cracion: {fecha_normalizada}")
-    print(f"Received story for editing: {old_story}")
-    user = get_current_user()
-    username = user["username"]
-    modified_story_info = {
-        "story_id": story["story_id"],
-        "title": story["title"],
-        "modified_by": username,
-        "modified_at": date_now, 
-        "sprint": story["sprint"]["name"],
-        "team_id":story['team']
-    }
-
     if "_id" in story:
         del story["_id"]
     # story["estimation_method"] = old_story["estimation_method"]  # cannot be changed
-    if "creation_date" in old_story:
-        story["creation_date"] = fecha_normalizada
 
     tasks = Task.format(story)
     story["tasks"] = tasks
@@ -355,13 +311,14 @@ def edit_story():
         print(f"Start date added: {date_now}")
 
     resp = Story.update(story, story_status)
-    save_modified_story(
-        modified_story_info["story_id"],
-        modified_story_info["title"],
-        modified_story_info["modified_by"],
-        modified_story_info["modified_at"],
-        modified_story_info["sprint"],
-        modified_story_info["team_id"],
+    user = User.get_user_by({"_id": ObjectId(g._id)})
+    Story.save_modified_story(
+        story_id=story["story_id"],
+        title=story["title"],
+        username=user.get("username", "Unknown"),
+        modified_at=date_now,
+        sprint=story["sprint"]["name"],
+        team_id=story['team'],
     )
     return send_response(
         resp.get("message", []), resp.get("error", []), resp["status"], **g.req_data
@@ -382,74 +339,27 @@ def unsubscribe_to_story(story_id):
     )
 
 @stories.route('/modified_stories', methods=['GET'])
-def get_modified_stories():
-    mongo_helper = MongoHelper()
-    team_id = request.args.get('team_id')
-    sprint_id = request.args.get('sprint')
-    ceremony_id = request.args.get('ceremony_id')
-
-    print(f"Received team_id: {team_id}, sprint: {sprint_id}, ceremony_id: {ceremony_id}")
-
-    ceremony_date = get_ceremony_date(ceremony_id)
+@use_args(
+    {
+        "team_id": fields.Str(required=True),
+        "sprint": fields.Str(required=True),
+        "ceremony_id": fields.Str(required=True)
+    },
+    location="query"
+)
+def get_modified_stories(args):
+    # ceremony_date = Ceremony.get_ceremony_date(args["ceremony_id"])
+    ceremony_date = datetime.combine(datetime.now().date(), datetime.min.time()) # testing only
+    print(f"ceremony date is {ceremony_date}")
     if not ceremony_date:
         return jsonify({"error": "No upcoming ceremony found for the team"}), 404
-    print("fecha2",ceremony_date)
-    filter_query = {
-        'team_id': ObjectId(team_id),
-        'modified_at': {'$lt': ceremony_date}
-        }
 
-    if sprint_id:
-        filter_query['sprint'] = sprint_id
-
-    modified_stories = mongo_helper.get_documents_by('modified_stories', filter_query)
-    print(f"Filter query: {filter_query}")
+    modified_stories = Story.get_modified_stories_up_to(
+        ceremony_date, args["team_id"], args["sprint"]
+    )
     print(f"Modified stories found: {modified_stories}")
 
     return jsonify(modified_stories)
-
-def save_modified_story(story_id, title, username, modified_at,sprint,team_id):
-    mongo_helper = MongoHelper()
-    modified_story = {
-        "story_id": story_id,
-        "title": title,
-        "username": username,
-        "modified_at": modified_at,
-        "sprint": sprint,
-        "team_id": team_id
-    }
-    print(f"Saving modified story: {modified_story}")
-    result = mongo_helper.create_document('modified_stories', modified_story)
-    print(f"Result of save: {result}")
-
-def get_current_user():
-    user_id = g._id
-    if user_id:
-        user = User.get_user_by({"_id": ObjectId(user_id)})
-        return user
-    return None
-
-def get_ceremony_date(ceremony_id):
-    """Obtiene la fecha de la ceremonia especificada por su ID y retorna el día anterior."""
-    ceremony = Ceremony.get_ceremony_by_id(ceremony_id)
-
-    print(f"Ceremony data: {ceremony}")
-    if not ceremony:
-        print("Error: No se encontró la ceremonia con el ID proporcionado.")
-        return None
-
-    if 'ends' not in ceremony or not ceremony['ends']:
-        print("Error: No se encontró la fecha de fin ('ends') en la ceremonia.")
-        return None
-
-    if isinstance(ceremony['ends'], dict) and '$date' in ceremony['ends']:
-        ends_date_str = ceremony['ends']['$date']
-        ceremony_date = datetime.fromisoformat(ends_date_str[:-1]) - timedelta(days=1)
-        print(f"Using ceremony date for filtering: {ceremony_date}")
-        return ceremony_date
-    else:
-        print("Error: 'ends' no es un dict o no contiene '$date'.")
-        return None
 
 @stories.route('/list_with_story_status', methods=['GET'])
 @use_args({'team_id': fields.Str(required=True),
@@ -509,10 +419,6 @@ def put_list_with_new_story_status(args):
 @use_args({"story_id": fields.Str(required=True)}, location="query")
 def delete_story(args):
     resp = Story.delete(g.team_id, args["story_id"])
-    MongoHelper().delete_many("modified_stories", {
-        "team_id": g.team_id,
-        "story_id": args["story_id"]
-    })
     return send_response(
         resp.get("message"), resp.get("error", []), resp["status"], **g.req_data
     )
