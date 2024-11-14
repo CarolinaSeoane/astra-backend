@@ -6,6 +6,7 @@ from app.services.astra_scheduler import generate_ceremonies_for_sprint
 from app.models.sprint import Sprint
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import CollectionNames
+from app.services.google_meet import list_conference_records
 
 
 CEREMONIES_COL = CollectionNames.CEREMONIES.value
@@ -50,7 +51,8 @@ class Ceremony:
             filter["ceremony_type"] = kwargs['ceremony_type']
         if 'ceremony_status' in kwargs and kwargs['ceremony_status']:
             filter["ceremony_status"] = kwargs['ceremony_status']
-
+        if 'ceremony_id' in kwargs and kwargs['ceremony_id']:
+            filter["_id"] = kwargs['ceremony_id']
         return MongoHelper().get_documents_by(CEREMONIES_COL, filter=filter, sort=sort)
     
     @staticmethod
@@ -62,4 +64,10 @@ class Ceremony:
         sort = {'starts': 1}
         projection = {"ceremony_type", "starts", "ends", "google_meet_config.meetingUri"} if for_banner else {}
         return MongoHelper().get_documents_by(CEREMONIES_COL, filter=filter, sort=sort, projection=projection)
+    
+    @staticmethod
+    def get_google_meet_data(user, ceremony):
+        conference_record = list_conference_records(user.access_token, user.refresh_token, ceremony)
+        print('conference_record: ', conference_record)
+        return []
 

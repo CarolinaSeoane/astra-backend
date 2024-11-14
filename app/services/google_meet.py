@@ -79,9 +79,9 @@ def refresh_access_token(refresh_token):
         print(response.text)
         raise RuntimeError("Could not refresh access token")
 
-def list_conference_records(google_access_token, refresh_token, meeting_code):
+def list_conference_records(google_access_token, refresh_token, ceremony):
     url = 'https://meet.googleapis.com/v2/conferenceRecords'
-    query_params = '?filter=space.meeting_code="' + meeting_code + '"'
+    query_params = '?filter=space.meeting_code="' + ceremony['google_meet_config']['meetingCode'] + '"'
 
     return call_google_api(url + query_params, 'get', {'google_access_token': google_access_token, 'refresh_token': refresh_token})
     

@@ -2,6 +2,7 @@ from flask import Blueprint, request, g
 from webargs.flaskparser import use_args
 from webargs import fields
 from datetime import datetime
+from bson import ObjectId
 
 from app.utils import send_response, apply_banner_format
 from app.routes.utils import validate_user_is_active_member_of_team
@@ -10,13 +11,11 @@ from app.models.configurations import CeremonyType, CeremonyStatus
 from app.models.sprint import Sprint
 from app.services.astra_scheduler import get_quarter
 from app.models.user import User
-from app.services.google_meet import list_conference_records
+
 
 ceremonies = Blueprint("ceremonies", __name__)
 
-excluded_routes = [
-    
-]
+excluded_routes = []
 
 @ceremonies.before_request
 def apply_validate_user_is_active_member_of_team():
@@ -43,12 +42,12 @@ def ceremonies_list(args):
 
 @ceremonies.route('/meet/data/<ceremony_id>', methods=['GET'])
 def get_ceremonies_meet_data(ceremony_id):
-    print('getting meet data for ceremony_id: ', ceremony_id)
     user_doc = User.get_user_by({'email': g.email}, True)
     user_obj = User(**user_doc)
-    ceremony = Ceremony.get_ceremonies_by_team_id(g.team_id, ceremony_id=ceremony_id)[0]
-    print(ceremony)
-    list_conference_records(user_obj.access_token, user_obj.refresh_token, ceremony)
+    ceremony = Ceremony.get_ceremonies_by_team_id(g.team_id, ceremony_id=ObjectId(ceremony_id))[0]
+    if not ceremony.get('attendees'):
+        ceremony_data = Ceremony.get_google_meet_data(user_obj, ceremony)
+
     return send_response([], [], 200, **g.req_data)
 
 @ceremonies.route("/filters", methods=['GET'])
