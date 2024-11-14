@@ -3,7 +3,7 @@ from bson import ObjectId
 
 from app.models.sprint import Sprint
 from app.models.task import Task
-from app.utils import kanban_format, list_format, mongo_query, list_format_with_task_details
+from app.utils import kanban_format, list_format, mongo_query
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import Configurations, CollectionNames, Status
 from app.db_connection import mongo
@@ -195,61 +195,36 @@ class Story:
         '''
         Returns all stories for the given team_id and sprint_name in list format.
         If no stories are found, returns an empty list.
-
-        filter = {
-        'team': ObjectId(team_id),  # Convert ObjectId to string for comparison
-        'sprint.name': sprint          # Directly use the sprint name
-        }
         '''
-        filter = {
+        match = {
             'team': ObjectId(team_id),
             'sprint.name': {'$in': [sprint_selected, sprint_current, "Backlog"]}
         }
-
-        stories = MongoHelper().get_documents_by(STORIES_COL, filter=filter)
-        #print("stories", stories)
-        listado = list_format_with_task_details(stories)
-        #print("listado", listado)
-        return listado
+        return MongoHelper().get_documents_by(STORIES_COL, filter=match)
 
     @staticmethod
     def put_new_status_and_new_sprint_to_story(team_id, story_id, new_sprint_name):
-        '''
-        new sprint
-        '''
-        #print("team_id.name", team_id)
-        #print("story_id.name", story_id)
-        #print("new_sprint_name.name", new_sprint_name)
-
-        #Sprint.get_sprint_by()
         res_sprint = Sprint.get_sprint_by({
             "name": new_sprint_name,
             "team": ObjectId(team_id)
         })
-
-        #print("rest sprint", res_sprint)
-
         sprint_id = res_sprint["_id"]["$oid"]
 
-        #print("Sprint ID:", sprint_id)
+        match = {
+            'story_id': story_id,
+            'team': ObjectId(team_id)
+        }
 
-        result = mongo.db.stories.update_one(
-            {
-                'story_id': story_id,
-                'team': ObjectId(team_id)
-            },
-            {
-                '$set': {
-                    #'story_status': new_status,
-                    'sprint': {
-                        '_id': ObjectId(sprint_id),  # Guardamos el ObjectId directamente
-                        'name': new_sprint_name
-                    }
+        update_op = {
+            '$set': {
+                'sprint': {
+                    '_id': ObjectId(sprint_id),
+                    'name': new_sprint_name
                 }
             }
-        )
-        #print("result mongo",  result)
+        }
 
+        result = MongoHelper().update_document(STORIES_COL, match, update_op)
         return result.modified_count > 0
 
     @staticmethod

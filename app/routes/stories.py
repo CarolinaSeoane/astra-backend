@@ -5,6 +5,7 @@ from webargs.flaskparser import use_args
 from webargs import fields
 from bson import ObjectId
 
+from app.models.ceremony import Ceremony
 from app.models.story import Story
 from app.utils import get_current_quarter, send_response
 from app.routes.utils import validate_user_is_active_member_of_team
@@ -348,9 +349,9 @@ def unsubscribe_to_story(story_id):
     location="query"
 )
 def get_modified_stories(args):
-    # ceremony_date = Ceremony.get_ceremony_date(args["ceremony_id"])
-    ceremony_date = datetime.combine(datetime.now().date(), datetime.min.time()) # testing only
-    print(f"ceremony date is {ceremony_date}")
+    ceremony_date = Ceremony.get_ceremony_date(args["ceremony_id"])
+    # ceremony_date = datetime.combine(datetime.now().date(), datetime.min.time()) # testing only
+    # print(f"ceremony date is {ceremony_date}")
     if not ceremony_date:
         return jsonify({"error": "No upcoming ceremony found for the team"}), 404
 
@@ -367,22 +368,12 @@ def get_modified_stories(args):
            'sprint_selected': fields.Str(required=True)},
           location='query')
 def list_with_story_status(args):
-    team_id = args.get('team_id')
-    sprint_current =  args.get('sprint_current')
-    sprint_selected =  args.get('sprint_selected')
-
-    #print("    team_id",team_id )
-    #print("    sprint ", sprint)
-    #team_id = args['team_id']  # Extraer team_id de los argumentos
-    #sprint = args['sprint']
     try:
-        stories = Story.get_list_stories_in_team_id_by_sprint_current_and_selected(
-            team_id, sprint_current, sprint_selected
-        )  # Llamar a la función mejorada
-        #print("stories", stories)
-        return send_response(stories, [], 200, **g.req_data)  # Retornar historias
+        stories_list = Story.get_list_stories_in_team_id_by_sprint_current_and_selected(
+            args["team_id"], args["sprint_current"], args["sprint_selected"]
+        )
+        return send_response(stories_list, [], 200, **g.req_data)
     except Exception as e:
-        #print(f"Error retrieving backlog stories: {e}")
         return send_response([], [f"Failed to retrieve backlog stories: {e}"], 200, **g.req_data)
 
 @stories.route('/update_story_sprint', methods=['PUT'])
@@ -393,25 +384,14 @@ def list_with_story_status(args):
     },
     location='query')
 def put_list_with_new_story_status(args):
-    team_id = args.get('team_id')
-    story_id = args.get('story_id')
-    new_sprint_name = args.get('new_sprint_name')
-
-    #print("team_id:", team_id)
-    #print("story_id:", story_id)
-    #print("new_sprint_name", new_sprint_name)
-
-    #if(new_status=="Backlog")
-    #{new_status=="Not Started"}
-
     try:
         result = Story.put_new_status_and_new_sprint_to_story(
-            team_id, story_id, new_sprint_name
-        ) #Move between sprints
+            args["team_id"], args["story_id"], args["new_sprint_name"]
+        )
 
-        if result:  # Verificar si result es verdadero (true)
-            return send_response(True, [], 200, **g.req_data)  # Retornar éxito
-        return send_response(False, [], 200, **g.req_data)  # Retornar fallo
+        if result:
+            return send_response(True, [], 200, **g.req_data)
+        return send_response(False, [], 200, **g.req_data)
     except Exception as e:
         return send_response(False, [f"Failed to put story status: {e}"], 200, **g.req_data)
 

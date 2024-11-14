@@ -6,7 +6,6 @@ from app.services.astra_scheduler import generate_ceremonies_for_sprint
 from app.models.sprint import Sprint
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import CollectionNames
-from app.utils import mongo_query
 
 
 CEREMONIES_COL = CollectionNames.CEREMONIES.value
@@ -132,3 +131,34 @@ class Ceremony:
             return ceremony_date
         print("Error: 'ends' no es un dict o no contiene '$date'.")
         return None
+
+    @staticmethod
+    def is_ceremony_active(ceremony_id):
+        ceremony = Ceremony.get_ceremony_by_id(ceremony_id)
+        if not ceremony:
+            return False
+
+        starts = ceremony.get('starts')
+        ends = ceremony.get('ends')
+
+        if isinstance(starts, dict) and '$date' in starts:
+            starts = starts['$date']
+        if isinstance(ends, dict) and '$date' in ends:
+            ends = ends['$date']
+
+        if isinstance(starts, str):
+            starts = datetime.fromisoformat(starts)
+        elif isinstance(starts, int):
+            starts = datetime.fromtimestamp(starts)
+
+        if isinstance(ends, str):
+            ends = datetime.fromisoformat(ends)
+        elif isinstance(ends, int):
+            ends = datetime.fromtimestamp(ends)
+
+        if starts.tzinfo is not None:
+            starts = starts.replace(tzinfo=None)
+        if ends.tzinfo is not None:
+            ends = ends.replace(tzinfo=None)
+
+        return starts <= datetime.now() <= ends

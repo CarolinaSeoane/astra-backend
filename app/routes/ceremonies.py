@@ -106,3 +106,12 @@ def get_ceremony(ceremony_id):
         return jsonify(ceremony), 200
     except Exception as e:
         return jsonify({'error': str(e)}), 500
+
+@ceremonies.route('/is_active_ceremony', methods=['GET'])
+@use_args(
+    {"team_id": fields.Str(required=True), "ceremony_id": fields.Str(required=True)},
+    location="query",
+)
+def get_is_active_ceremony_in_team(args):
+    response = Ceremony.is_ceremony_active(args["ceremony_id"])
+    return send_response(response, [], 200, **g.req_data)
