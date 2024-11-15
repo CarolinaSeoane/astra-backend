@@ -71,7 +71,11 @@ class CollectionNames(Enum):
     STORIES = "stories"
     TEAMS = "teams"
     USERS = "users"
+    NOTIFICATIONS = "notifications"
     CEREMONIES = "ceremonies"
+    POST_ITS = "post_its"
+    BOARDS = "boards"
+    MODIFIED_STORIES = "modified_stories"
 
 class CeremonyStatus(Enum):
     CONCLUDED = 'Concluded'

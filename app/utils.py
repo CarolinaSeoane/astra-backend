@@ -1,3 +1,4 @@
+from bson import ObjectId
 from flask import jsonify
 
 from app.models.task import Status
@@ -13,6 +14,7 @@ def send_response(data, errors, status_code, method, endpoint):
         'errors': errors
     }
     return jsonify(payload), status_code
+
 
 def kanban_format(stories_dict):
     kanban_columns = [
@@ -43,6 +45,7 @@ def kanban_format(stories_dict):
     }
     return kanban_data
 
+
 def list_format(stories_dict):
     for story in stories_dict:
         total_tasks = 0
@@ -62,8 +65,10 @@ def list_format(stories_dict):
         story['completeness'] = completness
     return stories_dict
 
+
 def gantt_format(stories_dict):
     pass
+
 
 def apply_banner_format(ceremonies):
     formatted_ceremonies = []
@@ -83,3 +88,36 @@ def apply_banner_format(ceremonies):
             }
         ])
     return formatted_ceremonies
+
+
+def get_current_quarter(date):
+    month = date.month
+    if month in [1, 2, 3]:
+        return 1
+    if month in [4, 5, 6]:
+        return 2
+    if month in [7, 8, 9]:
+        return 3
+    return 4
+
+
+def mongo_query(func):
+    def wrapper(*args, **kwargs):
+        try:
+            return func(*args, **kwargs)
+        except Exception as e:
+            print(f"mongo error {e}")
+            return {"message": [], "error": f"Unable to complete operation: {e}", "status": 500}
+    return wrapper
+
+
+def try_to_convert_to_object_id(to_convert):
+    if isinstance(to_convert, ObjectId):
+        return to_convert
+    if to_convert is None:
+        return ''
+    try:
+        to_convert = ObjectId(to_convert["$oid"])
+    except Exception as e:
+        print(f"error converting to object id: {e}")
+    return to_convert

@@ -22,48 +22,49 @@ if __name__ == "__main__":
 excluded_routes = [
     # '/users',
     # '/astra',
-    {
-        'route': '/astra/populate',
-        'methods': ['GET']
-    },
-    {
-        'route': '/users/sign-up',
-        'methods': ['POST']
-    },
-    {
-        'route': '/users/login', # check
-        'methods': ['POST']
-    },
-
+    {"route": "/astra/populate", "methods": ["GET"]},
+    {"route": "/users/sign-up", "methods": ["POST"]},
+    {"route": "/users/login", "methods": ["POST"]},  # check
 ]
+
 
 @app.before_request
 def validate_user_token():
-    '''
-    This validation runs before any request made to any route except the excluded_routes or OPTIONS requests
-    '''
+    """
+    This validation runs before any request made to any
+    route except the excluded_routes or OPTIONS requests
+    """
     for excluded_route in excluded_routes:
-        if request.path.startswith(excluded_route['route']) and (request.method in excluded_route['methods']) or request.method=='OPTIONS':
+        if (
+            request.path.startswith(excluded_route["route"])
+            and (request.method in excluded_route["methods"])
+            or request.method == "OPTIONS"
+        ):
             return None
-    
+
     req_data = {
-        'method': request.method,
-        'endpoint': request.path,
+        "method": request.method,
+        "endpoint": request.path,
     }
 
-    token = request.headers.get('Authorization')
+    token = request.headers.get("Authorization")
 
     if not token:
-        return send_response([], [f"Unprocessable Entity. Missing Authorization header"], 422, **req_data)
+        return send_response(
+            [], ["Unprocessable Entity. Missing Authorization header"], 422, **req_data
+        )
 
     # Validate token
-    decoded = validate_jwt(token)   
+    decoded = validate_jwt(token)
+
     if not decoded:
-        return send_response([], [f"Unauthorized. Invalid session token"], 401, **req_data)
-    
-    g._id = decoded['_id']
-    g.email = decoded['email']
+        return send_response(
+            [], ["Unauthorized. Invalid session token"], 401, **req_data
+        )
+
+    g._id = decoded["_id"]
+    g.email = decoded["email"]
     g.req_data = {
-        'method': request.method,
-        'endpoint': request.path,
+        "method": request.method,
+        "endpoint": request.path,
     }

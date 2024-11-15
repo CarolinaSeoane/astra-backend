@@ -4,7 +4,7 @@ from dateutil import parser
 
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import SprintStatus, CollectionNames
-from app.utils import list_format
+from app.utils import list_format, mongo_query
 
 SPRINTS_COL = CollectionNames.SPRINTS.value
 STORIES_COL = CollectionNames.STORIES.value
@@ -174,7 +174,9 @@ class Sprint:
         # Get finished SPs sum
         sprint = Sprint.get_sprint_by({'_id': ObjectId(sprint_id)})
 
-        completed_points = Sprint.get_completed_points_up_to(sprint['name'], sprint['team']['$oid'], datetime.today())
+        completed_points = Sprint.get_completed_points_up_to(
+            sprint['name'], sprint['team']['$oid'], datetime.today()
+        )
 
         if completed_points:
             total_sps_finished = completed_points[0]['completed_points']
@@ -184,7 +186,13 @@ class Sprint:
         # Set final SP completed
         # Set status as finished
         filter = {'_id': ObjectId(sprint_id)}
-        update = {'$set': {'status': SprintStatus.FINISHED.value, 'completed': total_sps_finished, 'actual_end_date': datetime.today()}}
+        update = {
+            '$set': {
+                'status': SprintStatus.FINISHED.value,
+                'completed': total_sps_finished,
+                'actual_end_date': datetime.today()
+            }
+        }
         return MongoHelper().update_document(SPRINTS_COL, filter, update)
 
     @staticmethod
@@ -195,7 +203,13 @@ class Sprint:
         '''
         # Set status as current and delete next flag
         filter = {'_id': ObjectId(sprint_id)}
-        update = {'$set': {'status': SprintStatus.CURRENT.value, 'actual_start_date': datetime.today()}, '$unset': {'next': ""}}
+        update = {
+            '$set': {
+                'status': SprintStatus.CURRENT.value,
+                'actual_start_date': datetime.today()
+            },
+            '$unset': {'next': ""}
+        }
         return MongoHelper().update_document(SPRINTS_COL, filter, update)
 
     @staticmethod
@@ -226,6 +240,7 @@ class Sprint:
         return  MongoHelper().get_document_by(SPRINTS_COL, filter)
         
     @staticmethod
+    @mongo_query
     def add_completed_points(sprint, team_id, points):
         match = {
             "name": sprint,
@@ -322,7 +337,7 @@ class Sprint:
             else:
                 story_end_date = None
 
-            completeness = story.get('completeness', 0)            
+            completeness = story.get('completeness', 0)
 
             if completeness < 100 or not story_end_date or story_end_date > sprint_end_date:
                 incomplete_stories += 1
@@ -364,3 +379,32 @@ class Sprint:
             "team": team_id
         }
         return len(MongoHelper().get_documents_by(STORIES_COL, match))
+
+    @staticmethod
+    def get_future_sprints(team_id):
+        '''
+        Returns future sprints (Future and Current) for a given team. Excludes the Backlog sprint.
+        '''
+        filter = {
+            'team': ObjectId(team_id),
+            '$or': [
+                {'status': SprintStatus.CURRENT.value},
+                {'status': SprintStatus.FUTURE.value}
+            ]
+        }
+
+        documents = MongoHelper().get_documents_by(SPRINTS_COL, filter)
+        return documents if documents else None
+
+    @staticmethod
+    def get_current_sprint(team_id):
+        '''
+        Returns current sprint for a given team. Excludes the Backlog sprint.
+        '''
+        match = {
+            'team': ObjectId(team_id),
+            'status': SprintStatus.CURRENT.value,
+        }
+
+        documents = MongoHelper().get_document_by(SPRINTS_COL, match)
+        return documents if documents else None

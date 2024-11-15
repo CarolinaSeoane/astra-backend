@@ -1,6 +1,6 @@
-import jwt
-from datetime import datetime, timedelta, UTC
 import os
+from datetime import datetime, timedelta, UTC
+import jwt
 
 
 JWT_ALGORITHM = os.getenv('JWT_ALGORITHM')
@@ -19,5 +19,5 @@ def validate_jwt(token):
     try:
         decoded = jwt.decode(token, SECRET_KEY, JWT_ALGORITHM)
         return decoded
-    except: # Token has expired or is invalid
+    except Exception: # Token has expired or is invalid
         return None
