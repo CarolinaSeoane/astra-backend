@@ -455,7 +455,7 @@ class Populate:
                         "username": self.username1,
                         "email": "carolina.b.seoane@gmail.com",
                         "profile_picture": self.pfp1,
-                        "role": Role.SCRUM_MASTER.value,
+                        "role": Role.DEV.value,
                         "member_status": MemberStatus.ACTIVE.value,
                         # "date": self.user1_id.generation_time
                     },
@@ -464,7 +464,7 @@ class Populate:
                         "username": self.username2,
                         "email": "seoane.m.b@gmail.com",
                         "profile_picture": self.pfp2,
-                        "role": Role.DEV.value,
+                        "role": Role.SCRUM_MASTER.value,
                         "member_status": MemberStatus.ACTIVE.value,
                         # "date": self.user2_id.generation_time
                     },
@@ -884,7 +884,7 @@ class Populate:
                     "profile_picture": self.pfp1,
                 },
                 "priority": Priority.MEDIUM.value,
-                "epic_color": self.epic8_color,
+                "epic_color": self.epic9_color,
                 "acceptance_criteria": "Factibilidad determinada.",
                 "business_value": "Mejora continua.",
                 "team": self.team3_id,
