@@ -4060,7 +4060,8 @@ class Populate:
                 "start_date": datetime.datetime(2024, 12, 10),
                 "end_date": datetime.datetime(2024, 12, 30),
                 "status": SprintStatus.FUTURE.value,
-                "team": self.team3_id
+                "team": self.team3_id,
+                "next": True
             },
             {
                 "_id": self.sprint5_q4_team3,
