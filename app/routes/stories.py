@@ -1,9 +1,11 @@
-import random
 from datetime import datetime
-from flask import Blueprint, g, request
+import random
+from flask import Blueprint, g, request,jsonify
 from webargs.flaskparser import use_args
 from webargs import fields
+from bson import ObjectId
 
+from app.models.ceremony import Ceremony
 from app.models.story import Story
 from app.utils import get_current_quarter, send_response
 from app.routes.utils import validate_user_is_active_member_of_team
@@ -11,7 +13,8 @@ from app.models.team import Team
 from app.models.sprint import Sprint
 from app.models.epic import Epic
 from app.models.task import Task
-from app.models.configurations import Priority, Status, Type, Configurations
+from app.models.user import User
+from app.models.configurations import Priority, Type, Configurations, Status
 from app.models.notification import Notification
 from app.services.notifications_services import notify_story_update
 
@@ -229,6 +232,7 @@ def create_story():
     story["tasks"] = tasks
     story["subscribers"] = []
     story['story_status'] = Status.NOT_STARTED.value
+    story["creation_date"] = datetime.combine(datetime.now().date(), datetime.min.time())
 
     resp = Story.create_story(story)
     Notification.create_assigned_notification(story, g.team_id)
@@ -259,6 +263,7 @@ def edit_story():
     if "_id" in story:
         del story["_id"]
     # story["estimation_method"] = old_story["estimation_method"]  # cannot be changed
+
     tasks = Task.format(story)
     story["tasks"] = tasks
 
@@ -269,8 +274,9 @@ def edit_story():
                 updated_fields[field] = story.get(field)
         elif field == SPRINT_FIELD:
             if old_story.get(field, {}).get("name") != story.get(field, {}).get("name"):
+                story["added_to_sprint"] = date_now
                 updated_fields[field] = story.get(field)
-        elif field  == TASKS_FIELD:
+        elif field == TASKS_FIELD:
             if Task.have_tasks_changed(old_story.get("tasks"), story["tasks"]):
                 updated_fields[field] = story[field]
         elif old_story.get(field) != story.get(field):
@@ -279,9 +285,6 @@ def edit_story():
             print(f"the new value is: {story.get(field)}")
             print("\n")
             updated_fields[field] = story.get(field)
-
-    if old_story.get("sprint", {}).get("name") != story.get("sprint", {}).get("name"):
-        story["added_to_sprint"] = date_now
 
     story["subscribers"] = old_story.get(
         "subscribers", []
@@ -303,7 +306,21 @@ def edit_story():
             resp.get("message", []), resp.get("error", []), resp["status"], **g.req_data
         )
 
+    story_status = Task.get_story_status(story["tasks"])
+    if story_status == DOING and "start_date" not in story:
+        story["start_date"] = date_now
+        print(f"Start date added: {date_now}")
+
     resp = Story.update(story, story_status)
+    user = User.get_user_by({"_id": ObjectId(g._id)})
+    Story.save_modified_story(
+        story_id=story["story_id"],
+        title=story["title"],
+        username=user.get("username", "Unknown"),
+        modified_at=date_now,
+        sprint=story["sprint"]["name"],
+        team_id=story['team'],
+    )
     return send_response(
         resp.get("message", []), resp.get("error", []), resp["status"], **g.req_data
     )
@@ -321,6 +338,62 @@ def unsubscribe_to_story(story_id):
     return send_response(
         resp["message"], resp.get("error", []), resp["status"], **g.req_data
     )
+
+@stories.route('/modified_stories', methods=['GET'])
+@use_args(
+    {
+        "team_id": fields.Str(required=True),
+        "sprint": fields.Str(required=True),
+        "ceremony_id": fields.Str(required=True)
+    },
+    location="query"
+)
+def get_modified_stories(args):
+    ceremony_date = Ceremony.get_ceremony_date(args["ceremony_id"])
+    # ceremony_date = datetime.combine(datetime.now().date(), datetime.min.time()) # testing only
+    # print(f"ceremony date is {ceremony_date}")
+    if not ceremony_date:
+        return jsonify({"error": "No upcoming ceremony found for the team"}), 404
+
+    modified_stories = Story.get_modified_stories_up_to(
+        ceremony_date, args["team_id"], args["sprint"]
+    )
+    print(f"Modified stories found: {modified_stories}")
+
+    return jsonify(modified_stories)
+
+@stories.route('/list_with_story_status', methods=['GET'])
+@use_args({'team_id': fields.Str(required=True),
+           'sprint_current': fields.Str(required=True),
+           'sprint_selected': fields.Str(required=True)},
+          location='query')
+def list_with_story_status(args):
+    try:
+        stories_list = Story.get_list_stories_in_team_id_by_sprint_current_and_selected(
+            args["team_id"], args["sprint_current"], args["sprint_selected"]
+        )
+        return send_response(stories_list, [], 200, **g.req_data)
+    except Exception as e:
+        return send_response([], [f"Failed to retrieve backlog stories: {e}"], 200, **g.req_data)
+
+@stories.route('/update_story_sprint', methods=['PUT'])
+@use_args({
+    'team_id': fields.Str(required=True),
+    'story_id': fields.Str(required=True),
+    'new_sprint_name': fields.Str(required=True)
+    },
+    location='query')
+def put_list_with_new_story_status(args):
+    try:
+        result = Story.put_new_status_and_new_sprint_to_story(
+            args["team_id"], args["story_id"], args["new_sprint_name"]
+        )
+
+        if result:
+            return send_response(True, [], 200, **g.req_data)
+        return send_response(False, [], 200, **g.req_data)
+    except Exception as e:
+        return send_response(False, [f"Failed to put story status: {e}"], 200, **g.req_data)
 
 @stories.route('/delete', methods=['DELETE'])
 @use_args({"story_id": fields.Str(required=True)}, location="query")

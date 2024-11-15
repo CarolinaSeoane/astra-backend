@@ -6,10 +6,11 @@ from app.models.task import Task
 from app.utils import kanban_format, list_format, mongo_query
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import Configurations, CollectionNames, Status
-
+from app.db_connection import mongo
 
 STORIES_COL = CollectionNames.STORIES.value
 DONE_STATUS = Status.DONE.value
+MODIFIED_STORIES_COL = CollectionNames.MODIFIED_STORIES.value
 
 
 class Story:
@@ -180,4 +181,74 @@ class Story:
             "story_id": story_id
         }
         MongoHelper().delete_element_from_collection(STORIES_COL, match)
+        match = {
+            "team_id": ObjectId(team_id),
+            "story_id": story_id
+        }
+        MongoHelper().delete_many(MODIFIED_STORIES_COL, match)
         return { "status": 204 }
+
+    @staticmethod
+    def get_list_stories_in_team_id_by_sprint_current_and_selected(
+        team_id, sprint_current, sprint_selected
+    ):
+        '''
+        Returns all stories for the given team_id and sprint_name in list format.
+        If no stories are found, returns an empty list.
+        '''
+        match = {
+            'team': ObjectId(team_id),
+            'sprint.name': {'$in': [sprint_selected, sprint_current, "Backlog"]}
+        }
+        return MongoHelper().get_documents_by(STORIES_COL, filter=match)
+
+    @staticmethod
+    def put_new_status_and_new_sprint_to_story(team_id, story_id, new_sprint_name):
+        res_sprint = Sprint.get_sprint_by({
+            "name": new_sprint_name,
+            "team": ObjectId(team_id)
+        })
+        sprint_id = res_sprint["_id"]["$oid"]
+
+        match = {
+            'story_id': story_id,
+            'team': ObjectId(team_id)
+        }
+
+        update_op = {
+            '$set': {
+                'sprint': {
+                    '_id': ObjectId(sprint_id),
+                    'name': new_sprint_name
+                }
+            }
+        }
+
+        result = MongoHelper().update_document(STORIES_COL, match, update_op)
+        return result.modified_count > 0
+
+    @staticmethod
+    def save_modified_story(story_id, title, username, modified_at, sprint, team_id):
+        # TODO o guardar una descripcion de lo que se cambio, o verificar que
+        # una historia con ese id no haya sido modificada ya, para no tener
+        # en la timeline lo mismo repetido dos veces.
+        modified_story = {
+            "story_id": story_id,
+            "title": title,
+            "username": username,
+            "modified_at": modified_at,
+            "sprint": sprint,
+            "team_id": team_id
+        }
+        print(f"Saving modified story: {modified_story}")
+        result = MongoHelper().create_document(MODIFIED_STORIES_COL, modified_story)
+        print(f"Result of save: {result}")
+
+    @staticmethod
+    def get_modified_stories_up_to(date, team_id, sprint):
+        filter_query = {
+            'team_id': ObjectId(team_id),
+            'modified_at': {'$lte': date},
+            'sprint': sprint
+        }
+        return MongoHelper().get_documents_by(MODIFIED_STORIES_COL, filter_query)

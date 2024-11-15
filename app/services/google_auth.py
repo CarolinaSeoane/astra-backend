@@ -4,7 +4,7 @@ import requests
 
 CLIENT_ID = os.getenv('CLIENT_ID')
 CLIENT_SECRET = os.getenv('CLIENT_SECRET')
-REDIRECT_URL = os.getenv('ASTRA_REDIRECT_URL')
+REDIRECT_URL = os.getenv('ASTRA_REDIRECT_URL', 'http://localhost:3000')
 
 def exchange_code_for_tokens(auth_code):
     url = 'https://oauth2.googleapis.com/token'

@@ -51,7 +51,7 @@ class User:
         return MongoHelper().document_exists(USERS_COL, filter)
 
     def save_user(self):
-        MongoHelper().add_new_element_to_collection(USERS_COL, self.__dict__)
+        MongoHelper().create_document(USERS_COL, self.__dict__)
 
     def add_team(self, team, status=MemberStatus.PENDING.value):
         '''

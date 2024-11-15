@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import Blueprint, request, g
+from flask import Blueprint, request, g,jsonify
 from webargs.flaskparser import use_args
 from webargs import fields
 
@@ -96,3 +96,22 @@ def join_ceremony(ceremony_id):
     print('joining ceremony ', ceremony_id)
     # ceremonies = Ceremony.get_ceremonies_by_team_id(g.team_id, **args)
     return send_response([], [], 200, **g.req_data)
+
+@ceremonies.route('/<ceremony_id>', methods=['GET'])
+def get_ceremony(ceremony_id):
+    try:
+        ceremony = Ceremony.get_ceremony_by_id(ceremony_id)
+        if not ceremony:
+            return jsonify({'error': 'Ceremony not found'}), 404
+        return jsonify(ceremony), 200
+    except Exception as e:
+        return jsonify({'error': str(e)}), 500
+
+@ceremonies.route('/is_active_ceremony', methods=['GET'])
+@use_args(
+    {"team_id": fields.Str(required=True), "ceremony_id": fields.Str(required=True)},
+    location="query",
+)
+def get_is_active_ceremony_in_team(args):
+    response = Ceremony.is_ceremony_active(args["ceremony_id"])
+    return send_response(response, [], 200, **g.req_data)

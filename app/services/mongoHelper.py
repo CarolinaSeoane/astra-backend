@@ -42,6 +42,10 @@ class MongoHelper:
     def delete_element_from_collection(self, collection_name, filter):
         return self.astra.db[collection_name].delete_one(filter)
 
+    def delete_many(self, collection_name, filter):
+        """Elimina múltiples documentos de una colección basándose en un filtro."""
+        return self.astra.db[collection_name].delete_many(filter)
+
     def document_exists(self, collection_name, filter):
         '''
         returns False if no documents match the query
