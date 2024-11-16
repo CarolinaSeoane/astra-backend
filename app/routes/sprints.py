@@ -141,7 +141,7 @@ def start_sprint(sprint_id):
 
     # Set following sprint as next
     Sprint.set_following_sprint(g.team_id)
-    
+
     # Create and save ceremonies for current sprint
     Ceremony.create_sprint_ceremonies(g.team_id, sprint_id)
 
@@ -196,7 +196,7 @@ def create_sprints(args):
     there_is_a_next_sprint = Sprint.there_is_a_next_sprint(g.team_id)
     if not there_is_a_next_sprint:
         Sprint.set_following_sprint(g.team_id)
-   
+
     # ToDo: handle errors
     return send_response([], [], 200, **g.req_data)
 
