@@ -4174,7 +4174,7 @@ class Populate:
                 "year": 2024,
                 "start_date": datetime.datetime(2024, 11, 19),
                 "end_date": datetime.datetime(2024, 12, 9),
-                "target": 12,
+                "target": 1,
                 # "completed": 1,
                 "status": SprintStatus.CURRENT.value,
                 "team": self.team3_id
