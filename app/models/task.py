@@ -77,8 +77,8 @@ class Task:
             return True
         for index, old_task in enumerate(old_tasks):
             if (
-                old_task["title"] != new_tasks[index]["title"]
-                or old_task["description"] != new_tasks[index]["description"]
+                old_task.get("title") != new_tasks[index].get("title")
+                or old_task.get("description") != new_tasks[index].get("description")
             ):
                 return True
         return False
