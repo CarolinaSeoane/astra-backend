@@ -59,8 +59,8 @@ class CeremonyType(Enum):
     RETRO = "Retrospective"
 
 class CeremonyStartOptions(Enum):
-    BEGINNING = "First day of sprint"
-    END = "Last day of previous sprint"
+    BEGINNING = "first_day_of_sprint"
+    END = "last_day_of_sprint"
 
 class CollectionNames(Enum):
     CONFIGURATIONS = "configurations"
@@ -84,7 +84,7 @@ class CeremonyStatus(Enum):
 
 class GoogleMeetDataStatus(Enum):
     UNAVAILABLE = 'Unavailable'
-    
+
 CONFIGURATIONS_COL = CollectionNames.CONFIGURATIONS.value
 
 PERMISSIONS_COL = CollectionNames.PERMISSIONS.value

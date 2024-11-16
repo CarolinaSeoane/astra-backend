@@ -126,9 +126,8 @@ def update_mandatory_fields(args):
 
 @teams.route('/sprint_set_up', methods=['PUT'])
 @use_args({
-    'estimation_method': fields.List(fields.Str(required=False)),
-    'sprint_duration': fields.Str(required=False),
-    'sprint_begins_on': fields.Str(required=False)
+    'sprint_duration': fields.Integer(required=True),
+    'sprint_begins_on': fields.Str(required=True)
     }, location='json')
 def update_sprint_set_up(args):
     Team.update_sprint_set_up(g.team_id, args)
