@@ -3,7 +3,7 @@ from bson import ObjectId
 
 from app.models.sprint import Sprint
 from app.models.task import Task
-from app.utils import kanban_format, list_format, mongo_query
+from app.utils import gantt_format, kanban_format, list_format, mongo_query
 from app.services.mongoHelper import MongoHelper
 from app.models.configurations import Configurations, CollectionNames, Status
 from app.db_connection import mongo
@@ -78,10 +78,11 @@ class Story:
 
         if view_type == 'kanban':
             return kanban_format(stories)
-        elif view_type == 'list':
+        if view_type == 'list':
             return list_format(stories)
-        else:
-            return stories
+        if view_type == 'gantt':
+            return gantt_format(stories)
+        return stories
 
     @staticmethod
     def get_story_fields(sections=False):

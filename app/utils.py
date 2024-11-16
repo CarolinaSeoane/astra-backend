@@ -1,3 +1,4 @@
+from datetime import datetime, timezone
 from bson import ObjectId
 from flask import jsonify
 
@@ -47,7 +48,50 @@ def kanban_format(stories_dict):
 
 
 def list_format(stories_dict):
-    for story in stories_dict:
+    return add_completeness(stories_dict)
+
+
+def gantt_format(stories_dict):
+    stories_dict = add_completeness(stories_dict, percent=False)
+    gantt_data = []
+    for index, story in enumerate(stories_dict):
+        if "start_date" not in story:
+            print("start date not found")
+            continue
+
+        _start_date = story["start_date"]["$date"]
+        start_date = datetime.strptime(_start_date, '%Y-%m-%dT%H:%M:%SZ').replace(
+            tzinfo=timezone.utc
+        )
+        # start_date = datetime(2024, 11, 1, tzinfo=timezone.utc) # for testing only
+
+        if "end_date" in story:
+            _end_date = story["end_date"]["$date"]
+            end_date = datetime.strptime(_end_date, '%Y-%m-%dT%H:%M:%SZ').replace(
+                tzinfo=timezone.utc
+            )
+        else:
+            end_date = datetime.combine(
+                datetime.now().date(), datetime.min.time(), tzinfo=timezone.utc
+            )
+
+        gantt_data.append({
+            "id": index + 1,
+            "text": story.get("title"),
+            "start_date": start_date.strftime('%Y-%m-%d'),
+            "duration": (end_date - start_date).days,
+            "progress": story.get("completeness")
+        })
+
+    return gantt_data
+
+
+def add_completeness(stories, percent=True):
+    multiply = 1
+    if percent:
+        multiply = 100
+
+    for story in stories:
         total_tasks = 0
         tasks_completed = 0
 
@@ -57,17 +101,13 @@ def list_format(stories_dict):
                 tasks_completed += 1
 
         try:
-            completness = round(tasks_completed/total_tasks * 100)
+            completness = round(tasks_completed/total_tasks * multiply)
             story.pop('tasks')
         except Exception:
             completness = 0
 
         story['completeness'] = completness
-    return stories_dict
-
-
-def gantt_format(stories_dict):
-    pass
+    return stories
 
 
 def apply_banner_format(ceremonies):
