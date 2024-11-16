@@ -82,6 +82,9 @@ class CeremonyStatus(Enum):
     NOT_HAPPENED_YET = 'Not happened yet'
     DIDNT_TAKE_PLACE = 'Did not take place'
 
+class GoogleMeetDataStatus(Enum):
+    UNAVAILABLE = 'Unavailable'
+    
 CONFIGURATIONS_COL = CollectionNames.CONFIGURATIONS.value
 
 PERMISSIONS_COL = CollectionNames.PERMISSIONS.value

@@ -5,8 +5,8 @@ from app.models.team import Team
 from app.services.astra_scheduler import generate_ceremonies_for_sprint
 from app.models.sprint import Sprint
 from app.services.mongoHelper import MongoHelper
-from app.models.configurations import CollectionNames
-from app.services.google_meet import list_conference_records
+from app.models.configurations import CollectionNames, GoogleMeetDataStatus
+from app.services.google_meet import list_conference_records, list_conference_record_participants
 
 
 CEREMONIES_COL = CollectionNames.CEREMONIES.value
@@ -75,9 +75,34 @@ class Ceremony:
     
     @staticmethod
     def get_google_meet_data(user, ceremony):
-        conference_record = list_conference_records(user.access_token, user.refresh_token, ceremony)
-        print('conference_record: ', conference_record)
-        return []
+        conference_records = list_conference_records(user.access_token, user.refresh_token, ceremony)
+        if not conference_records:
+            # Set attendees and transcript as Unavailable
+            participants, transcript = GoogleMeetDataStatus.UNAVAILABLE.value, GoogleMeetDataStatus.UNAVAILABLE.value
+            MongoHelper().update_document(
+                CEREMONIES_COL,
+                filter={'_id': ObjectId(ceremony['_id']['$oid'])},
+                update={'$set': {'attendees': participants, 'transcript': transcript}}
+            )
+
+        else:
+            # I'll only consider the first conference record. If more than one record was found for the duration of the meeting, only the
+            # first will be recorded as the meeting
+
+            # Fetch participants from google service
+            conference_record = conference_records['conferenceRecords'][0]
+            participants = list_conference_record_participants(user.access_token, user.refresh_token, conference_record['name'])['participants']
+
+            # TODO: Fetch transcript from google service    
+
+            # Update record
+            MongoHelper().update_document(
+                CEREMONIES_COL,
+                filter={'_id': ObjectId(ceremony['_id']['$oid'])},
+                update={'$set': {'attendees': participants, 'transcript': ''}}
+            )
+
+        return {'attendees': participants, 'transcript': ''}
 
     @staticmethod
     def get_current_ceremony_by_team_id(team_id):

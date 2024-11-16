@@ -7,7 +7,6 @@ CLIENT_SECRET = os.getenv('CLIENT_SECRET')
 
 
 def call_google_api(url, method, user_tokens):
-    print('user_tokens: ', user_tokens)
     headers = {
         'Authorization': f'Bearer {user_tokens["google_access_token"]}',
         'Content-Type': 'application/json'
@@ -18,13 +17,16 @@ def call_google_api(url, method, user_tokens):
     if response.status_code == 401:
         print("Access token expired, refreshing token...")
         # Refresh the access token
-        google_access_token = refresh_access_token(user_tokens['refresh_token'])
-        # Retry the request with the new access token
-        headers['Authorization'] = f'Bearer {google_access_token}'
-        response = requests.post(url, headers=headers)
-
+        try:
+            google_access_token = refresh_access_token(user_tokens['refresh_token'])
+            # Retry the request with the new access token
+            headers['Authorization'] = f'Bearer {google_access_token}'
+            response = requests.post(url, headers=headers)
+        except:
+            return None
+        
     # Handle success or error in the retried request
-    print(response.text)
+    # print(response.text)
     if response.status_code == 200:
         return response.json()
     else:
@@ -80,9 +82,18 @@ def refresh_access_token(refresh_token):
         raise RuntimeError("Could not refresh access token")
 
 def list_conference_records(google_access_token, refresh_token, ceremony):
-    print(ceremony)
+    '''
+    Gets all conference records for a given Google Meet meeting code and time period. Returns None if no conference records were found
+    '''
     url = 'https://meet.googleapis.com/v2/conferenceRecords'
     query_params = f'?filter=space.meeting_code="{ceremony["google_meet_config"]["meetingCode"]}" AND start_time>="{ceremony["starts"]["$date"]}" AND start_time<="{ceremony["ends"]["$date"]}"'
-
+    # query_params = '?filter=space.meeting_code="thp-mamh-rws"'
     return call_google_api(url + query_params, 'get', {'google_access_token': google_access_token, 'refresh_token': refresh_token})
+
+def list_conference_record_participants(google_access_token, refresh_token, conference_record_name):
+    '''
+    Gets all participants for the given conference record
+    '''
+    url = f'https://meet.googleapis.com/v2/{conference_record_name}/participants'
     
+    return call_google_api(url, 'get', {'google_access_token': google_access_token, 'refresh_token': refresh_token})

@@ -45,10 +45,11 @@ def get_ceremonies_meet_data(ceremony_id):
     user_doc = User.get_user_by({'email': g.email}, True)
     user_obj = User(**user_doc)
     ceremony = Ceremony.get_ceremonies_by_team_id(g.team_id, ceremony_id=ObjectId(ceremony_id))[0]
-    if not ceremony.get('attendees'):
+    if not ceremony.get('attendees') or not ceremony.get('transcript'):
         ceremony_data = Ceremony.get_google_meet_data(user_obj, ceremony)
-
-    return send_response([], [], 200, **g.req_data)
+    else:
+        ceremony_data = {'attendees': ceremony['attendees'], 'transcript': ceremony['transcript']}
+    return send_response(ceremony_data, [], 200, **g.req_data)
 
 @ceremonies.route("/filters", methods=['GET'])
 @use_args({
