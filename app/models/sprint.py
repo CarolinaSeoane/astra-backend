@@ -199,14 +199,23 @@ class Sprint:
     def start_sprint(sprint_id):
         '''
         Starts a sprint by setting the status of the given sprint as CURRENT and
-        deleting the next attribute from the doc
+        deleting the next attribute from the doc. This also sets the target points
         '''
+        # Get target points
+        target = 0
+        match = {'sprint._id': ObjectId(sprint_id)}
+        group = {'_id': None, 'target': {'$sum': '$estimation'}}
+        target_cursor = MongoHelper().aggregate(STORIES_COL, match, group)
+        for t in target_cursor:
+            target = t.get("target", 0)
+
         # Set status as current and delete next flag
         filter = {'_id': ObjectId(sprint_id)}
         update = {
             '$set': {
                 'status': SprintStatus.CURRENT.value,
-                'actual_start_date': datetime.today()
+                'actual_start_date': datetime.today(),
+                'target': target,
             },
             '$unset': {'next': ""}
         }
@@ -238,7 +247,7 @@ class Sprint:
         # Find a sprint with the next flag
         filter = {'team': ObjectId(team_id), 'next': {'$exists': True}}
         return  MongoHelper().get_document_by(SPRINTS_COL, filter)
-        
+
     @staticmethod
     @mongo_query
     def add_completed_points(sprint, team_id, points):
