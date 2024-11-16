@@ -75,11 +75,15 @@ def gantt_format(stories_dict):
                 datetime.now().date(), datetime.min.time(), tzinfo=timezone.utc
             )
 
+        duration = (end_date - start_date).days
+        if duration <= 0:
+            duration = 1
+
         gantt_data.append({
             "id": index + 1,
             "text": story.get("title"),
             "start_date": start_date.strftime('%Y-%m-%d'),
-            "duration": (end_date - start_date).days,
+            "duration": duration,
             "progress": story.get("completeness")
         })
 
