@@ -49,7 +49,7 @@ class Story:
         elif view_type == 'list':
             projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.status', 'story_type', 'description', 'epic.title', 'epic.epic_color'}
         elif view_type == 'gantt':
-            projection = {'_id', 'story_id', 'title', 'tasks.status', 'story_type'}
+            projection = {'_id', 'story_id', 'title', 'start_date', 'end_date', 'completeness'}
         else:
             projection = None
 

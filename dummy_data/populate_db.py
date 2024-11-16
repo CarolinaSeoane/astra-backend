@@ -1363,7 +1363,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 3, 30),
                 "tasks": [
                     {
                         "title": "Elaborar propuesta 1",
@@ -1382,6 +1382,8 @@ class Populate:
                     }
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 4, 9),
+                "end_date": datetime.datetime(2024, 4, 12),
             },
             {
                 "story_id": "PROYECTO-000002",
@@ -1410,7 +1412,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 3, 30),
                 "tasks": [
                     {
                         "title": "Investigar problemática",
@@ -1426,6 +1428,8 @@ class Populate:
                     }
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 4, 12),
+                "end_date": datetime.datetime(2024, 4, 14),
             },
             {
                 "story_id": "PROYECTO-000003",
@@ -1454,7 +1458,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 3, 30),
                 "tasks": [
                     {
                         "title": "Completar sección Factibilidad Técnica y Operativa",
@@ -1475,6 +1479,8 @@ class Populate:
                     }
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 4, 23),
+                "end_date": datetime.datetime(2024, 4, 30),
             },
             {
                 "story_id": "PROYECTO-000004",
@@ -1503,7 +1509,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 3, 30),
                 "tasks": [
                     {
                         "title": "Hacer CANVAS en Mural",
@@ -1512,6 +1518,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 4, 23),
+                "end_date": datetime.datetime(2024, 4, 24),
             },
             {
                 "story_id": "PROYECTO-000005",
@@ -1540,7 +1548,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 3, 30),
                 "tasks": [
                     {
                         "title": "Elaborar plan de alto nivel",
@@ -1552,6 +1560,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 4, 26),
+                "end_date": datetime.datetime(2024, 5, 4),
             },
             {
                 "story_id": "PROYECTO-000006",
@@ -1580,7 +1590,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 3, 30),
                 "tasks": [
                     {
                         "title": "Definir tareas que se incluirán en el WBS",
@@ -1592,6 +1602,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 5, 7),
+                "end_date": datetime.datetime(2024, 5, 12),
             },
             {
                 "story_id": "PROYECTO-000007",
@@ -1620,7 +1632,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 3, 30),
                 "tasks": [
                     {
                         "title": "Definir roles",
@@ -1632,6 +1644,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 5, 7),
+                "end_date": datetime.datetime(2024, 5, 17),
             },
             {
                 "story_id": "PROYECTO-000008",
@@ -1660,7 +1674,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 3, 30),
                 "tasks": [
                     {
                         "title": "Completar matriz de riesgos",
@@ -1668,6 +1682,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 5, 7),
+                "end_date": datetime.datetime(2024, 5, 10),
             },
             {
                 "story_id": "PROYECTO-000009",
@@ -1696,7 +1712,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 3, 30),
                 "tasks": [
                     {
                         "title": "Completar matriz",
@@ -1704,6 +1720,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 5, 7),
+                "end_date": datetime.datetime(2024, 5, 11),
             },
             {
                 "story_id": "PROYECTO-000010",
@@ -1732,7 +1750,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 4, 9),
                 "tasks": [
                     {
                         "title": "Completar matriz",
@@ -1740,6 +1758,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 5, 21),
+                "end_date": datetime.datetime(2024, 5, 23),
             },
             {
                 "story_id": "PROYECTO-000011",
@@ -1768,7 +1788,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 4, 4),
                 "tasks": [
                     {
                         "title": "Completar planilla de Excel con los costos del proyecto",
@@ -1776,6 +1796,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 5, 22),
+                "end_date": datetime.datetime(2024, 5, 26),
             },
             {
                 "story_id": "PROYECTO-000012",
@@ -1804,7 +1826,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 5, 1),
                 "tasks": [
                     {
                         "title": "Establecer dependencias entre tareas",
@@ -1816,6 +1838,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 5, 25),
+                "end_date": datetime.datetime(2024, 5, 30),
             },
             {
                 "story_id": "PROYECTO-000013",
@@ -1844,7 +1868,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 5, 10),
                 "tasks": [
                     {
                         "title": "Separar funcionalidades de la aplicación en releases",
@@ -1860,6 +1884,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 5, 24),
+                "end_date": datetime.datetime(2024, 6, 2),
             },
             {
                 "story_id": "PROYECTO-000014",
@@ -1888,7 +1914,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 5, 20),
                 "tasks": [
                     {
                         "title": "Completar tablero",
@@ -1896,6 +1922,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 6, 4),
+                "end_date": datetime.datetime(2024, 6, 6),
             },
             {
                 "story_id": "PROYECTO-000015",
@@ -1924,7 +1952,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 7, 1),
                 "tasks": [
                     {
                         "title": "Completar tablero",
@@ -1932,6 +1960,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 7, 16),
+                "end_date": datetime.datetime(2024, 7, 19),
             },
             {
                 "story_id": "PROYECTO-000016",
@@ -1960,7 +1990,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 7, 1),
                 "tasks": [
                     {
                         "title": "Completar tablero",
@@ -1968,6 +1998,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 8, 27),
+                "end_date": datetime.datetime(2024, 8, 28),
             },
             {
                 "story_id": "PROYECTO-000017",
@@ -1996,7 +2028,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 7, 1),
                 "tasks": [
                     {
                         "title": "Completar tablero",
@@ -2004,6 +2036,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 10, 8),
+                "end_date": datetime.datetime(2024, 10, 11),
             },
             {
                 "story_id": "PROYECTO-000018",
@@ -2032,7 +2066,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 4, 20),
                 "tasks": [
                     {
                         "title": "Elaborar story mapping",
@@ -2040,6 +2074,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 6, 5),
+                "end_date": datetime.datetime(2024, 6, 8),
             },
             {
                 "story_id": "PROYECTO-000019",
@@ -2068,7 +2104,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 5, 2),
                 "tasks": [
                     {
                         "title": "Elaborar casos a probar en el plan de pruebas",
@@ -2080,6 +2116,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 6, 7),
+                "end_date": datetime.datetime(2024, 6, 14),
             },
             {
                 "story_id": "PROYECTO-000020",
@@ -2108,7 +2146,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 6, 1),
                 "tasks": [
                     {
                         "title": "Describir escenario esperado para cada caso de prueba",
@@ -2120,6 +2158,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 6, 13),
+                "end_date": datetime.datetime(2024, 6, 24),
             },
             {
                 "story_id": "PROYECTO-000021",
@@ -2148,7 +2188,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 6, 1),
                 "tasks": [
                     {
                         "title": "Diagramar la arquitectura del sistema",
@@ -2156,6 +2196,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 6, 19),
+                "end_date": datetime.datetime(2024, 6, 23),
             },
             {
                 "story_id": "PROYECTO-000022",
@@ -2168,10 +2210,10 @@ class Populate:
                     "email": self.email2
                 },
                 "assigned_to": {
-                    "_id": self.user1_id,
-                    "username": self.username1,
-                    "profile_picture": self.pfp1,
-                    "email": self.email1
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2,
+                    "email": self.email2
                 },
                 "epic": {
                     "_id": self.epic5_id,
@@ -2184,7 +2226,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 6, 20),
                 "tasks": [
                     {
                         "title": "Confeccionar el diagrama de clases del backend",
@@ -2192,6 +2234,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 6, 25),
+                "end_date": datetime.datetime(2024, 6, 27),
             },
             {
                 "story_id": "PROYECTO-000023",
@@ -2220,7 +2264,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 4, 14),
                 "tasks": [
                     {
                         "title": "Ejecutar los diferentes casos de prueba",
@@ -2236,6 +2280,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 6, 27),
+                "end_date": datetime.datetime(2024, 7, 13),
             },
             {
                 "story_id": "PROYECTO-000024",
@@ -2264,7 +2310,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 5, 7),
                 "tasks": [
                     {
                         "title": "Usar un SSO para validar la identidad del usuario.",
@@ -2288,6 +2334,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 6, 26),
+                "end_date": datetime.datetime(2024, 7, 14),
             },
             {
                 "story_id": "PROYECTO-000025",
@@ -2316,7 +2364,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 6, 11),
                 "tasks": [
                     {
                         "title": "Utilizar biblioteca pymongo para hacer la conexión.",
@@ -2324,6 +2372,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 6, 26),
+                "end_date": datetime.datetime(2024, 6, 26),
             },
             {
                 "story_id": "PROYECTO-000026",
@@ -2352,7 +2402,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 5, 14),
                 "tasks": [
                     {
                         "title": "Acceder a página principal de Home",
@@ -2381,6 +2431,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 7, 16),
+                "end_date": datetime.datetime(2024, 7, 25),
             },
             {
                 "story_id": "PROYECTO-000027",
@@ -2409,7 +2461,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 6, 21),
                 "tasks": [
                     {
                         "title": "Filtros backend",
@@ -2423,6 +2475,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 7, 19),
+                "end_date": datetime.datetime(2024, 7, 27),
             },
             {
                 "story_id": "PROYECTO-000028",
@@ -2451,7 +2505,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 7, 4),
                 "tasks": [
                     {
                         "title": "Generar endpoint PUT /story",
@@ -2465,6 +2519,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 7, 19),
+                "end_date": datetime.datetime(2024, 7, 30),
             },
             {
                 "story_id": "PROYECTO-000029",
@@ -2493,7 +2549,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 4, 5),
                 "tasks": [
                     {
                         "title": "Formato List",
@@ -2512,6 +2568,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 7, 21),
+                "end_date": datetime.datetime(2024, 8, 5),
             },
             {
                 "story_id": "PROYECTO-000030",
@@ -2554,6 +2612,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 8, 6),
+                "end_date": datetime.datetime(2024, 8, 24),
             },
             {
                 "story_id": "PROYECTO-000031",
@@ -2596,6 +2656,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 8, 7),
+                "end_date": datetime.datetime(2024, 8, 19),
             },
             {
                 "story_id": "PROYECTO-000032",
@@ -2653,6 +2715,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 8, 6),
+                "end_date": datetime.datetime(2024, 8, 26),
             },
             {
                 "story_id": "PROYECTO-000033",
@@ -2697,6 +2761,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 8, 6),
+                "end_date": datetime.datetime(2024, 8, 23),
             },
             {
                 "story_id": "PROYECTO-000034",
@@ -2725,7 +2791,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 7, 15),
                 "tasks": [
                     {
                         "title": "Ver todas las ceremonias del sprint actual, pasados y futuros",
@@ -2734,6 +2800,8 @@ class Populate:
                     }
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 8, 28),
+                "end_date": datetime.datetime(2024, 8, 30),
             },
             {
                 "story_id": "PROYECTO-000035",
@@ -2762,7 +2830,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 6, 22),
                 "tasks": [
                     {
                         "title": "Gráfico de torta",
@@ -2778,6 +2846,8 @@ class Populate:
                     }
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 8, 27),
+                "end_date": datetime.datetime(2024, 9, 7),
             },
             {
                 "story_id": "PROYECTO-000036",
@@ -2806,7 +2876,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 5, 17),
                 "tasks": [
                     {
                         "title": "Carga de post-its",
@@ -2820,6 +2890,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 8, 29),
+                "end_date": datetime.datetime(2024, 9, 5),
             },
             {
                 "story_id": "PROYECTO-000037",
@@ -2848,7 +2920,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 4, 13),
                 "tasks": [
                     {
                         "title": "Ver stories trabajadas por un usuario",
@@ -2867,6 +2939,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 8, 30),
+                "end_date": datetime.datetime(2024, 9, 2),
             },
             {
                 "story_id": "PROYECTO-000038",
@@ -2895,7 +2969,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 6, 15),
                 "tasks": [
                     {
                         "title": "Ver notificaciones de las cuales el usuario es el reporter",
@@ -2914,6 +2988,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 9, 4),
+                "end_date": datetime.datetime(2024, 9, 12),
             },
             {
                 "story_id": "PROYECTO-000039",
@@ -2954,6 +3030,8 @@ class Populate:
                     }
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 8, 11),
+                "end_date": datetime.datetime(2024, 8, 13),
             },
             {
                 "story_id": "PROYECTO-000040",
@@ -2982,7 +3060,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 6, 30),
                 "tasks": [
                     {
                         "title": "Elaborar el poster para profesores",
@@ -2998,6 +3076,8 @@ class Populate:
                     }
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 9, 10),
+                "end_date": datetime.datetime(2024, 9, 15),
             },
             {
                 "story_id": "PROYECTO-000041",
@@ -3026,7 +3106,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 8, 11),
                 "tasks": [
                     {
                         "title": "Preparar ppt",
@@ -3042,6 +3122,8 @@ class Populate:
                     }
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 9, 18),
+                "end_date": datetime.datetime(2024, 9, 22),
             },
             {
                 "story_id": "PROYECTO-000042",
@@ -3070,7 +3152,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 8, 30),
                 "tasks": [
                     {
                         "title": "Confeccionar el documento",
@@ -3078,6 +3160,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 10, 10),
+                "end_date": datetime.datetime(2024, 10, 14),
             },
             {
                 "story_id": "PROYECTO-000043",
@@ -3106,7 +3190,7 @@ class Populate:
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 9, 19),
                 "tasks": [
                     {
                         "title": "Implementar react-i18",
@@ -3122,6 +3206,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 10, 29),
+                "end_date": datetime.datetime(2024, 11, 6),
             },
             {
                 "story_id": "PROYECTO-000044",
@@ -3144,13 +3230,13 @@ class Populate:
                     "title": self.epic8_title,
                     "epic_color": self.epic8_color,
                 },
-                "sprint": {"_id": self.sprint3_q4_team3, "name": "S3-Q4-2024"},
+                "sprint": {"_id": self.sprint2_q4_team3, "name": "S2-Q4-2024"},
                 "estimation": 5,
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 10, 13),
                 "tasks": [
                     {
                         "title": "Implementar selección de color al crear una épica",
@@ -3170,6 +3256,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 11, 3),
+                "end_date": datetime.datetime(2024, 11, 15),
             },
             {
                 "story_id": "PROYECTO-000045",
@@ -3192,13 +3280,13 @@ class Populate:
                     "title": self.epic7_title,
                     "epic_color": self.epic7_color,
                 },
-                "sprint": {"_id": self.sprint3_q4_team3, "name": "S3-Q4-2024"},
+                "sprint": {"_id": self.sprint2_q4_team3, "name": "S2-Q4-2024"},
                 "estimation": 2,
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.BUGFIX.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 10, 5),
                 "tasks": [
                     {
                         "title": "Fix bug",
@@ -3210,11 +3298,13 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 10, 30),
+                "end_date": datetime.datetime(2024, 11, 1),
             },
             {
                 "story_id": "PROYECTO-000046",
                 "title": "Implementar nueva librería Gantt",
-                "description": "Se debe implementar la libería https://www.npmjs.com/package/@syncfusion/ej2-react-gantt para la vista Gantt de la Home",
+                "description": "Se debe implementar la libería https://www.npmjs.com/package/dhtmlx-gantt para la vista Gantt de la Home",
                 "creator": {
                     "_id": self.user2_id,
                     "username": self.username2,
@@ -3222,23 +3312,23 @@ class Populate:
                     "email": self.email2
                 },
                 "assigned_to": {
-                    "_id": self.user1_id,
-                    "username": self.username1,
-                    "profile_picture": self.pfp1,
-                    "email": self.email1
+                    "_id": self.user2_id,
+                    "username": self.username2,
+                    "profile_picture": self.pfp2,
+                    "email": self.email2
                 },
                 "epic": {
                     "_id": self.epic8_id,
                     "title": self.epic8_title,
                     "epic_color": self.epic8_color,
                 },
-                "sprint": {"_id": self.sprint3_q4_team3, "name": "S3-Q4-2024"},
+                "sprint": {"_id": self.sprint2_q4_team3, "name": "S2-Q4-2024"},
                 "estimation": 2,
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 10, 5),
                 "tasks": [
                     {
                         "title": "Conseguir licencia",
@@ -3254,6 +3344,8 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 11, 1),
+                "end_date": datetime.datetime(2024, 11, 3),
             },
             {
                 "story_id": "PROYECTO-000047",
@@ -3364,13 +3456,13 @@ class Populate:
                     "title": self.epic7_title,
                     "epic_color": self.epic7_color,
                 },
-                "sprint": {"_id": self.sprint3_q4_team3, "name": "S3-Q4-2024"},
+                "sprint": {"_id": self.sprint2_q4_team3, "name": "S2-Q4-2024"},
                 "estimation": 3,
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.BUGFIX.value,
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
-                "creation_date": datetime.datetime(2024, 7, 20),
+                "creation_date": datetime.datetime(2024, 10, 5),
                 "tasks": [
                     {
                         "title": "Fix backend",
@@ -3382,6 +3474,46 @@ class Populate:
                     },
                 ],
                 "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 11, 15),
+                "end_date": datetime.datetime(2024, 11, 18),
+            },
+            {
+                "story_id": "PROYECTO-000050",
+                "title": "Presentación Final",
+                "description": "Exponer el proyecto frente a la cátedra de sistemas",
+                "creator": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "assigned_to": {
+                    "_id": self.user1_id,
+                    "username": self.username1,
+                    "profile_picture": self.pfp1,
+                    "email": self.email1
+                },
+                "epic": {
+                    "_id": self.epic6_id,
+                    "title": self.epic6_title,
+                    "epic_color": self.epic6_color,
+                },
+                "sprint": {"_id": self.sprint3_q4_team3, "name": "S3-Q4-2024"},
+                "estimation": 1,
+                "priority": Priority.MEDIUM.value,
+                "story_type": Type.FEATURE.value,
+                "estimation_method": "Fibonacci",
+                "story_status": Status.DONE.value,
+                "creation_date": datetime.datetime(2024, 11, 7),
+                "tasks": [
+                    {
+                        "title": "Presentar carpeta final",
+                        "status": Status.DOING.value,
+                    },
+                ],
+                "team": self.team3_id,
+                "start_date": datetime.datetime(2024, 11, 19),
+                "end_date": datetime.datetime(2024, 11, 19),
             },
             {
                 "story_id": "PROYECTO-000100",
@@ -4029,8 +4161,8 @@ class Populate:
                 "year": 2024,
                 "start_date": datetime.datetime(2024, 10, 29),
                 "end_date": datetime.datetime(2024, 11, 18),
-                "target": 3,
-                "completed": 3,
+                "target": 15,
+                "completed": 15,
                 "status": SprintStatus.FINISHED.value,
                 "team": self.team3_id
             },
