@@ -78,9 +78,9 @@ class CollectionNames(Enum):
     MODIFIED_STORIES = "modified_stories"
 
 class CeremonyStatus(Enum):
-    CONCLUDED = 'Concluded'
-    NOT_HAPPENED_YET = 'Not happened yet'
-    DIDNT_TAKE_PLACE = 'Did not take place'
+    CONCLUDED = 'concluded'
+    NOT_HAPPENED_YET = 'not_happened_yet'
+    DIDNT_TAKE_PLACE = 'did_not_take_place'
 
 class GoogleMeetDataStatus(Enum):
     UNAVAILABLE = 'Unavailable'
