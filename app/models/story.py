@@ -3,9 +3,9 @@ from bson import ObjectId
 
 from app.models.sprint import Sprint
 from app.models.task import Task
+from app.models.configurations import Configurations, CollectionNames, Status
 from app.utils import gantt_format, kanban_format, list_format, mongo_query
 from app.services.mongoHelper import MongoHelper
-from app.models.configurations import Configurations, CollectionNames, Status
 from app.db_connection import mongo
 
 STORIES_COL = CollectionNames.STORIES.value
@@ -47,7 +47,9 @@ class Story:
         if view_type == 'kanban':
             projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.title', 'tasks.status'}
         elif view_type == 'list':
-            projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.status', 'story_type', 'description', 'epic.title'}
+            projection = {'_id', 'story_id', 'title', 'assigned_to', 'estimation', 'tasks.status', 'story_type', 'description', 'epic.title', 'epic.epic_color'}
+        elif view_type == 'gantt':
+            projection = {'_id', 'story_id', 'title', 'start_date', 'end_date', 'completeness'}
         else:
             projection = None
 

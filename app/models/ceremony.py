@@ -5,7 +5,8 @@ from app.models.team import Team
 from app.services.astra_scheduler import generate_ceremonies_for_sprint
 from app.models.sprint import Sprint
 from app.services.mongoHelper import MongoHelper
-from app.models.configurations import CollectionNames
+from app.models.configurations import CollectionNames, GoogleMeetDataStatus
+from app.services.google_meet import list_conference_records, list_conference_record_participants
 
 
 CEREMONIES_COL = CollectionNames.CEREMONIES.value
@@ -52,7 +53,8 @@ class Ceremony:
             filter["ceremony_type"] = kwargs['ceremony_type']
         if 'ceremony_status' in kwargs and kwargs['ceremony_status']:
             filter["ceremony_status"] = kwargs['ceremony_status']
-
+        if 'ceremony_id' in kwargs and kwargs['ceremony_id']:
+            filter["_id"] = kwargs['ceremony_id']
         return MongoHelper().get_documents_by(CEREMONIES_COL, filter=filter, sort=sort)
 
     @staticmethod
@@ -61,16 +63,46 @@ class Ceremony:
         returns [] if no ceremonies are found for the given team_id
         '''
         filter = { "team": ObjectId(team_id), "starts": {"$gt": datetime.today()} }
-        sort = {'starts': 1}
+        sort = {'starts': 1}  
         projection = (
             {"_id", "ceremony_type", "starts", "ends", "google_meet_config.meetingUri"}
             if for_banner
             else {}
         )
-
         return MongoHelper().get_documents_by(
             CEREMONIES_COL, filter=filter, sort=sort, projection=projection
         )
+    
+    @staticmethod
+    def get_google_meet_data(user, ceremony):
+        conference_records = list_conference_records(user.access_token, user.refresh_token, ceremony)
+        if not conference_records:
+            # Set attendees and transcript as Unavailable
+            participants, transcript = GoogleMeetDataStatus.UNAVAILABLE.value, GoogleMeetDataStatus.UNAVAILABLE.value
+            MongoHelper().update_document(
+                CEREMONIES_COL,
+                filter={'_id': ObjectId(ceremony['_id']['$oid'])},
+                update={'$set': {'attendees': participants, 'transcript': transcript}}
+            )
+
+        else:
+            # I'll only consider the first conference record. If more than one record was found for the duration of the meeting, only the
+            # first will be recorded as the meeting
+
+            # Fetch participants from google service
+            conference_record = conference_records['conferenceRecords'][0]
+            participants = list_conference_record_participants(user.access_token, user.refresh_token, conference_record['name'])['participants']
+
+            # TODO: Fetch transcript from google service    
+
+            # Update record
+            MongoHelper().update_document(
+                CEREMONIES_COL,
+                filter={'_id': ObjectId(ceremony['_id']['$oid'])},
+                update={'$set': {'attendees': participants, 'transcript': ''}}
+            )
+
+        return {'attendees': participants, 'transcript': ''}
 
     @staticmethod
     def get_current_ceremony_by_team_id(team_id):

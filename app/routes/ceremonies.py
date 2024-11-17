@@ -2,6 +2,7 @@ from datetime import datetime
 from flask import Blueprint, request, g,jsonify
 from webargs.flaskparser import use_args
 from webargs import fields
+from bson import ObjectId
 
 from app.utils import send_response, apply_banner_format
 from app.routes.utils import validate_user_is_active_member_of_team
@@ -9,6 +10,7 @@ from app.models.ceremony import Ceremony
 from app.models.configurations import CeremonyType, CeremonyStatus
 from app.models.sprint import Sprint
 from app.services.astra_scheduler import get_quarter
+from app.models.user import User
 
 
 ceremonies = Blueprint("ceremonies", __name__)
@@ -37,6 +39,17 @@ def team_upcoming_ceremonies():
 def ceremonies_list(args):
     team_ceremonies = Ceremony.get_ceremonies_by_team_id(g.team_id, **args)
     return send_response(team_ceremonies, [], 200, **g.req_data)
+
+@ceremonies.route('/meet/data/<ceremony_id>', methods=['GET'])
+def get_ceremonies_meet_data(ceremony_id):
+    user_doc = User.get_user_by({'email': g.email}, True)
+    user_obj = User(**user_doc)
+    ceremony = Ceremony.get_ceremonies_by_team_id(g.team_id, ceremony_id=ObjectId(ceremony_id))[0]
+    if not ceremony.get('attendees') or not ceremony.get('transcript'):
+        ceremony_data = Ceremony.get_google_meet_data(user_obj, ceremony)
+    else:
+        ceremony_data = {'attendees': ceremony['attendees'], 'transcript': ceremony['transcript']}
+    return send_response(ceremony_data, [], 200, **g.req_data)
 
 @ceremonies.route("/filters", methods=['GET'])
 @use_args({
@@ -82,7 +95,7 @@ def filters(args):
         }
 
     if args['ceremony_status']:
-        ceremony_status = [{'key': _type.value, 'label': _type.value} for _type in CeremonyStatus]
+        ceremony_status = [{'key': _type.value.lower().replace(' ', '_'), 'label': _type.value.lower().replace(' ', '_')} for _type in CeremonyStatus]
         filters['ceremony_status'] = {
             'label': 'Status',
             'value': 'status',

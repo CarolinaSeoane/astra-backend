@@ -18,6 +18,7 @@ class Color(Enum):
     RED = "astra-red"
     ORANGE = "astra-orange"
     YELLOW = "astra-yellow"
+    PINK = "astra-pink"
 
 class Role(Enum):
     SCRUM_MASTER = "Scrum Master"
@@ -58,8 +59,8 @@ class CeremonyType(Enum):
     RETRO = "Retrospective"
 
 class CeremonyStartOptions(Enum):
-    BEGINNING = "First day of sprint"
-    END = "Last day of previous sprint"
+    BEGINNING = "first_day_of_sprint"
+    END = "last_day_of_sprint"
 
 class CollectionNames(Enum):
     CONFIGURATIONS = "configurations"
@@ -77,9 +78,12 @@ class CollectionNames(Enum):
     MODIFIED_STORIES = "modified_stories"
 
 class CeremonyStatus(Enum):
-    CONCLUDED = 'Concluded'
-    NOT_HAPPENED_YET = 'Not happened yet'
-    DIDNT_TAKE_PLACE = 'Did not take place'
+    CONCLUDED = 'concluded'
+    NOT_HAPPENED_YET = 'not_happened_yet'
+    DIDNT_TAKE_PLACE = 'did_not_take_place'
+
+class GoogleMeetDataStatus(Enum):
+    UNAVAILABLE = 'Unavailable'
 
 CONFIGURATIONS_COL = CollectionNames.CONFIGURATIONS.value
 

@@ -1,21 +1,21 @@
 from datetime import datetime
 import random
-from flask import Blueprint, g, request,jsonify
+from flask import Blueprint, g, request, jsonify
 from webargs.flaskparser import use_args
 from webargs import fields
 from bson import ObjectId
 
 from app.models.ceremony import Ceremony
-from app.models.story import Story
-from app.utils import get_current_quarter, send_response
-from app.routes.utils import validate_user_is_active_member_of_team
 from app.models.team import Team
 from app.models.sprint import Sprint
 from app.models.epic import Epic
 from app.models.task import Task
 from app.models.user import User
+from app.models.story import Story
 from app.models.configurations import Priority, Type, Configurations, Status
 from app.models.notification import Notification
+from app.utils import send_response
+from app.routes.utils import validate_user_is_active_member_of_team
 from app.services.notifications_services import notify_story_update
 
 
@@ -83,12 +83,10 @@ def story_fields(args):
         "estimation": fields.Boolean(required=False, missing=True),
         "task_statuses": fields.Boolean(required=False, missing=True),
         ## customization
-        "quarter": fields.Str(
-            required=False, missing=str(get_current_quarter(datetime.today()))
-        ),  # affects sprints (TODO: should affect epics too!!!!)
-        "year": fields.Str(
-            required=False, missing=str(datetime.today().year)
-        ),  # affects sprints (TODO: should affect epics too!!!!)
+        # "quarter": fields.Str(
+        #     required=False, missing=str(get_current_quarter(datetime.today()))
+        # ),  # affects sprints (TODO: should affect epics too!!!!)
+        'year': fields.Integer(required=False), # affects sprints (TODO: should affect epics too!!!!)
         "future": fields.Str(
             required=False, missing=False
         ),  # affects sprints (TODO: should affect epics too!!!!)
@@ -108,7 +106,7 @@ def filters(args):
 
     if args["sprints"]:
         sprints = Sprint.get_sprints(
-            g.team_id, args["quarter"], args["year"], args["future"]
+            g.team_id, args.get('quarter'), args.get('year'), args["future"]
         )
 
         if sprints:
@@ -159,9 +157,10 @@ def filters(args):
         if epics:
             for epic in epics:
                 epic_option = {
-                    "key": epic["_id"]["$oid"],
-                    "label": epic["title"],
-                    "team": epic["team"],
+                    'key': epic['_id']['$oid'],
+                    'label': epic['title'],
+                    'team': epic['team'],
+                    'epic_color': epic['epic_color']
                 }
                 epics_filter.append(epic_option)
 

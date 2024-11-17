@@ -58,7 +58,7 @@ class Sprint:
                 '$or': [
                     {
                         'team': ObjectId(team_id),
-                        'quarter': quarter, 
+                        # 'quarter': quarter, 
                         'year': year
                     },
                     {
@@ -113,7 +113,7 @@ class Sprint:
             "team": ObjectId(team_id)
         }
         projection = {"target": 1, "_id": 0}
-        return MongoHelper().get_document_by(SPRINTS_COL, filter, projection=projection)["target"]
+        return MongoHelper().get_document_by(SPRINTS_COL, filter, projection=projection).get("target", 0)
 
     @staticmethod
     def get_start_and_end_dates(sprint, team_id):
@@ -154,9 +154,13 @@ class Sprint:
         # sort = {"_id": 1}  # Sort by _id (which is end_date after grouping)
         projection = {"_id": 0}
 
-        return list(MongoHelper().aggregate(
-            STORIES_COL, match, group, project=projection
-            ))[0]["target"]
+        cursor = MongoHelper().aggregate(STORIES_COL, match, group, project=projection)
+        cursor_list = list(cursor)
+        if isinstance(cursor_list, list) and len(cursor_list) > 0:
+            target_dict = cursor_list[0]
+            if "target" in target_dict:
+                return target_dict["target"]
+        return 0
 
     @staticmethod
     def get_sprint_by(filter):
@@ -199,31 +203,37 @@ class Sprint:
     def start_sprint(sprint_id):
         '''
         Starts a sprint by setting the status of the given sprint as CURRENT and
-        deleting the next attribute from the doc
+        deleting the next attribute from the doc. This also sets the target points
         '''
+        # Get target points
+        target = 0
+        match = {'sprint._id': ObjectId(sprint_id)}
+        group = {'_id': None, 'target': {'$sum': '$estimation'}}
+        target_cursor = MongoHelper().aggregate(STORIES_COL, match, group)
+        for t in target_cursor:
+            target = t.get("target", 0)
+
         # Set status as current and delete next flag
         filter = {'_id': ObjectId(sprint_id)}
         update = {
             '$set': {
                 'status': SprintStatus.CURRENT.value,
-                'actual_start_date': datetime.today()
+                'actual_start_date': datetime.today(),
+                'target': target,
             },
             '$unset': {'next': ""}
         }
         return MongoHelper().update_document(SPRINTS_COL, filter, update)
 
     @staticmethod
-    def set_following_sprint(sprint_id):
+    def set_following_sprint(team_id):
         '''
-        Adds the next attribute to the sprint that follows the given sprint (if it exists)
+        Adds the next attribute to the first sprint found with a FUTURE status.
         '''
-        curr_sprint = Sprint.get_sprint_by({'_id': ObjectId(sprint_id)})
+        # curr_sprint = Sprint.get_sprint_by({'_id': ObjectId(sprint_id)})
 
         # Find the next sprint
-        filter = {
-            'team': ObjectId(curr_sprint['team']['$oid']),
-            'status': SprintStatus.FUTURE.value
-        }
+        filter = {'team': ObjectId(team_id), 'status': SprintStatus.FUTURE.value}
         sort = {'start_date': 1}
         next_sprint = MongoHelper().get_document_by(SPRINTS_COL, filter, sort)
 
@@ -232,6 +242,15 @@ class Sprint:
             filter = {'_id': ObjectId(next_sprint['_id']['$oid'])}
             update = {'$set': {'next': True}}
             MongoHelper().update_document(SPRINTS_COL, filter, update)
+
+    @staticmethod
+    def there_is_a_next_sprint(team_id):
+        '''
+        Checks if there is a sprint with the flag "next"
+        '''
+        # Find a sprint with the next flag
+        filter = {'team': ObjectId(team_id), 'next': {'$exists': True}}
+        return  MongoHelper().get_document_by(SPRINTS_COL, filter)
 
     @staticmethod
     @mongo_query

@@ -75,11 +75,15 @@ def gantt_format(stories_dict):
                 datetime.now().date(), datetime.min.time(), tzinfo=timezone.utc
             )
 
+        duration = (end_date - start_date).days
+        if duration <= 0:
+            duration = 1
+
         gantt_data.append({
             "id": index + 1,
             "text": story.get("title"),
             "start_date": start_date.strftime('%Y-%m-%d'),
-            "duration": (end_date - start_date).days,
+            "duration": duration,
             "progress": story.get("completeness")
         })
 
@@ -115,13 +119,13 @@ def apply_banner_format(ceremonies):
     for ceremony in ceremonies:
         formatted_ceremonies.extend([
             {
-                'name': f"{ceremony['ceremony_type']} begins",
+                'name': f"{ceremony['ceremony_type'].lower()}_begins",
                 'date': ceremony['starts']['$date'][:-1],
                 'in_progress': False
             },
             {
                 '_id': ceremony['_id'],
-                'name': f"{ceremony['ceremony_type']}",
+                'name': f"{ceremony['ceremony_type'].lower()}",
                 'date': ceremony['ends']['$date'],
                 'in_progress': True,
                 'google_meet_link': ceremony['google_meet_config']["meetingUri"]
