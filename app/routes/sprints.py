@@ -49,17 +49,17 @@ def calculate_burn_down(args):
         return send_response([], [], 200, **g.req_data)
     start_date = datetime.fromisoformat(sprint_data["start_date"]["$date"][:-1])
     end_date = datetime.fromisoformat(sprint_data["end_date"]["$date"][:-1])
-    original_target = Sprint.get_target_points(sprint_name, g.team_id)
+    target = Sprint.get_target_points(sprint_name, g.team_id)
 
     current_date = start_date
     burn_down_data = {
-        "target": original_target,
+        "target": target,
         "data": []
     }
     while current_date <= end_date:
-        target = Sprint.get_commited_points_up_to(
-            sprint_name, g.team_id, current_date
-        )
+        # target = Sprint.get_commited_points_up_to(
+        #     sprint_name, g.team_id, current_date
+        # )
         completed_points_so_far = Sprint.get_completed_points_up_to(
             sprint_name, g.team_id, current_date
         )
