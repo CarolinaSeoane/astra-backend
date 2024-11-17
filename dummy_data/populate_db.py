@@ -4313,6 +4313,7 @@ class Populate:
                 "story_fields": [
                     {
                         "value": "story_id",
+                        "key": "story_id",
                         "label": "Story ID",
                         "modifiable": 0,
                         "description": "The ID of the story.",
@@ -4322,6 +4323,7 @@ class Populate:
                     },
                     {
                         "value": "title",
+                        "key": "title",
                         "label": "Title",
                         "modifiable": 0,
                         "description": "The title of the story or task.",
@@ -4331,6 +4333,7 @@ class Populate:
                     },
                     {
                         "value": "description",
+                        "key": "description",
                         "label": "Description",
                         "modifiable": 0,
                         "description": "A detailed description of the story or task.",
@@ -4340,6 +4343,7 @@ class Populate:
                     },
                     {
                         "value": "acceptance_criteria",
+                        "key": "acceptance_criteria",
                         "label": "Acceptance criteria",
                         "modifiable": 1,
                         "description": "The conditions that must be met for the story to be accepted.",
@@ -4348,6 +4352,7 @@ class Populate:
                     },
                     {
                         "value": "creator",
+                        "key": "creator",
                         "label": "Creator",
                         "modifiable": 0,
                         "description": "The person who created the story or task.",
@@ -4356,6 +4361,7 @@ class Populate:
                     },
                     {
                         "value": "assigned_to",
+                        "key": "assigned_to",
                         "label": "Assigned to",
                         "modifiable": 0,
                         "description": "The person responsible for completing the story or task.",
@@ -4364,6 +4370,7 @@ class Populate:
                     },
                     {
                         "value": "epic",
+                        "key": "epic",
                         "label": "Epic",
                         "modifiable": 1,
                         "description": "The larger body of work that this story or task belongs to.",
@@ -4373,6 +4380,7 @@ class Populate:
                     },
                     {
                         "value": "sprint",
+                        "key": "sprint",
                         "label": "Sprint",
                         "modifiable": 0,
                         "description": "The sprint in which the story or task is being worked on.",
@@ -4382,6 +4390,7 @@ class Populate:
                     },
                     {
                         "value": "estimation",
+                        "key": "estimation",
                         "label": "Estimation",
                         "modifiable": 0,
                         "description": "The estimated effort required to complete the story or task.",
@@ -4391,6 +4400,7 @@ class Populate:
                     },
                     {
                         "value": "notifications",
+                        "key": "notifications",
                         "label": "Notifications",
                         "modifiable": 1,
                         "description": "Toggle to subscribe to story.",
@@ -4400,6 +4410,7 @@ class Populate:
                     },
                     {
                         "value": "tags",
+                        "key": "tags",
                         "label": "Tags",
                         "modifiable": 1,
                         "description": "Keywords associated with the story or task for categorization.",
@@ -4408,6 +4419,7 @@ class Populate:
                     },
                     {
                         "value": "priority",
+                        "key": "priority",
                         "label": "Priority",
                         "modifiable": 1,
                         "description": "The importance level of the story or task.",
@@ -4416,6 +4428,7 @@ class Populate:
                     },
                     {
                         "value": "story_type",
+                        "key": "story_type",
                         "label": "Story type",
                         "modifiable": 1,
                         "description": "The classification of the story.",
@@ -4425,6 +4438,7 @@ class Populate:
                     },
                     {
                         "value": "tasks",
+                        "key": "tasks",
                         "label": "Tasks",
                         "modifiable": 0,
                         "description": "The sub-tasks that need to be completed to finish the story.",
@@ -4433,6 +4447,7 @@ class Populate:
                         "components": [
                             {
                                 "value": "task_0_title",
+                                "key": "task_0_title",
                                 "label": "Task title",
                                 "modifiable": 0,
                                 "description": "The title of the task.",
@@ -4442,6 +4457,7 @@ class Populate:
                             },
                             {
                                 "value": "task_0_description",
+                                "key": "task_0_description",
                                 "label": "Task description",
                                 "modifiable": 0,
                                 "description": "A detailed description of the task.",
@@ -4453,6 +4469,7 @@ class Populate:
                     },
                     {
                         "value": "estimation_method",
+                        "key": "estimation_method",
                         "label": "Estimation method",
                         "modifiable": 0,
                         "description": "The method used to estimate the effort for the story or task.",
@@ -4468,6 +4485,7 @@ class Populate:
                 "epic_fields": [
                     {
                         "value": "title",
+                        "key": "title",
                         "label": "Title",
                         "modifiable": 0,
                         "description": "The title of the epic.",
@@ -4477,6 +4495,7 @@ class Populate:
                     },
                     {
                         "value": "description",
+                        "key": "description",
                         "label": "Description",
                         "modifiable": 0,
                         "description": "A detailed description of the epic.",
@@ -4486,6 +4505,7 @@ class Populate:
                     },
                     {
                         "value": "creator",
+                        "key": "creator",
                         "label": "Creator",
                         "modifiable": 0,
                         "description": "The person who created the story or task.",
@@ -4494,6 +4514,7 @@ class Populate:
                     },
                     {
                         "value": "priority",
+                        "key": "priority",
                         "label": "Priority",
                         "modifiable": 0,
                         "description": "The importance level of the epic.",
@@ -4503,6 +4524,7 @@ class Populate:
                     },
                     {
                         "value": "epic_color",
+                        "key": "epic_color",
                         "label": "Color",
                         "modifiable": 0,
                         "description": "The color associated to the epic.",
@@ -4512,6 +4534,7 @@ class Populate:
                     },
                     {
                         "value": "acceptance_criteria",
+                        "key": "acceptance_criteria",
                         "label": "Acceptance criteria",
                         "modifiable": 0,
                         "description": "The conditions that must be met for the epic to be accepted.",
@@ -4520,6 +4543,7 @@ class Populate:
                     },
                     {
                         "value": "business_value",
+                        "key": "business_value",
                         "label": "Business value",
                         "modifiable": 0,
                         "description": "Benefit that this epic brings to the business.",

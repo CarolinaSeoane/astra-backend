@@ -95,7 +95,7 @@ def filters(args):
         }
 
     if args['ceremony_status']:
-        ceremony_status = [{'key': _type.value, 'label': _type.value} for _type in CeremonyStatus]
+        ceremony_status = [{'key': _type.value.lower().replace(' ', '_'), 'label': _type.value.lower().replace(' ', '_')} for _type in CeremonyStatus]
         filters['ceremony_status'] = {
             'label': 'Status',
             'value': 'status',
