@@ -113,7 +113,7 @@ class Sprint:
             "team": ObjectId(team_id)
         }
         projection = {"target": 1, "_id": 0}
-        return MongoHelper().get_document_by(SPRINTS_COL, filter, projection=projection)["target"]
+        return MongoHelper().get_document_by(SPRINTS_COL, filter, projection=projection).get("target", 0)
 
     @staticmethod
     def get_start_and_end_dates(sprint, team_id):
@@ -154,9 +154,13 @@ class Sprint:
         # sort = {"_id": 1}  # Sort by _id (which is end_date after grouping)
         projection = {"_id": 0}
 
-        return list(MongoHelper().aggregate(
-            STORIES_COL, match, group, project=projection
-            ))[0]["target"]
+        cursor = MongoHelper().aggregate(STORIES_COL, match, group, project=projection)
+        cursor_list = list(cursor)
+        if isinstance(cursor_list, list) and len(cursor_list) > 0:
+            target_dict = cursor_list[0]
+            if "target" in target_dict:
+                return target_dict["target"]
+        return 0
 
     @staticmethod
     def get_sprint_by(filter):

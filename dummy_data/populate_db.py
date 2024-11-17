@@ -740,7 +740,7 @@ class Populate:
                         "username": self.username2,
                         "email": "seoane.m.b@gmail.com",
                         "profile_picture": self.pfp2,
-                        "role": Role.PRODUCT_OWNER.value,
+                        "role": Role.SCRUM_MASTER.value,
                         "member_status": MemberStatus.ACTIVE.value,
                         # "date": self.user2_id.generation_time
                     },
@@ -1364,6 +1364,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 3, 30),
+                "added_to_sprint": datetime.datetime(2024, 3, 30),
                 "tasks": [
                     {
                         "title": "Elaborar propuesta 1",
@@ -1413,6 +1414,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 3, 30),
+                "added_to_sprint": datetime.datetime(2024, 3, 30),
                 "tasks": [
                     {
                         "title": "Investigar problemática",
@@ -1459,6 +1461,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 3, 30),
+                "added_to_sprint": datetime.datetime(2024, 3, 30),
                 "tasks": [
                     {
                         "title": "Completar sección Factibilidad Técnica y Operativa",
@@ -1510,6 +1513,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 3, 30),
+                "added_to_sprint": datetime.datetime(2024, 3, 30),
                 "tasks": [
                     {
                         "title": "Hacer CANVAS en Mural",
@@ -1549,6 +1553,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 3, 30),
+                "added_to_sprint": datetime.datetime(2024, 3, 30),
                 "tasks": [
                     {
                         "title": "Elaborar plan de alto nivel",
@@ -1591,6 +1596,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 3, 30),
+                "added_to_sprint": datetime.datetime(2024, 3, 30),
                 "tasks": [
                     {
                         "title": "Definir tareas que se incluirán en el WBS",
@@ -1633,6 +1639,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 3, 30),
+                "added_to_sprint": datetime.datetime(2024, 3, 30),
                 "tasks": [
                     {
                         "title": "Definir roles",
@@ -1675,6 +1682,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 3, 30),
+                "added_to_sprint": datetime.datetime(2024, 3, 30),
                 "tasks": [
                     {
                         "title": "Completar matriz de riesgos",
@@ -1713,6 +1721,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 3, 30),
+                "added_to_sprint": datetime.datetime(2024, 3, 30),
                 "tasks": [
                     {
                         "title": "Completar matriz",
@@ -1751,6 +1760,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 4, 9),
+                "added_to_sprint": datetime.datetime(2024, 4, 9),
                 "tasks": [
                     {
                         "title": "Completar matriz",
@@ -1789,6 +1799,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 4, 4),
+                "added_to_sprint": datetime.datetime(2024, 4, 4),
                 "tasks": [
                     {
                         "title": "Completar planilla de Excel con los costos del proyecto",
@@ -1827,6 +1838,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 5, 1),
+                "added_to_sprint": datetime.datetime(2024, 5, 1),
                 "tasks": [
                     {
                         "title": "Establecer dependencias entre tareas",
@@ -1869,6 +1881,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 5, 10),
+                "added_to_sprint": datetime.datetime(2024, 5, 10),
                 "tasks": [
                     {
                         "title": "Separar funcionalidades de la aplicación en releases",
@@ -1915,6 +1928,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 5, 20),
+                "added_to_sprint": datetime.datetime(2024, 5, 20),
                 "tasks": [
                     {
                         "title": "Completar tablero",
@@ -1953,6 +1967,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 7, 1),
+                "added_to_sprint": datetime.datetime(2024, 7, 1),
                 "tasks": [
                     {
                         "title": "Completar tablero",
@@ -1991,6 +2006,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 7, 1),
+                "added_to_sprint": datetime.datetime(2024, 7, 1),
                 "tasks": [
                     {
                         "title": "Completar tablero",
@@ -2029,6 +2045,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 7, 1),
+                "added_to_sprint": datetime.datetime(2024, 7, 1),
                 "tasks": [
                     {
                         "title": "Completar tablero",
@@ -2067,6 +2084,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 4, 20),
+                "added_to_sprint": datetime.datetime(2024, 4, 20),
                 "tasks": [
                     {
                         "title": "Elaborar story mapping",
@@ -2105,6 +2123,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 5, 2),
+                "added_to_sprint": datetime.datetime(2024, 5, 2),
                 "tasks": [
                     {
                         "title": "Elaborar casos a probar en el plan de pruebas",
@@ -2147,6 +2166,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 6, 1),
+                "added_to_sprint": datetime.datetime(2024, 6, 1),
                 "tasks": [
                     {
                         "title": "Describir escenario esperado para cada caso de prueba",
@@ -2189,6 +2209,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 6, 1),
+                "added_to_sprint": datetime.datetime(2024, 6, 1),
                 "tasks": [
                     {
                         "title": "Diagramar la arquitectura del sistema",
@@ -2227,6 +2248,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 6, 20),
+                "added_to_sprint": datetime.datetime(2024, 6, 20),
                 "tasks": [
                     {
                         "title": "Confeccionar el diagrama de clases del backend",
@@ -2265,6 +2287,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 4, 14),
+                "added_to_sprint": datetime.datetime(2024, 4, 14),
                 "tasks": [
                     {
                         "title": "Ejecutar los diferentes casos de prueba",
@@ -2311,6 +2334,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 5, 7),
+                "added_to_sprint": datetime.datetime(2024, 5, 7),
                 "tasks": [
                     {
                         "title": "Usar un SSO para validar la identidad del usuario.",
@@ -2365,6 +2389,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 6, 11),
+                "added_to_sprint": datetime.datetime(2024, 6, 11),
                 "tasks": [
                     {
                         "title": "Utilizar biblioteca pymongo para hacer la conexión.",
@@ -2403,6 +2428,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 5, 14),
+                "added_to_sprint": datetime.datetime(2024, 5, 14),
                 "tasks": [
                     {
                         "title": "Acceder a página principal de Home",
@@ -2462,6 +2488,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 6, 21),
+                "added_to_sprint": datetime.datetime(2024, 6, 21),
                 "tasks": [
                     {
                         "title": "Filtros backend",
@@ -2506,6 +2533,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 7, 4),
+                "added_to_sprint": datetime.datetime(2024, 7, 4),
                 "tasks": [
                     {
                         "title": "Generar endpoint PUT /story",
@@ -2550,6 +2578,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 4, 5),
+                "added_to_sprint": datetime.datetime(2024, 4, 5),
                 "tasks": [
                     {
                         "title": "Formato List",
@@ -2599,6 +2628,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 7, 20),
+                "added_to_sprint": datetime.datetime(2024, 7, 20),
                 "tasks": [
                     {
                         "title": "(Backend) Generar endpoint que devuelva la próxima ceremonia.",
@@ -2643,6 +2673,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 7, 20),
+                "added_to_sprint": datetime.datetime(2024, 7, 20),
                 "tasks": [
                     {
                         "title": "(Backend) POST /story",
@@ -2687,6 +2718,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 7, 20),
+                "added_to_sprint": datetime.datetime(2024, 7, 20),
                 "tasks": [
                     {
                         "title": "Agregar o eliminar usuarios del equipo",
@@ -2746,6 +2778,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 7, 20),
+                "added_to_sprint": datetime.datetime(2024, 7, 20),
                 "tasks": [
                     {
                         "title": "Crear meeting space",
@@ -2792,6 +2825,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 7, 15),
+                "added_to_sprint": datetime.datetime(2024, 7, 15),
                 "tasks": [
                     {
                         "title": "Ver todas las ceremonias del sprint actual, pasados y futuros",
@@ -2831,6 +2865,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 6, 22),
+                "added_to_sprint": datetime.datetime(2024, 6, 22),
                 "tasks": [
                     {
                         "title": "Gráfico de torta",
@@ -2921,6 +2956,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 4, 13),
+                "added_to_sprint": datetime.datetime(2024, 4, 13),
                 "tasks": [
                     {
                         "title": "Ver stories trabajadas por un usuario",
@@ -2970,6 +3006,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 6, 15),
+                "added_to_sprint": datetime.datetime(2024, 6, 15),
                 "tasks": [
                     {
                         "title": "Ver notificaciones de las cuales el usuario es el reporter",
@@ -3019,6 +3056,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 7, 20),
+                "added_to_sprint": datetime.datetime(2024, 7, 20),
                 "tasks": [
                     {
                         "title": "Preparar la ppt",
@@ -3061,6 +3099,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 6, 30),
+                "added_to_sprint": datetime.datetime(2024, 6, 30),
                 "tasks": [
                     {
                         "title": "Elaborar el poster para profesores",
@@ -3107,6 +3146,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 8, 11),
+                "added_to_sprint": datetime.datetime(2024, 8, 11),
                 "tasks": [
                     {
                         "title": "Preparar ppt",
@@ -3153,6 +3193,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 8, 30),
+                "added_to_sprint": datetime.datetime(2024, 8, 30),
                 "tasks": [
                     {
                         "title": "Confeccionar el documento",
@@ -3191,6 +3232,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 9, 19),
+                "added_to_sprint": datetime.datetime(2024, 9, 19),
                 "tasks": [
                     {
                         "title": "Implementar react-i18",
@@ -3237,6 +3279,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 10, 13),
+                "added_to_sprint": datetime.datetime(2024, 10, 13),
                 "tasks": [
                     {
                         "title": "Implementar selección de color al crear una épica",
@@ -3287,6 +3330,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 10, 5),
+                "added_to_sprint": datetime.datetime(2024, 10, 5),
                 "tasks": [
                     {
                         "title": "Fix bug",
@@ -3329,6 +3373,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 10, 5),
+                "added_to_sprint": datetime.datetime(2024, 10, 5),
                 "tasks": [
                     {
                         "title": "Conseguir licencia",
@@ -3375,6 +3420,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.NOT_STARTED.value,
                 "creation_date": datetime.datetime(2024, 7, 20),
+                "added_to_sprint": datetime.datetime(2024, 7, 20),
                 "tasks": [
                     {
                         "title": "Conseguir licencia",
@@ -3419,6 +3465,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.NOT_STARTED.value,
                 "creation_date": datetime.datetime(2024, 7, 20),
+                "added_to_sprint": datetime.datetime(2024, 7, 20),
                 "tasks": [
                     {
                         "title": "Modificaciones frontend",
@@ -3463,6 +3510,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 10, 5),
+                "added_to_sprint": datetime.datetime(2024, 10, 5),
                 "tasks": [
                     {
                         "title": "Fix backend",
@@ -3505,6 +3553,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.DONE.value,
                 "creation_date": datetime.datetime(2024, 11, 7),
+                "added_to_sprint": datetime.datetime(2024, 11, 7),
                 "tasks": [
                     {
                         "title": "Presentar carpeta final",
@@ -3543,6 +3592,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.NOT_STARTED.value,
                 "creation_date": datetime.datetime(2024, 7, 20),
+                "added_to_sprint": datetime.datetime(2024, 7, 20),
                 "tasks": [
                     {
                         "title": "Investigar factibilidad técnica",
@@ -3579,6 +3629,7 @@ class Populate:
                 "estimation_method": "Fibonacci",
                 "story_status": Status.NOT_STARTED.value,
                 "creation_date": datetime.datetime(2024, 7, 20),
+                "added_to_sprint": datetime.datetime(2024, 7, 20),
                 "tasks": [
                     {
                         "title": "Investigar factibilidad técnica",
