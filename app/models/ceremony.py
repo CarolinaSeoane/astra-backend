@@ -1,5 +1,5 @@
 from datetime import datetime, timedelta, UTC
-from zoneinfo import ZoneInfo
+import pytz
 from bson import ObjectId
 
 from app.models.team import Team
@@ -65,8 +65,8 @@ class Ceremony:
         '''
         print('datetime today >>>>>> ', datetime.today())
         print('datetime today as UTC >>>>>> ', datetime.today().astimezone(UTC))
-        print('datetime Argentina >>>>>>', datetime.now(ZoneInfo("America/Argentina/Buenos_Aires")).date())
-        filter = { "team": ObjectId(team_id), "starts": {"$gte": datetime.now(ZoneInfo("America/Argentina/Buenos_Aires")).date()}, "ceremony_status": CeremonyStatus.NOT_HAPPENED_YET.value }
+        print('datetime Argentina >>>>>>', datetime.now(pytz.timezone("America/Argentina/Buenos_Aires")).replace(tzinfo=None))
+        filter = { "team": ObjectId(team_id), "starts": {"$gte": datetime.now(pytz.timezone("America/Argentina/Buenos_Aires")).replace(tzinfo=None)}, "ceremony_status": CeremonyStatus.NOT_HAPPENED_YET.value }
         sort = {'starts': 1}
         projection = (
             {"_id", "ceremony_type", "starts", "ends", "google_meet_config.meetingUri"}
