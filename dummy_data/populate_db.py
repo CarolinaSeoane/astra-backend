@@ -218,11 +218,6 @@ class Populate:
                         "member_status": MemberStatus.ACTIVE.value,
                     },
                     {
-                        "_id": self.team2_id,
-                        "name": "Flyers",
-                        "member_status": MemberStatus.ACTIVE.value,
-                    },
-                    {
                         "_id": self.team3_id,
                         "name": "Proyecto",
                         "member_status": MemberStatus.ACTIVE.value,
@@ -617,15 +612,6 @@ class Populate:
                     {"role": Role.DEV.value, "options": ["create_story", "edit_story"]},
                 ],
                 "members": [
-                    {
-                        "_id": self.user2_id,
-                        "username": self.username2,
-                        "email": self.email2,
-                        "profile_picture": self.pfp2,
-                        "role": Role.SCRUM_MASTER.value,
-                        "member_status": MemberStatus.ACTIVE.value,
-                        # "date": self.user1_id.generation_time
-                    },
                     {
                         "_id": self.user8_id,
                         "username": self.username8,
@@ -4203,6 +4189,7 @@ class Populate:
                 "start_date": datetime.datetime(2024, 10, 29),
                 "end_date": datetime.datetime(2024, 11, 18),
                 "target": 15,
+                "completed": 12,
                 "status": SprintStatus.CURRENT.value,
                 "team": self.team3_id
             },

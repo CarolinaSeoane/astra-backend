@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, UTC
 from bson import ObjectId
 
 from app.models.team import Team
@@ -63,7 +63,9 @@ class Ceremony:
         returns [] if no ceremonies are found for the given team_id
         '''
         filter = { "team": ObjectId(team_id), "starts": {"$gte": datetime.today()}, "ceremony_status": CeremonyStatus.NOT_HAPPENED_YET.value }
-        sort = {'starts': 1}  
+        print('datetime today >>>>>> ', datetime.today())
+        print('datetime today as UTC >>>>>> ', datetime.today().astimezone(UTC))
+        sort = {'starts': 1}
         projection = (
             {"_id", "ceremony_type", "starts", "ends", "google_meet_config.meetingUri"}
             if for_banner
@@ -96,7 +98,7 @@ class Ceremony:
 
             if not participants:
                 participants = GoogleMeetDataStatus.UNAVAILABLE.value
-                
+
             # TODO: Fetch transcript from google service    
 
             # Update record
