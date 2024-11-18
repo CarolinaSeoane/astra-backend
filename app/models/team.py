@@ -219,3 +219,15 @@ class Team:
             team_id, role
         )
         return action in available_actions
+
+    @staticmethod
+    def update_members_role(team_id, roles):
+        for role_change in roles:
+            match = {
+                "_id": ObjectId(team_id),
+                "members._id": ObjectId(role_change["_id"])
+            }
+            update = {
+                "$set": {"members.$.role": role_change["role"]}
+            }
+            MongoHelper().update_document(TEAMS_COL, match, update)

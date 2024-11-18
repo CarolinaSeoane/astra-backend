@@ -288,3 +288,14 @@ def is_member_allowed(role, action):
 
     allowed = Team.is_member_authorized(g.team_id, role, action)
     return send_response(allowed, [], 200, **g.req_data)
+
+roles_args = {
+    "_id": fields.Str(required=True),
+    "role": fields.Str(required=True),
+}
+
+@teams.route('/roles', methods=['PUT'])
+@use_args({'roles': fields.List(fields.Nested(roles_args), required=True)}, location='json')
+def new_roles(args):
+    Team.update_members_role(g.team_id, args["roles"])
+    return send_response([], [], 200, **g.req_data)
