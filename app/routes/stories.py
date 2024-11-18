@@ -189,10 +189,10 @@ def filters(args):
 
     if args["estimation"]:
         estimation_methods = team.get("estimation_method")
-        try:
-            estimation_methods.remove("planning_poker")
-        except Exception:
-            pass
+        # try:
+        #     estimation_methods.remove("planning_poker")
+        # except Exception:
+        #     pass
 
         est_method = estimation_methods[0]
         estimation = Configurations.get_estimation_method_options(est_method)

@@ -75,6 +75,7 @@ class Ceremony:
     
     @staticmethod
     def get_google_meet_data(user, ceremony):
+        print('Fetching conference records from Google Meet API')
         conference_records = list_conference_records(user.access_token, user.refresh_token, ceremony)
         if not conference_records:
             # Set attendees and transcript as Unavailable
@@ -93,6 +94,9 @@ class Ceremony:
             conference_record = conference_records['conferenceRecords'][0]
             participants = list_conference_record_participants(user.access_token, user.refresh_token, conference_record['name'])['participants']
 
+            if not participants:
+                participants = GoogleMeetDataStatus.UNAVAILABLE.value
+                
             # TODO: Fetch transcript from google service    
 
             # Update record
