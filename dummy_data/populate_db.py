@@ -3230,7 +3230,7 @@ class Populate:
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
-                "story_status": Status.DONE.value,
+                "story_status": Status.DOING.value,
                 "creation_date": datetime.datetime(2024, 9, 19),
                 "added_to_sprint": datetime.datetime(2024, 9, 19),
                 "tasks": [
@@ -3240,11 +3240,11 @@ class Populate:
                     },
                     {
                         "title": "Generar documento en.json",
-                        "status": Status.DONE.value,
+                        "status": Status.DOING.value,
                     },
                     {
                         "title": "Generar documento es.json",
-                        "status": Status.DONE.value,
+                        "status": Status.DOING.value,
                     },
                 ],
                 "team": self.team3_id,

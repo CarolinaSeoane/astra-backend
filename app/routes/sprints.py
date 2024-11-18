@@ -114,8 +114,8 @@ def attempt_to_finish_sprint(sprint_id):
     )
 
     # Notify day of closing
-    end_date = datetime.fromisoformat(sprint["end_date"]["$date"][:-1])
-    today = datetime.today()
+    end_date = datetime.fromisoformat(sprint["end_date"]["$date"][:-1]).date()
+    today = datetime.today().date()
     difference = (end_date - today).days
     # A positive number means the sprint is being closed BEFORE it's supposed to
     # A negative number means the sprint is being closed AFTER it was supposed to
