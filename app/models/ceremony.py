@@ -62,9 +62,9 @@ class Ceremony:
         '''
         returns [] if no ceremonies are found for the given team_id
         '''
-        filter = { "team": ObjectId(team_id), "starts": {"$gte": datetime.today()}, "ceremony_status": CeremonyStatus.NOT_HAPPENED_YET.value }
         print('datetime today >>>>>> ', datetime.today())
         print('datetime today as UTC >>>>>> ', datetime.today().astimezone(UTC))
+        filter = { "team": ObjectId(team_id), "starts": {"$gte": datetime.today().astimezone(UTC)}, "ceremony_status": CeremonyStatus.NOT_HAPPENED_YET.value }
         sort = {'starts': 1}
         projection = (
             {"_id", "ceremony_type", "starts", "ends", "google_meet_config.meetingUri"}
