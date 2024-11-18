@@ -119,6 +119,7 @@ def apply_banner_format(ceremonies):
     for ceremony in ceremonies:
         formatted_ceremonies.extend([
             {
+                '_id': ceremony['_id'],
                 'name': f"{ceremony['ceremony_type'].lower()}_begins",
                 'date': ceremony['starts']['$date'][:-1],
                 'in_progress': False
@@ -126,7 +127,7 @@ def apply_banner_format(ceremonies):
             {
                 '_id': ceremony['_id'],
                 'name': f"{ceremony['ceremony_type'].lower()}",
-                'date': ceremony['ends']['$date'],
+                'date': ceremony['ends']['$date'][:-1],
                 'in_progress': True,
                 'google_meet_link': ceremony['google_meet_config']["meetingUri"]
             }

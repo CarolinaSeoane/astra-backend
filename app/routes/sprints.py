@@ -34,9 +34,9 @@ def apply_validate_user_is_active_member_of_team():
 
     return validate_user_is_active_member_of_team()
 
-@sprints.route('/velocity', methods=['GET'])
-def get_velocity():
-    all_time_velocity = Sprint.get_velocity(g.team_id)
+@sprints.route('/velocity/<sprint_name>', methods=['GET'])
+def get_velocity(sprint_name):
+    all_time_velocity = Sprint.get_velocity(g.team_id, sprint_name)
     velocity = all_time_velocity[-9:]
     return send_response(velocity, [], 200, **g.req_data)
 
@@ -49,17 +49,17 @@ def calculate_burn_down(args):
         return send_response([], [], 200, **g.req_data)
     start_date = datetime.fromisoformat(sprint_data["start_date"]["$date"][:-1])
     end_date = datetime.fromisoformat(sprint_data["end_date"]["$date"][:-1])
-    original_target = Sprint.get_target_points(sprint_name, g.team_id)
+    target = Sprint.get_target_points(sprint_name, g.team_id)
 
     current_date = start_date
     burn_down_data = {
-        "target": original_target,
+        "target": target,
         "data": []
     }
     while current_date <= end_date:
-        target = Sprint.get_commited_points_up_to(
-            sprint_name, g.team_id, current_date
-        )
+        # target = Sprint.get_commited_points_up_to(
+        #     sprint_name, g.team_id, current_date
+        # )
         completed_points_so_far = Sprint.get_completed_points_up_to(
             sprint_name, g.team_id, current_date
         )
@@ -114,8 +114,8 @@ def attempt_to_finish_sprint(sprint_id):
     )
 
     # Notify day of closing
-    end_date = datetime.fromisoformat(sprint["end_date"]["$date"][:-1])
-    today = datetime.today()
+    end_date = datetime.fromisoformat(sprint["end_date"]["$date"][:-1]).date()
+    today = datetime.today().date()
     difference = (end_date - today).days
     # A positive number means the sprint is being closed BEFORE it's supposed to
     # A negative number means the sprint is being closed AFTER it was supposed to
