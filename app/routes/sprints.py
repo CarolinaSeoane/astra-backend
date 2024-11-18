@@ -34,9 +34,9 @@ def apply_validate_user_is_active_member_of_team():
 
     return validate_user_is_active_member_of_team()
 
-@sprints.route('/velocity', methods=['GET'])
-def get_velocity():
-    all_time_velocity = Sprint.get_velocity(g.team_id)
+@sprints.route('/velocity/<sprint_name>', methods=['GET'])
+def get_velocity(sprint_name):
+    all_time_velocity = Sprint.get_velocity(g.team_id, sprint_name)
     velocity = all_time_velocity[-9:]
     return send_response(velocity, [], 200, **g.req_data)
 

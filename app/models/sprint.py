@@ -82,16 +82,17 @@ class Sprint:
         return MongoHelper().get_documents_by(SPRINTS_COL, filter, sort)
 
     @staticmethod
-    def get_velocity(team_id):
+    def get_velocity(team_id, sprint_name):
+        sprint = Sprint.get_sprint_by({
+            "name": sprint_name,
+            "team": team_id
+        })
         filter = {
-            "team": { "$eq": team_id },
+            "team": team_id,
             "name": { "$ne": "Backlog" },
-            '$or': [
-                {'status': SprintStatus.CURRENT.value},
-                {'status': SprintStatus.FINISHED.value}
-            ]
+            "start_date": { "$lte": datetime.strptime(sprint["start_date"]["$date"], '%Y-%m-%dT%H:%M:%S%z') }
         }
-        sort = {'sprint_number': 1}
+        sort = {'start_date': 1}
         projection = {"name", "target", "completed"}
         return MongoHelper().get_documents_by(
             SPRINTS_COL, filter=filter, sort=sort, projection=projection
