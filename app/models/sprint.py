@@ -287,7 +287,8 @@ class Sprint:
                 {'status': SprintStatus.FINISHED.value}
             ]
         }
-        documents = MongoHelper().get_documents_by('sprints', filter)
+        sort_criteria = [('start_date', 1)]  # 1 for ascending, -1 for descending
+        documents = MongoHelper().get_documents_by('sprints', filter,  sort=sort_criteria)
         return documents if documents else None
 
     @staticmethod
