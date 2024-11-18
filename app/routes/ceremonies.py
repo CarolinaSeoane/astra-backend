@@ -107,8 +107,18 @@ def filters(args):
 
 @ceremonies.route('/join/<ceremony_id>', methods=['GET'])
 def join_ceremony(ceremony_id):
-    print('joining ceremony ', ceremony_id)
-    # ceremonies = Ceremony.get_ceremonies_by_team_id(g.team_id, **args)
+    Ceremony.change_ceremony_status(ceremony_id, CeremonyStatus.CONCLUDED.value)
+    return send_response([], [], 200, **g.req_data)
+
+@ceremonies.route('/status/<ceremony_id>', methods=['GET'])
+def ceremony_did_not_take_place(ceremony_id):
+    '''
+    This sets the status as DIDNT_TAKE_PLACE as soon as the countdown finishes. If a user joins the ceremony,
+    it will be changed to CONCLUDED and once it's concluded it can't be changed back to DIDNT_TAKE_PLACE
+    '''
+    ceremony = Ceremony.get_ceremony_by_id(ceremony_id)
+    if ceremony['ceremony_status'] == CeremonyStatus.NOT_HAPPENED_YET.value:
+        Ceremony.change_ceremony_status(ceremony_id, CeremonyStatus.DIDNT_TAKE_PLACE.value)
     return send_response([], [], 200, **g.req_data)
 
 @ceremonies.route('/<ceremony_id>', methods=['GET'])
