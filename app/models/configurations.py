@@ -147,6 +147,7 @@ class Configurations:
                     if permissions_value is None or action["value"] in permissions_value:
                         labels.append({
                             "label": action["label"],
-                            "description": action["description"]
+                            "description": action["description"],
+                            "value": action["value"],
                         })
         return labels
