@@ -83,13 +83,16 @@ def story_fields(args):
         "estimation": fields.Boolean(required=False, missing=True),
         "task_statuses": fields.Boolean(required=False, missing=True),
         ## customization
-        # "quarter": fields.Str(
-        #     required=False, missing=str(get_current_quarter(datetime.today()))
-        # ),  # affects sprints (TODO: should affect epics too!!!!)
         'year': fields.Integer(required=False), # affects sprints (TODO: should affect epics too!!!!)
-        "future": fields.Str(
+        "future": fields.Boolean(
             required=False, missing=False
         ),  # affects sprints (TODO: should affect epics too!!!!)
+        "backlog": fields.Boolean(
+            required=False, missing=True
+        ),
+        "all_from_year": fields.Boolean(
+            required=False, missing=False
+        ),
     },
     location="query",
 )
@@ -106,7 +109,7 @@ def filters(args):
 
     if args["sprints"]:
         sprints = Sprint.get_sprints(
-            g.team_id, args.get('quarter'), args.get('year'), args["future"]
+            g.team_id, args.get('year'), args["future"], args["backlog"], args["all_from_year"]
         )
 
         if sprints:
