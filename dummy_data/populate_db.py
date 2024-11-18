@@ -92,7 +92,7 @@ class Populate:
     epic8_title = "Mejoras y nuevas features"
     epic9_title = "Nuevas ideas"
 
-    epic1_color = Color.LIME.value
+    epic1_color = Color.BLUE.value
     epic2_color = Color.GREEN.value
     epic3_color = Color.ORANGE.value
     epic4_color = Color.BLUE.value
@@ -600,7 +600,6 @@ class Populate:
                     "epic",
                     "sprint",
                     "estimation",
-                    "tags",
                     "story_type",
                     "estimation_method",
                     "tasks",
@@ -951,7 +950,6 @@ class Populate:
                 },
                 "sprint": {"_id": self.sprint4_q3_team1, "name": "S4-Q3-2024"},
                 "estimation": 5,
-                "tags": ["Buscador"],
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
@@ -1006,7 +1004,6 @@ class Populate:
                 },
                 "sprint": {"_id": self.sprint4_q3_team1, "name": "S4-Q3-2024"},
                 "estimation": 1,
-                "tags": ["UX", "Accesibilidad"],
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
@@ -1049,7 +1046,6 @@ class Populate:
                 },
                 "sprint": {"_id": self.sprint1_q1_team1, "name": "S1-Q1-2024"},
                 "estimation": 3,
-                "tags": ["QA", "Performance"],
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
@@ -1092,7 +1088,6 @@ class Populate:
                 },
                 "sprint": {"_id": self.sprint1_q1_team1, "name": "S1-Q1-2024"},
                 "estimation": 5,
-                "tags": ["Stakeholder"],
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.DISCOVERY.value,
                 "estimation_method": "Fibonacci",
@@ -1135,7 +1130,6 @@ class Populate:
                 },
                 "sprint": {"_id": self.sprint5_q3_team1, "name": "S5-Q3-2024"},
                 "estimation": 1,
-                "tags": ["Frontend"],
                 "priority": Priority.LOW.value,
                 "story_type": Type.BUGFIX.value,
                 "estimation_method": "Fibonacci",
@@ -1177,7 +1171,6 @@ class Populate:
                 },
                 "sprint": {"_id": self.sprint1_q1_team1, "name": "S1-Q1-2024"},
                 "estimation": 8,
-                "tags": ["Backend", "Performance"],
                 "priority": Priority.HIGH.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
@@ -1219,7 +1212,6 @@ class Populate:
                 },
                 "sprint": {"_id": self.sprint1_q1_team1, "name": "S1-Q1-2024"},
                 "estimation": 2,
-                "tags": ["Frontend", "Validations"],
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.BUGFIX.value,
                 "estimation_method": "Fibonacci",
@@ -1276,7 +1268,6 @@ class Populate:
                 },
                 "sprint": {"_id": self.sprint1_q1_team1, "name": "S1-Q1-2024"},
                 "estimation": 5,
-                "tags": ["Frontend", "UI/UX"],
                 "priority": Priority.LOW.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
@@ -1318,7 +1309,6 @@ class Populate:
                 },
                 "sprint": {"_id": self.sprint1_q1_team1, "name": "S1-Q1-2024"},
                 "estimation": 4,
-                "tags": ["Frontend", "Bugfix"],
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.BUGFIX.value,
                 "estimation_method": "Fibonacci",
@@ -4283,9 +4273,7 @@ class Populate:
             {
                 "key": "default_settings",
                 "value": "estimation_method",
-                "estimation_method": {
-                    "estimation_method": ["fibonacci"]
-                },
+                "estimation_method": ["fibonacci"]
             },
             {
                 "key": "default_settings",
@@ -4307,7 +4295,6 @@ class Populate:
                     "epic",
                     "sprint",
                     "estimation",
-                    "tags",
                     "story_type",
                     "estimation_method",
                     "tasks",

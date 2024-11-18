@@ -77,6 +77,8 @@ class Story:
             filter["story_status"] = kwargs['story_status']
 
         stories = MongoHelper().get_documents_by(STORIES_COL, filter=filter, projection=projection)
+        if not stories:
+            return []
 
         if view_type == 'kanban':
             return kanban_format(stories)

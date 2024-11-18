@@ -1,5 +1,7 @@
 import os
 import requests
+from datetime import datetime, timedelta
+from pytz import UTC
 
 
 CLIENT_ID = os.getenv('CLIENT_ID')
@@ -85,8 +87,14 @@ def list_conference_records(google_access_token, refresh_token, ceremony):
     '''
     Gets all conference records for a given Google Meet meeting code and time period. Returns None if no conference records were found
     '''
+    start_date = ceremony["starts"]["$date"] 
+    end_date = ceremony["ends"]["$date"]
+
+    formatted_start_date = (datetime.fromisoformat(start_date) + timedelta(hours=3)).strftime("%Y-%m-%dT%H:%M:%SZ")
+    formatted_end_date = (datetime.fromisoformat(end_date) + timedelta(hours=3)).strftime("%Y-%m-%dT%H:%M:%SZ")
+
     url = 'https://meet.googleapis.com/v2/conferenceRecords'
-    query_params = f'?filter=space.meeting_code="{ceremony["google_meet_config"]["meetingCode"]}" AND start_time>="{ceremony["starts"]["$date"]}" AND start_time<="{ceremony["ends"]["$date"]}"'
+    query_params = f'?filter=space.meeting_code="{ceremony["google_meet_config"]["meetingCode"]}" AND start_time>="{formatted_start_date}" AND start_time<="{formatted_end_date}"'
     # query_params = '?filter=space.meeting_code="thp-mamh-rws"'
     return call_google_api(url + query_params, 'get', {'google_access_token': google_access_token, 'refresh_token': refresh_token})
 
