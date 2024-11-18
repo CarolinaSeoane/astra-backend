@@ -58,9 +58,10 @@ def get_ceremonies_meet_data(ceremony_id):
     'ceremony_type': fields.Boolean(required=False, missing=True),
     'ceremony_status': fields.Boolean(required=False, missing=True),
     ## customization
-    'quarter': fields.Integer(required=False, missing=get_quarter(datetime.today())),
-    'year': fields.Integer(required=False, missing=datetime.today().year),
-    'future': fields.Str(required=False, missing=False),
+    'year': fields.Integer(required=False),
+    "future": fields.Boolean(required=False, missing=False),
+    "backlog": fields.Boolean(required=False, missing=True),
+    "all_from_year": fields.Boolean(required=False, missing=False),
     }, location='query')
 def filters(args):
     sprints_filter = []
@@ -69,7 +70,7 @@ def filters(args):
     filters = {}
 
     if args['sprints']:
-        sprints = Sprint.get_sprints(g.team_id, args['quarter'], args['year'], args['future'])
+        sprints = Sprint.get_sprints(g.team_id, args.get('year'), args['future'], args['backlog'])
 
         if sprints:
             for sprint in sprints:

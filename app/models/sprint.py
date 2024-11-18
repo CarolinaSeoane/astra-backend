@@ -30,13 +30,22 @@ class Sprint:
         self.actual_end_date = actual_end_date
 
     @staticmethod
-    def get_sprints(team_id, quarter, year, future):
+    def get_sprints(team_id, year, future=False, backlog=True, all_from_year=False):
         '''
         returns None if the team has no sprints
         '''
         filter = {}
 
-        if future:
+        if all_from_year:
+            filter = {
+                '$or': [
+                    {
+                       'team': ObjectId(team_id),
+                        'year': year
+                    },
+                ]
+            }
+        elif future:
             filter = {
                 '$or': [
                     {
@@ -47,10 +56,6 @@ class Sprint:
                         'team': ObjectId(team_id),
                         'status': SprintStatus.FUTURE.value
                     },
-                    {
-                        'team': ObjectId(team_id),
-                        'name': 'Backlog'
-                    },
                 ]
             }
         else:
@@ -58,22 +63,29 @@ class Sprint:
                 '$or': [
                     {
                         'team': ObjectId(team_id),
-                        # 'quarter': quarter, 
-                        'year': year
-                    },
-                    {
-                        'team': ObjectId(team_id),
-                        'name': 'Backlog'
+                        'status': { "$ne": SprintStatus.FUTURE.value},
+                        'name': { "$ne": "Backlog" }
                     },
                 ]
             }
+            if year:
+                filter['$or'][0]['year'] = year
+
+        if backlog:
+            filter['$or'].append({
+                'team': ObjectId(team_id),
+                'name': 'Backlog'
+            })
 
         sort = {'start_date': 1}
         documents = MongoHelper().get_documents_by(SPRINTS_COL, filter, sort)
 
         if not documents:
             return None
-        return documents[1:] + [documents[0]] # Send first element (backlog) to the back
+
+        if backlog:
+            return documents[1:] + [documents[0]] # Send first element (backlog) to the back
+        return documents
 
     @staticmethod
     def get_all_sprints(team_id):
