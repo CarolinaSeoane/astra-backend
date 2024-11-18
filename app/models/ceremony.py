@@ -5,7 +5,7 @@ from app.models.team import Team
 from app.services.astra_scheduler import generate_ceremonies_for_sprint
 from app.models.sprint import Sprint
 from app.services.mongoHelper import MongoHelper
-from app.models.configurations import CollectionNames, GoogleMeetDataStatus
+from app.models.configurations import CollectionNames, GoogleMeetDataStatus, CeremonyStatus
 from app.services.google_meet import list_conference_records, list_conference_record_participants
 
 
@@ -62,7 +62,7 @@ class Ceremony:
         '''
         returns [] if no ceremonies are found for the given team_id
         '''
-        filter = { "team": ObjectId(team_id), "starts": {"$gt": datetime.today()} }
+        filter = { "team": ObjectId(team_id), "starts": {"$gte": datetime.today()}, "ceremony_status": CeremonyStatus.NOT_HAPPENED_YET.value }
         sort = {'starts': 1}  
         projection = (
             {"_id", "ceremony_type", "starts", "ends", "google_meet_config.meetingUri"}

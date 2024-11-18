@@ -4213,8 +4213,7 @@ class Populate:
                 "start_date": datetime.datetime(2024, 10, 29),
                 "end_date": datetime.datetime(2024, 11, 18),
                 "target": 15,
-                "completed": 15,
-                "status": SprintStatus.FINISHED.value,
+                "status": SprintStatus.CURRENT.value,
                 "team": self.team3_id
             },
             {
@@ -4225,9 +4224,8 @@ class Populate:
                 "year": 2024,
                 "start_date": datetime.datetime(2024, 11, 19),
                 "end_date": datetime.datetime(2024, 12, 9),
-                "target": 1,
-                # "completed": 1,
-                "status": SprintStatus.CURRENT.value,
+                "status": SprintStatus.FUTURE.value,
+                "next": True,
                 "team": self.team3_id
             },
             {
@@ -4240,7 +4238,6 @@ class Populate:
                 "end_date": datetime.datetime(2024, 12, 30),
                 "status": SprintStatus.FUTURE.value,
                 "team": self.team3_id,
-                "next": True
             },
             {
                 "_id": self.sprint5_q4_team3,
@@ -4671,11 +4668,6 @@ class Populate:
             {"ceremony_type": CeremonyType.STANDUP.value,"starts": datetime.datetime(2024, 11, 12, 19),"ends": datetime.datetime(2024, 11, 12, 19, 30), "google_meet_config": {"name": "spaces/ocak_wpXR_4B", "meetingUri": "https://meet.google.com/cda-idfb-dgu", "meetingCode": "cda-idfb-dgu", "config": {"accessType": "TRUSTED", "entryPointAccess": "ALL"}},"ceremony_status": CeremonyStatus.CONCLUDED.value,"happens_on_sprint":{"_id": self.sprint2_q4_team3,"name":"S2-Q4-2024"},"team": self.team3_id, "attendees": GoogleMeetDataStatus.UNAVAILABLE.value, "transcript": GoogleMeetDataStatus.UNAVAILABLE.value},
             {"ceremony_type": CeremonyType.RETRO.value,"starts": datetime.datetime(2024, 11, 18, 10),"ends": datetime.datetime(2024, 11, 18, 11), "google_meet_config": {"name": "spaces/vSZjBs2ToWcB", "meetingUri": "https://meet.google.com/hsg-dbbh-vas", "meetingCode": "hsg-dbbh-vas", "config": {"accessType": "TRUSTED", "entryPointAccess": "ALL"}},"ceremony_status": CeremonyStatus.CONCLUDED.value,"happens_on_sprint":{"_id": self.sprint2_q4_team3,"name":"S2-Q4-2024"},"team": self.team3_id, "attendees": GoogleMeetDataStatus.UNAVAILABLE.value, "transcript": GoogleMeetDataStatus.UNAVAILABLE.value},
             
-            {"ceremony_type": CeremonyType.PLANNING.value,"starts": datetime.datetime(2024, 11, 19, 10),"ends": datetime.datetime(2024, 11, 19, 12),"google_meet_config": {"name": "spaces/u9ZdR00OFpoB", "meetingUri": "https://meet.google.com/thp-mamh-rws", "meetingCode": "thp-mamh-rws", "config": {"accessType": "TRUSTED", "entryPointAccess": "ALL"}},"ceremony_status": CeremonyStatus.CONCLUDED.value,"happens_on_sprint":{"_id": self.sprint3_q4_team3,"name":"S3-Q4-2024"},"team": self.team3_id},
-            {"ceremony_type": CeremonyType.STANDUP.value,"starts": datetime.datetime(2024, 11, 19, 19),"ends": datetime.datetime(2024, 11, 19, 19, 30), "google_meet_config": {"name": "spaces/ocak_wpXR_4B", "meetingUri": "https://meet.google.com/cda-idfb-dgu", "meetingCode": "cda-idfb-dgu", "config": {"accessType": "TRUSTED", "entryPointAccess": "ALL"}},"ceremony_status": CeremonyStatus.NOT_HAPPENED_YET.value,"happens_on_sprint":{"_id": self.sprint3_q4_team3,"name":"S3-Q4-2024"},"team": self.team3_id},
-            {"ceremony_type": CeremonyType.STANDUP.value,"starts": datetime.datetime(2024, 11, 26, 19),"ends": datetime.datetime(2024, 11, 26, 19, 30), "google_meet_config": {"name": "spaces/ocak_wpXR_4B", "meetingUri": "https://meet.google.com/cda-idfb-dgu", "meetingCode": "cda-idfb-dgu", "config": {"accessType": "TRUSTED", "entryPointAccess": "ALL"}},"ceremony_status": CeremonyStatus.NOT_HAPPENED_YET.value,"happens_on_sprint":{"_id": self.sprint3_q4_team3,"name":"S3-Q4-2024"},"team": self.team3_id},
-            {"ceremony_type": CeremonyType.STANDUP.value,"starts": datetime.datetime(2024, 12, 3, 19),"ends": datetime.datetime(2024, 12, 3, 19, 30), "google_meet_config": {"name": "spaces/ocak_wpXR_4B", "meetingUri": "https://meet.google.com/cda-idfb-dgu", "meetingCode": "cda-idfb-dgu", "config": {"accessType": "TRUSTED", "entryPointAccess": "ALL"}},"ceremony_status": CeremonyStatus.NOT_HAPPENED_YET.value,"happens_on_sprint":{"_id": self.sprint3_q4_team3,"name":"S3-Q4-2024"},"team": self.team3_id},
-            {"ceremony_type": CeremonyType.RETRO.value,"starts": datetime.datetime(2024, 12, 9, 10),"ends": datetime.datetime(2024, 12, 9, 11), "google_meet_config": {"name": "spaces/vSZjBs2ToWcB", "meetingUri": "https://meet.google.com/hsg-dbbh-vas", "meetingCode": "hsg-dbbh-vas", "config": {"accessType": "TRUSTED", "entryPointAccess": "ALL"}},"ceremony_status": CeremonyStatus.NOT_HAPPENED_YET.value,"happens_on_sprint":{"_id": self.sprint3_q4_team3,"name":"S3-Q4-2024"},"team": self.team3_id},
         ]
         self.helper.post_to_collection(
             CollectionNames.CEREMONIES.value, ceremonies
