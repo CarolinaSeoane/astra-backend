@@ -63,9 +63,9 @@ class Ceremony:
         '''
         returns [] if no ceremonies are found for the given team_id
         '''
-        print('datetime today >>>>>> ', datetime.today())
-        print('datetime today as UTC >>>>>> ', datetime.today().astimezone(UTC))
-        print('datetime Argentina >>>>>>', datetime.now(pytz.timezone("America/Argentina/Buenos_Aires")).replace(tzinfo=None))
+        # print('datetime today >>>>>> ', datetime.today())
+        # print('datetime today as UTC >>>>>> ', datetime.today().astimezone(UTC))
+        # print('datetime Argentina >>>>>>', datetime.now(pytz.timezone("America/Argentina/Buenos_Aires")).replace(tzinfo=None))
         filter = { "team": ObjectId(team_id), "starts": {"$gte": datetime.now(pytz.timezone("America/Argentina/Buenos_Aires")).replace(tzinfo=None)}, "ceremony_status": CeremonyStatus.NOT_HAPPENED_YET.value }
         sort = {'starts': 1}
         projection = (
@@ -178,30 +178,34 @@ class Ceremony:
         if not ceremony:
             return False
 
-        starts = ceremony.get('starts')
-        ends = ceremony.get('ends')
+        # starts = ceremony.get('starts')
+        # ends = ceremony.get('ends')
 
-        if isinstance(starts, dict) and '$date' in starts:
-            starts = starts['$date']
-        if isinstance(ends, dict) and '$date' in ends:
-            ends = ends['$date']
+        # if isinstance(starts, dict) and '$date' in starts:
+        #     starts = starts['$date']
+        # if isinstance(ends, dict) and '$date' in ends:
+        #     ends = ends['$date']
 
-        if isinstance(starts, str):
-            starts = datetime.fromisoformat(starts)
-        elif isinstance(starts, int):
-            starts = datetime.fromtimestamp(starts)
+        # starts = ceremony['starts']['$date']
+        ends = ceremony['ends']['$date']
+
+        # if isinstance(starts, str):
+        #     starts = datetime.fromisoformat(starts)
+        # elif isinstance(starts, int):
+        #     starts = datetime.fromtimestamp(starts)
 
         if isinstance(ends, str):
             ends = datetime.fromisoformat(ends)
         elif isinstance(ends, int):
             ends = datetime.fromtimestamp(ends)
 
-        if starts.tzinfo is not None:
-            starts = starts.replace(tzinfo=None)
+        # if starts.tzinfo is not None:
+        #     starts = starts.replace(tzinfo=None)
+        
         if ends.tzinfo is not None:
             ends = ends.replace(tzinfo=None)
 
-        return datetime.now() <= ends
+        return datetime.now(pytz.timezone("America/Argentina/Buenos_Aires")).replace(tzinfo=None) <= ends
     
     @staticmethod
     def change_ceremony_status(ceremony_id, new_status):
