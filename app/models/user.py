@@ -83,3 +83,10 @@ class User:
         filter = {'_id': ObjectId(user_id)}
         update = {'$set': {'access_token': token}}
         return MongoHelper().update_document(USERS_COL, filter, update)
+    
+    @staticmethod
+    def activate_team(user_email, team_id):
+        filter = {'email': user_email, 'teams._id': ObjectId(team_id)}
+        update = {'$set': {'teams.$.member_status': MemberStatus.ACTIVE.value}}
+        MongoHelper().update_document(USERS_COL, filter=filter, update=update)
+        return
