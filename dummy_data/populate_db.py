@@ -166,6 +166,7 @@ class Populate:
         self.populate_permissions()
         self.populate_configurations()
         self.populate_ceremonies()
+        self.populate_daily_ceremony()
 
     def populate_organizations(self):
         organizations = [
@@ -4631,3 +4632,49 @@ class Populate:
             CollectionNames.CEREMONIES.value, ceremonies
         )
         print("populated ceremonies")
+
+    def populate_daily_ceremony(self):
+        modified_stories = [
+            {
+            "story_id": "PROYECTO-000050",
+            "title": "Presentación Final",
+            "username": "CarolinaSeoane",
+            "modified_at": datetime.datetime(2024, 11, 15),
+            "sprint": "S3-Q4-2024",
+            "team_id": self.team3_id
+            },
+            {
+            "story_id": "PROYECTO-000050",
+            "title": "Presentación Final",
+            "username": "BelenSeoane",
+            "modified_at": datetime.datetime(2024, 11, 16),
+            "sprint": "S3-Q4-2024",
+            "team_id": self.team3_id
+            },
+            {
+            "story_id": "PROYECTO-000050",
+            "title": "Presentación Final",
+            "username": "MatiasMasseretti",
+            "modified_at":datetime.datetime(2024, 11, 16),
+            "sprint": "S3-Q4-2024",
+            "team_id": self.team3_id
+            },
+            {
+            "story_id": "PROYECTO-000050",
+            "title": "Presentación Final",
+            "username": "FedeUTN",
+            "modified_at": datetime.datetime(2024, 11, 17),
+            "sprint": "S3-Q4-2024",
+            "team_id": self.team3_id
+            },
+            {
+            "story_id": "PROYECTO-000050",
+            "title": "Presentación Final",
+            "username": "MatiasMasseretti",
+            "modified_at":datetime.datetime(2024, 11, 18),
+            "sprint": "S3-Q4-2024",
+            "team_id": self.team3_id
+            }
+            ]
+        self.helper.post_to_collection(CollectionNames.MODIFIED_STORIES.value, modified_stories)
+        print("populated permissions")
