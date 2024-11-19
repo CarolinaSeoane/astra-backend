@@ -435,3 +435,43 @@ class Sprint:
 
         documents = MongoHelper().get_document_by(SPRINTS_COL, match)
         return documents if documents else None
+
+
+    @staticmethod
+    def set_points_current_sprint(sprint_id):
+        '''
+        set_points_current_sprint in planning board
+        '''
+        # Get target points
+        target = 0
+        match = {'sprint._id': ObjectId(sprint_id)}
+        group = {'_id': None, 'target': {'$sum': '$estimation'}}
+        target_cursor = MongoHelper().aggregate(STORIES_COL, match, group)
+
+
+        for t in target_cursor:
+            target = t.get("target", 0)
+
+
+
+        #print("target total de puntos:", target )
+
+        
+        # Set status as current and delete next flag
+        filter = {'_id': ObjectId(sprint_id)}
+        update = {
+            '$set': {
+            #    'status': SprintStatus.CURRENT.value,
+            #    'actual_start_date': datetime.today(),
+                'target': target,
+            },
+
+        }
+        respuesta = MongoHelper().update_document(SPRINTS_COL, filter, update)
+        ''
+        if respuesta.modified_count > 0:
+            print("modificado")# Update successful
+        else:
+            print("no modificado")  # Update failed
+        ''
+        return target
