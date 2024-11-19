@@ -79,6 +79,7 @@ class Task:
             if (
                 old_task.get("title") != new_tasks[index].get("title")
                 or old_task.get("description") != new_tasks[index].get("description")
+                or old_task.get("status") != new_tasks[index].get("status")
             ):
                 return True
         return False

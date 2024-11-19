@@ -201,7 +201,7 @@ class Ceremony:
         if ends.tzinfo is not None:
             ends = ends.replace(tzinfo=None)
 
-        return starts <= datetime.now() <= ends
+        return datetime.now() <= ends
     
     @staticmethod
     def change_ceremony_status(ceremony_id, new_status):

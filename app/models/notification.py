@@ -49,7 +49,13 @@ class Notification:
         Notification.create_notification(
             owner_id=assigned_to,
             title=f'{story["story_id"]} - {story["title"]}',
-            msg="Has sido asignado a la historia",
+            msg={
+            "key": "assigned_to_notification",
+            "message": {
+                    "old": None,
+                    "nuevo": None
+            }
+        },#"Has sido asignado a la historia",
             story=story,
             assigned_to=assigned_to,
             team_id=team_id
@@ -60,7 +66,13 @@ class Notification:
         Notification.create_notification(
             owner_id=ObjectId(story['creator']['_id']['$oid']),
             title=f'{story["story_id"]} - {story["title"]}',
-            msg="Has creado la historia",
+            msg={
+            "key": "creator_notification",
+            "message": {
+                    "old": None,
+                    "nuevo": None
+            }
+        },#"Has creado la historia",
             story=story,
             assigned_to=None,
             team_id=team_id

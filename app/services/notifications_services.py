@@ -35,46 +35,135 @@ def notify_story_update(old_story, updated_fields, team_id):
 
     if "title" in updated_fields:
         old_title = old_story.get("title", "Título antiguo no disponible")
-        title_message = f"El título de la historia '{old_title}' se ha cambiado a '{updated_fields['title']}'."
+        title_message = {
+            "key": "story_title_updated",
+        "message": {
+            "old": old_title,
+            "nuevo": updated_fields['title']
+        }
+        }
+        #title_message = f"El título de la historia '{old_title}' se ha cambiado a '{updated_fields['title']}'."
         notifications.append(title_message)
 
     if "description" in updated_fields:
-        description_message = "La descripción de la historia ha sido actualizada. Clickea para ver mas."
+        #description_message = "La descripción de la historia ha sido actualizada. Clickea para ver mas."
+        description_message = {
+            "key": "story_description_updated",
+            "message": {
+                "old": None,
+                "nuevo": None 
+        }
+    }
         notifications.append(description_message)
 
     if "acceptance_criteria" in updated_fields:
-        criteria_message = "Se han actualizado los criterios de aceptación de la historia."
+        criteria_message =  {
+            "key": "story_acceptance_criteria_updated",
+            "message": {
+                "old": None,
+                "nuevo": None 
+        }}#"Se han actualizado los criterios de aceptación de la historia."
         notifications.append(criteria_message)
 
+    #if "assigned_to" in updated_fields:
+    #    new_assigned_to = updated_fields["assigned_to"]["_id"]
+    #    original_assign_message = f"Te han desasignado la tarea '{story_title}'."
+    #    new_assign_message = f"Se te ha asignado la historia '{story_title}'."
+    #    assign_message = "Se ha cambiado el usuario asignado a la historia."
+    #    notifications.append(assign_message)
     if "assigned_to" in updated_fields:
         new_assigned_to = updated_fields["assigned_to"]["_id"]
-        original_assign_message = f"Te han desasignado la tarea '{story_title}'."
-        new_assign_message = f"Se te ha asignado la historia '{story_title}'."
-        assign_message = "Se ha cambiado el usuario asignado a la historia."
-        notifications.append(assign_message)
 
+        # Notificación para el usuario original (si existía uno)
+        if original_assigned_to:
+            original_assign_message = {
+                "key": "story_assigned_removed",
+                "message": {
+                    "old": None,
+                    "nuevo": story_title 
+                }
+            }
+            notifications.append(original_assign_message)
+
+        # Notificación para el nuevo usuario asignado
+        if new_assigned_to:
+            new_assign_message = {
+                "key": "story_assigned_new",
+                "message": {
+                    "old": None,
+                    "nuevo": story_title
+                }
+            }
+            notifications.append(new_assign_message)
+
+        # Notificación genérica sobre el cambio de asignación
+        assign_message = {
+            "key": "story_assigned_changed",
+            "message": {
+                    "old": None,
+                    "nuevo": story_title
+            }
+        }
+        notifications.append(assign_message)
+    
     if "epic" in updated_fields:
-        epic_message = f"Se ha actualizado la épica de la historia a '{updated_fields['epic']['title']}'."
+        epic_message = {
+        "key": "story_epic_updated",
+        "message": {
+            "old": None,
+            "nuevo": updated_fields["epic"]["title"]
+        }
+    }#f"Se ha actualizado la épica de la historia a '{updated_fields['epic']['title']}'."
         notifications.append(epic_message)
 
     if "sprint" in updated_fields:
-        sprint_message = f"Se ha cambiado el sprint de la historia a {updated_fields['sprint']['name']}."
+        sprint_message = {
+        "key": "story_sprint_updated",
+        "message": {
+            "old": None,
+            "nuevo": updated_fields["sprint"]["name"]
+        }
+    }#f"Se ha cambiado el sprint de la historia a {updated_fields['sprint']['name']}."
         notifications.append(sprint_message)
 
     if "estimation" in updated_fields:
-        estimation_message = f"Se ha cambiado la estimación de la historia a {updated_fields['estimation']} puntos."
+        estimation_message = {
+        "key": "story_estimation_updated",
+        "message": {
+            "old": None,
+            "nuevo": updated_fields["estimation"]
+        }
+    }#f"Se ha cambiado la estimación de la historia a {updated_fields['estimation']} puntos."
         notifications.append(estimation_message)
 
     if "priority" in updated_fields:
-        priority_message = f"Se ha cambiado la prioridad de la historia a {updated_fields['priority']}."
+        priority_message = {
+        "key": "story_priority_updated",
+        "message": {
+            "old": None,
+            "nuevo": updated_fields["priority"]
+        }
+    }#f"Se ha cambiado la prioridad de la historia a {updated_fields['priority']}."
         notifications.append(priority_message)
 
     if "tasks" in updated_fields:
-        tasks_message = "Se han actualizado las tareas de la historia."
+        tasks_message = {
+        "key": "story_tasks_updated",
+        "message": {
+            "old": None,
+            "nuevo": None
+        }
+    }#"Se han actualizado las tareas de la historia."
         notifications.append(tasks_message)
 
     if "story_type" in updated_fields:
-        story_type_message = f"El tipo de historia ha sido actualizado a '{updated_fields['story_type']}'"
+        story_type_message =  {
+        "key": "story_type_updated",
+        "message": {
+            "old": None,
+            "nuevo": updated_fields["story_type"]
+        }
+    }#f"El tipo de historia ha sido actualizado a '{updated_fields['story_type']}'"
         notifications.append(story_type_message)
 
     print(f"created the following notifications {notifications}")
