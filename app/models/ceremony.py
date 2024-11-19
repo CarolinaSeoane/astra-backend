@@ -63,10 +63,27 @@ class Ceremony:
         '''
         returns [] if no ceremonies are found for the given team_id
         '''
-        # print('datetime today >>>>>> ', datetime.today())
-        # print('datetime today as UTC >>>>>> ', datetime.today().astimezone(UTC))
-        # print('datetime Argentina >>>>>>', datetime.now(pytz.timezone("America/Argentina/Buenos_Aires")).replace(tzinfo=None))
-        filter = { "team": ObjectId(team_id), "starts": {"$gte": datetime.now(pytz.timezone("America/Argentina/Buenos_Aires")).replace(tzinfo=None)}, "ceremony_status": CeremonyStatus.NOT_HAPPENED_YET.value }
+        # Get in progress
+        condition_1 = { 
+            "team": ObjectId(team_id),
+            "starts": {"$lte": datetime.now(pytz.timezone("America/Argentina/Buenos_Aires")).replace(tzinfo=None)},
+            "ends": {"$gte": datetime.now(pytz.timezone("America/Argentina/Buenos_Aires")).replace(tzinfo=None)}
+        }
+        
+        # Get future
+        condition_2 = {
+            "team": ObjectId(team_id),
+            "starts": {"$gte": datetime.now(pytz.timezone("America/Argentina/Buenos_Aires")).replace(tzinfo=None)},
+            "ceremony_status": CeremonyStatus.NOT_HAPPENED_YET.value
+        }
+        
+        filter = {
+            '$or': [
+                condition_1,
+                condition_2
+            ]
+        }
+        
         sort = {'starts': 1}
         projection = (
             {"_id", "ceremony_type", "starts", "ends", "google_meet_config.meetingUri"}
