@@ -231,3 +231,17 @@ def get_future_and_current_sprints(args):
 def get_current_sprint(args):
     documents = Sprint.get_current_sprint(args["team_id"])
     return send_response(documents, [], 200, **g.req_data)
+
+
+
+@sprints.route('/set_points_current_sprint', methods=['PUT'])
+@use_args({"team_id": fields.Str(required=True)}, location='query')
+def set_points_current_sprint(args):
+    current_sprint = Sprint.get_current_sprint(args["team_id"])
+    #print("current_sprint", current_sprint)
+    #print( "id" , current_sprint['_id']['$oid'])
+
+    resp = Sprint.set_points_current_sprint(current_sprint['_id']['$oid'])
+    #print("resp", resp)
+
+    return send_response([], [], 200, **g.req_data)
