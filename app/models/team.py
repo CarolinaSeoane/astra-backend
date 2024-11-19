@@ -74,6 +74,15 @@ class Team:
                 cls.remove_member(team_id, new_user._id)
             return False
         return True
+    
+    @staticmethod
+    def accept_member(user_email, team_id):
+        filter={'_id': ObjectId(team_id), 'members.email': user_email}
+        update={'$set': {'members.$.member_status': MemberStatus.ACTIVE.value, 'members.$.role': Role.DEV.value}}
+
+        MongoHelper().update_document(TEAMS_COL, filter=filter, update=update)
+        User.activate_team(user_email, team_id)
+        return
 
     @staticmethod
     def remove_member(team_id, member_id):
@@ -192,10 +201,10 @@ class Team:
         return None
 
     @staticmethod
-    def get_member_role(team_id, user_id):
+    def get_member_role(team_id, email):
         match = {
             "_id": ObjectId(team_id),
-            "members": {"$elemMatch": {"_id": ObjectId(user_id)}}
+            "members": {"$elemMatch": {"email": email}}
         }
         projection = {"members.role.$": 1}
         return MongoHelper().get_document_by(
@@ -219,3 +228,15 @@ class Team:
             team_id, role
         )
         return action in available_actions
+
+    @staticmethod
+    def update_members_role(team_id, roles):
+        for role_change in roles:
+            match = {
+                "_id": ObjectId(team_id),
+                "members._id": ObjectId(role_change["_id"])
+            }
+            update = {
+                "$set": {"members.$.role": role_change["role"]}
+            }
+            MongoHelper().update_document(TEAMS_COL, match, update)
