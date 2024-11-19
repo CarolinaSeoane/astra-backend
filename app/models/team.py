@@ -74,6 +74,15 @@ class Team:
                 cls.remove_member(team_id, new_user._id)
             return False
         return True
+    
+    @staticmethod
+    def accept_member(user_email, team_id):
+        filter={'_id': ObjectId(team_id), 'members.email': user_email}
+        update={'$set': {'members.$.member_status': MemberStatus.ACTIVE.value, 'members.$.role': Role.DEV.value}}
+
+        MongoHelper().update_document(TEAMS_COL, filter=filter, update=update)
+        User.activate_team(user_email, team_id)
+        return
 
     @staticmethod
     def remove_member(team_id, member_id):

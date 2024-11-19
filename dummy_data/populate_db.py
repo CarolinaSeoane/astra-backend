@@ -191,11 +191,6 @@ class Populate:
                 "refresh_token": "1//0ho11G9eYlzhOCgYIARAAGBESNwF-L9IrVFc5SwzPSm01IoILdYjCpH1Lr6hYBAAWYS1y45NUYenHBvXuRi6EJltNXxNQqiYU7yA",
                 "teams": [
                     {
-                        "_id": self.team1_id,
-                        "name": "Argo",
-                        "member_status": MemberStatus.ACTIVE.value,
-                    },
-                    {
                         "_id": self.team3_id,
                         "name": "Proyecto",
                         "member_status": MemberStatus.ACTIVE.value,
@@ -467,15 +462,6 @@ class Populate:
                     },
                 ],
                 "members": [
-                    {
-                        "_id": self.user1_id,
-                        "username": self.username1,
-                        "email": "carolina.b.seoane@gmail.com",
-                        "profile_picture": self.pfp1,
-                        "role": Role.DEV.value,
-                        "member_status": MemberStatus.ACTIVE.value,
-                        # "date": self.user1_id.generation_time
-                    },
                     {
                         "_id": self.user2_id,
                         "username": self.username2,

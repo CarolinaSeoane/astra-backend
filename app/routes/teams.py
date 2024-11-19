@@ -96,17 +96,6 @@ def add_team_member(args):
     else:
         return send_response([], ["User not authorized to complete operation"], 400, **g.req_data)
 
-@teams.route('/remove_member/<member_id>', methods=['DELETE'])
-def remove_team_member(member_id):
-    members = Team.get_team_members(g.team_id)
-    if user_is_scrum_master_of_team(members, g._id):
-        Team.remove_member(g.team_id, member_id) # can a user remove themselves from a team? what happens if the team is empty after deletion?
-        members = Team.get_team_members(g.team_id)
-        print(f"team members after deletion: {members}")
-        return send_response([], [], 200, **g.req_data)
-
-    return send_response([], ["User not authorized to complete operation"], 400, **g.req_data)
-
 # Validate query param
 def validate_section(value):
     if value not in VALIDATE_SECTIONS:
@@ -300,3 +289,18 @@ roles_args = {
 def new_roles(args):
     Team.update_members_role(g.team_id, args["roles"])
     return send_response([], [], 200, **g.req_data)
+
+@teams.route('/pending/accept/<user_email>', methods=['PUT'])
+def accept_pending_member(user_email):
+    Team.accept_member(user_email, g.team_id)
+    return send_response([], [], 200, **g.req_data)
+
+@teams.route('/remove_member/<member_id>', methods=['DELETE'])
+def remove_team_member(member_id):
+    # members = Team.get_team_members(g.team_id)
+    # if user_is_scrum_master_of_team(members, g._id):
+    Team.remove_member(g.team_id, member_id) # can a user remove themselves from a team? what happens if the team is empty after deletion?
+    # members = Team.get_team_members(g.team_id)
+    # print(f"team members after deletion: {members}")
+    return send_response([], [], 200, **g.req_data)
+    # return send_response([], ["User not authorized to complete operation"], 400, **g.req_data)
