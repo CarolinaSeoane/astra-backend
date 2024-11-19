@@ -192,10 +192,10 @@ class Team:
         return None
 
     @staticmethod
-    def get_member_role(team_id, user_id):
+    def get_member_role(team_id, email):
         match = {
             "_id": ObjectId(team_id),
-            "members": {"$elemMatch": {"_id": ObjectId(user_id)}}
+            "members": {"$elemMatch": {"email": email}}
         }
         projection = {"members.role.$": 1}
         return MongoHelper().get_document_by(

@@ -263,7 +263,8 @@ def create_team(args):
 @use_args({"team_id": fields.Str(required=True)}, location='query')
 def get_member_role(args):
     team_id = args["team_id"]
-    role = Team.get_member_role(team_id, g._id)
+    user = User.get_user_by({"_id": ObjectId(g._id)})
+    role = Team.get_member_role(team_id, user["email"])
     return send_response(role, [], 200, **g.req_data)
 
 @teams.route('/permissions_by_role/<role>', methods=['GET'])
