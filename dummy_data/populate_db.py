@@ -711,7 +711,7 @@ class Populate:
                         "username": self.username2,
                         "email": "seoane.m.b@gmail.com",
                         "profile_picture": self.pfp2,
-                        "role": Role.SCRUM_MASTER.value,
+                        "role": Role.PRODUCT_OWNER.value,
                         "member_status": MemberStatus.ACTIVE.value,
                         # "date": self.user2_id.generation_time
                     },
@@ -3513,18 +3513,16 @@ class Populate:
                 "priority": Priority.MEDIUM.value,
                 "story_type": Type.FEATURE.value,
                 "estimation_method": "Fibonacci",
-                "story_status": Status.DONE.value,
+                "story_status": Status.NOT_STARTED.value,
                 "creation_date": datetime.datetime(2024, 11, 7),
                 "added_to_sprint": datetime.datetime(2024, 11, 7),
                 "tasks": [
                     {
                         "title": "Presentar carpeta final",
-                        "status": Status.DOING.value,
+                        "status": Status.NOT_STARTED.value,
                     },
                 ],
                 "team": self.team3_id,
-                "start_date": datetime.datetime(2024, 11, 19),
-                "end_date": datetime.datetime(2024, 11, 19),
             },
             {
                 "story_id": "PROYECTO-000100",
